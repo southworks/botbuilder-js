@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { MiddlewareSet } from './middlewareSet';
-import { Activity, ConversationReference } from './activity';
+import { Activity, ConversationReference } from 'botbuilder-schema';
 import { ActivityAdapter } from './activityAdapter';
 import { Promiseable } from './middleware';
 import { TemplateRenderer } from './templateManager';
@@ -17,7 +17,7 @@ import { TemplateDictionary } from './botbuilder';
  * **Usage Example**
  *
  * ```js
- * import { Bot } from 'botbuilder-core'; // typescript
+ * import { Bot } from 'botbuilder'; // typescript
  *
  * const bot = new Bot(adapter); // init bot and bind to adapter
  *

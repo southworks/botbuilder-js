@@ -1,12 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @module botbuilder-node
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 const botbuilder_1 = require("botbuilder");
 const readline = require("readline");
 /**
@@ -94,7 +87,7 @@ class ConsoleAdapter {
                 from: { id: 'user', name: 'User1' },
                 recipient: { id: 'bot', name: 'Bot' },
                 conversation: { id: 'Convo1' },
-                timestamp: new Date().toISOString(),
+                timestamp: new Date(),
                 text: text || '',
                 id: (this.nextId++).toString()
             };

@@ -2,11 +2,11 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 import { ActivityAdapter } from './activityAdapter';
-import { Activity, ActivityTypes, ConversationReference } from './activity';
+import { ActivityTypes, Activity, ConversationReference } from 'botbuilder-schema';
 import { Promiseable } from './middleware';
 import assert = require('assert');
 
@@ -40,7 +40,7 @@ export class TestAdapter implements ActivityAdapter {
 
     /**
      * Creates a new instance of the test adapter.
-     * @param reference (Optional) conversation reference that lets you customize the address 
+     * @param reference (Optional) conversation reference that lets you customize the address
      * information for messages sent during a test.
      */
     constructor(reference?: ConversationReference) {
@@ -64,7 +64,7 @@ export class TestAdapter implements ActivityAdapter {
     public _sendActivityToBot(userSays: string | Partial<Activity>): Promise<void> {
         // ready for next reply
         let activity = <Activity>(typeof userSays === 'string' ? { type:ActivityTypes.message, text: userSays } : userSays);
-        if (!activity.type) 
+        if (!activity.type)
             throw new Error("Missing activity.type");
         activity.channelId = this.reference.channelId;
         activity.from = this.reference.user;
@@ -157,7 +157,7 @@ export class TestFlow {
 
     /**
      * Throws if the bot's response doesn't match the expected text/activity
-     * @param expected expected text or activity from the bot, or callback to inspect object 
+     * @param expected expected text or activity from the bot, or callback to inspect object
      * @param description description of test case
      * @param timeout (default 3000ms) time to wait for response from bot
      */

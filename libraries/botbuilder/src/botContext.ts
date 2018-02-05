@@ -2,10 +2,10 @@
  * @module botbuilder
  */
 /**
- * Copyright (c) Microsoft Corporation. All rights reserved.  
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, EndOfConversationCodes, ConversationReference, getConversationReference } from './activity';
+import { ActivityTypes, EndOfConversationCodes, Activity, ConversationReference } from 'botbuilder-schema';
 import { Bot } from './bot';
 import { Intent } from './intentRecognizer';
 import { EntityObject } from './entityObject';
@@ -189,9 +189,9 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
         args.unshift(this);
         return Bot.prototype.post.apply(this.bot, args)
             .then((results: ConversationReference[]) => {
-                if (cnt > 0) { 
+                if (cnt > 0) {
                     this.responses.splice(0, cnt);
-                    responded = true; 
+                    responded = true;
                 }
                 return results;
             });
@@ -205,9 +205,29 @@ export function createBotContext(bot: Bot, request?: Activity): BotContext {
 
     Object.defineProperty(context, 'responded', {
         get: function () {
-            return (this as BotContext).responses.length > 0 || responded; 
+            return (this as BotContext).responses.length > 0 || responded;
         }
     });
 
     return context;
+}
+
+export function getConversationReference(activity: Partial<Activity>): ConversationReference {
+    return {
+        activityId: activity.id,
+        user: activity.from,
+        bot: activity.recipient,
+        conversation: activity.conversation,
+        channelId: activity.channelId,
+        serviceUrl: activity.serviceUrl
+    };
+}
+
+export function applyConversationReference(activity: Partial<Activity>, reference: ConversationReference): void {
+    activity.channelId = reference.channelId;
+    activity.serviceUrl = reference.serviceUrl;
+    activity.conversation = reference.conversation;
+    activity.from = reference.bot;
+    activity.recipient = reference.user;
+    activity.replyToId = reference.activityId;
 }
