@@ -65,7 +65,7 @@ export declare class LanguageTranslator implements Middleware {
      */
     constructor(settings: TranslatorSettings);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    private translateMessageAsync;
+    private translateMessageAsync(context, message, sourceLanguage, targetLanguage);
 }
 /**
  * @private
@@ -78,29 +78,10 @@ export declare class PostProcessTranslator {
     constructor(noTranslatePatterns?: string[], wordDictionary?: {
         [id: string]: string;
     });
-    private join;
-    private splitSentence;
-    private wordAlignmentParse;
-    private keepSrcWrdInTranslation;
-    private replaceWordInDictionary;
+    private join(delimiter, words);
+    private splitSentence(sentence, alignments, isSrcSentence?);
+    private wordAlignmentParse(alignments, srcWords, trgWords);
+    private keepSrcWrdInTranslation(alignment, sourceWords, targetWords, srcWrdIndex);
+    private replaceWordInDictionary(alignment, sourceWords, targetWords, srcWrdIndex);
     fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string;
-}
-export interface body {
-    text: string;
-}
-export interface Alignment {
-    proj: string;
-}
-export interface SentLen {
-    srcSentLen: number[];
-    transSentLen: number[];
-}
-export interface Translation {
-    text: string;
-    to: string;
-    alignment: Alignment;
-    sentLen: SentLen;
-}
-export interface ResponseModel {
-    translations: Translation[];
 }

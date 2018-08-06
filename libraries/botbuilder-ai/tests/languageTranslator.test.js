@@ -1,4 +1,4 @@
-﻿const assert = require('assert');
+const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 

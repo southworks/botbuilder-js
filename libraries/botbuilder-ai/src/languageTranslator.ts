@@ -240,114 +240,61 @@ class MicrosoftTranslator implements Translator {
     }
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
-        const baseUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
-        
         let from = options.from;
         let to = options.to;
         let texts = options.texts;
-        let uri: any = baseUrl + '&from=' + from + '&to=' + to;
+        let orgTexts = [];
+        texts.forEach((text, index, array) => {
+            orgTexts.push(text);
+            let escapedText = this.escapeHtml(text);
+            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
+        });
         
-                
-        let option = {
-            uri: uri,
+        let uri: any = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
+        let body: any = "<TranslateArrayRequest>" +
+        "<AppId />" +
+            `<From>${from}</From>` +
+            "<Options>" +
+            " <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" >generalnn</Category>" +
+                "<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>" +
+                "<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+                "<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+                "<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+                "<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
+            "</Options>" +
+            "<Texts>" +
+            texts.join('') +
+            "</Texts>" +
+            `<To>${to}</To>` +
+        "</TranslateArrayRequest>";
+        
+        return this.getAccessToken()
+        .then(accessToken => {
+            return request({
+                url: uri,
                 method: 'POST',
-                headers: { 'Ocp-Apim-Subscription-Key': this.apiKey, 'Content-Type':'application/json' },
-                body: GetBody(texts),
-                json: true
-        };
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'text/xml'
+                },
+                body: body,
                 
-        return Promise.resolve(
-            request(option)
-            .then(response => {
-                let results: TranslationResult[] = [];
-                let model: ResponseModel[];
-                model = response;
-                model.forEach(element => {
-                    element.translations.forEach((element2, index, array) => {
-                        let translation = element2.text as string;
-                        let alignment = element2.alignment.proj as string;
-                        translation = this.postProcessor.fixTranslation(options.texts[index], alignment, translation);
-                        let result: TranslationResult = { translatedText: translation };
-                        results.push(result);
-                    });
-                });
-                results.forEach(element =>{
-                    console.log(element.translatedText);
-                });
-                return Promise.resolve(results);
             })
-            .catch(err => {
-                console.log(err.message);
-                return Promise.resolve(null);
-            })
-        );
-
-        function GetBody(textArray: string[]): any{
-            let body: body[]=[];
-            
-            textArray.forEach((texto)=>{
-                let temp: body;
-                temp = {text: texto};
-                body.push(temp);
+        })
+        .then(response => {
+            let results: TranslationResult[] = [];
+            let parser = new DOMParser();
+            let responseObj = parser.parseFromString(response);
+            let elements = responseObj.getElementsByTagName("TranslateArray2Response");
+            Array.from(elements).forEach((element, index, array) => {
+                let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
+                let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
+                translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
+                let result: TranslationResult = { translatedText: translation };
+                results.push(result);
             });
-            return body;
-        }
-        
-        // let from = options.from;
-        // let to = options.to;
-        // let texts = options.texts;
-        // let orgTexts = [];
-        // texts.forEach((text, index, array) => {
-        //     orgTexts.push(text);
-        //     let escapedText = this.escapeHtml(text);
-        //     texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
-        // });
-        
-        // let uri: any = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
-        // let body: any = "<TranslateArrayRequest>" +
-        // "<AppId />" +
-        //     `<From>${from}</From>` +
-        //     "<Options>" +
-        //     " <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" >generalnn</Category>" +
-        //         "<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>" +
-        //         "<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-        //         "<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-        //         "<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-        //         "<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-        //     "</Options>" +
-        //     "<Texts>" +
-        //     texts.join('') +
-        //     "</Texts>" +
-        //     `<To>${to}</To>` +
-        // "</TranslateArrayRequest>";
-        
-        // return this.getAccessToken()
-        // .then(accessToken => {
-        //     return request({
-        //         url: uri,
-        //         method: 'POST',
-        //         headers: {
-        //             'Authorization': 'Bearer ' + accessToken,
-        //             'Content-Type': 'text/xml'
-        //         },
-        //         body: body,
-                
-        //     })
-        // })
-        // .then(response => {
-        //     let results: TranslationResult[] = [];
-        //     let parser = new DOMParser();
-        //     let responseObj = parser.parseFromString(response);
-        //     let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-        //     Array.from(elements).forEach((element, index, array) => {
-        //         let translation = element.getElementsByTagName('TranslatedText')[0].textContent as string;
-        //         let alignment = element.getElementsByTagName('Alignment')[0].textContent as string;
-        //         translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-        //         let result: TranslationResult = { translatedText: translation };
-        //         results.push(result);
-        //     });
-        //     return Promise.resolve(results);
-        // })
+            return Promise.resolve(results);
+        })
     }
 }
 
@@ -628,28 +575,4 @@ export class PostProcessTranslator {
         }
         return this.join(" ", trgWords);
     }
-}
-
-export interface body {
-    text: string;
-}
-
-export interface Alignment {
-    proj: string;
-}
-
-export interface SentLen {
-    srcSentLen: number[];
-    transSentLen: number[];
-}
-
-export interface Translation {
-    text: string;
-    to: string;
-    alignment: Alignment;
-    sentLen: SentLen;
-}
-
-export interface ResponseModel {
-    translations: Translation[];
 }

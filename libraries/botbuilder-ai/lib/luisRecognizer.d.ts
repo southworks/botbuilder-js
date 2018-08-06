@@ -69,19 +69,19 @@ export declare class LuisRecognizer {
      * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      */
     static topIntent(results: RecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
-    private emitTraceInfo;
-    private normalizeName;
-    private getIntents;
-    private getEntitiesAndMetadata;
-    private getEntityValue;
-    private getEntityMetadata;
-    private getNormalizedEntityName;
-    private populateCompositeEntity;
+    private emitTraceInfo(context, luisResult, recognizerResult);
+    private normalizeName(name);
+    private getIntents(luisResult);
+    private getEntitiesAndMetadata(entities, compositeEntities, verbose);
+    private getEntityValue(entity);
+    private getEntityMetadata(entity);
+    private getNormalizedEntityName(entity);
+    private populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
     /**
      * If a property doesn't exist add it to a new array, otherwise append it to the existing array
      * @param obj Object on which the property is to be set
      * @param key Property Key
      * @param value Property Value
      */
-    private addProperty;
+    private addProperty(obj, key, value);
 }
