@@ -123,5 +123,5 @@ export declare class QnAMaker {
      * @param context Context for the current turn of conversation with the user.
      * @param answers Answers returned by QnA Maker.
      */
-    private emitTraceInfo(context, answers);
+    private emitTraceInfo;
 }

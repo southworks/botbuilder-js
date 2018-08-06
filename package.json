@@ -7,6 +7,7 @@
 		"clean": "lerna run clean",
 		"test:travis": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\" && nyc report --reporter=text-lcov | coveralls",
 		"test": "lerna run build && nyc mocha \"libraries/bot*/tests/*.test.js\"",
+		"test-translator": "lerna run translator-only",
 		"build-docs": "lerna run build-docs"
 	},
 	"dependencies": {
