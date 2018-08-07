@@ -189,8 +189,8 @@ interface Translator {
  */
 class MicrosoftTranslator implements Translator {
     readonly TranslateUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
-    readonly DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0'
-    
+    readonly DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
+
     apiKey: string;
     postProcessor: PostProcessTranslator;
 
@@ -203,24 +203,15 @@ class MicrosoftTranslator implements Translator {
         this.postProcessor = new PostProcessTranslator(noTranslatePatterns, wordDictionary);
     }
 
-    getAccessToken(): Promise<string> {
-        
-        return request({
-            url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
-            method: 'POST'
-        })
-        .then(result => Promise.resolve(result))
-    }
-
     detect(text: string): Promise<string> {
-        if (text.trim() === ''){
-            return Promise.resolve('')
+        if (text.trim() === '') {
+            return Promise.resolve('');
         }
         return request({
             url: this.DetectURL,
             method: 'POST',
             headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
-            json:[{'text': text}]
+            json: [{'text': text}]
         })
         .then(response => {
             return response[0].language;
@@ -229,24 +220,24 @@ class MicrosoftTranslator implements Translator {
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
         let texts = options.texts;
-        let uri: any = this.TranslateUrl + '&from=' + options.from + '&to=' + options.to;         
-                
-        if (texts.join('').trim() === ''){
-            return Promise.resolve([])
+        let uri: any = this.TranslateUrl + '&from=' + options.from + '&to=' + options.to;
+
+        if (texts.join('').trim() === '') {
+            return Promise.resolve([]);
         }
 
         let uriOptions = {
             uri: uri,
                 method: 'POST',
                 headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
-                json: texts.map(t => { return {"Text":t } })
+                json: texts.map(t => { return {'Text': t }; })
         };
-                
+
         return Promise.resolve(
             request(uriOptions)
             .then(response => {
                 let translationResults: TranslationResult[] = [];
-                <ResponseModel[]>response.forEach(responseElement => {
+                response.forEach(responseElement => {
                     let translationElement = responseElement.translations[0];
                     if (translationElement.alignment != null) {
                         let alignment = translationElement.alignment.proj as string;
@@ -538,24 +529,4 @@ export class PostProcessTranslator {
         }
         return this.join(" ", trgWords);
     }
-}
-
-export interface Alignment {
-    proj: string;
-}
-
-export interface SentLen {
-    srcSentLen: number[];
-    transSentLen: number[];
-}
-
-export interface Translation {
-    text: string;
-    to: string;
-    alignment: Alignment;
-    sentLen: SentLen;
-}
-
-export interface ResponseModel {
-    translations: Translation[];
 }

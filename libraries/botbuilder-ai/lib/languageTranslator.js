@@ -125,13 +125,6 @@ class MicrosoftTranslator {
     setPostProcessorTemplate(noTranslatePatterns, wordDictionary) {
         this.postProcessor = new PostProcessTranslator(noTranslatePatterns, wordDictionary);
     }
-    getAccessToken() {
-        return request({
-            url: `https://api.cognitive.microsoft.com/sts/v1.0/issueToken?Subscription-Key=${this.apiKey}`,
-            method: 'POST'
-        })
-            .then(result => Promise.resolve(result));
-    }
     detect(text) {
         if (text.trim() === '') {
             return Promise.resolve('');
@@ -156,7 +149,7 @@ class MicrosoftTranslator {
             uri: uri,
             method: 'POST',
             headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
-            json: texts.map(t => { return { "Text": t }; })
+            json: texts.map(t => { return { 'Text': t }; })
         };
         return Promise.resolve(request(uriOptions)
             .then(response => {
