@@ -17,7 +17,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const botbuilder_1 = require("botbuilder");
 const request = require("request-promise-native");
-const xmldom_1 = require("xmldom");
 /**
  * Middleware that uses the Text Translator Cognitive service to translate text from a source
  * language to one of the native languages that the bot speaks.
@@ -118,6 +117,8 @@ exports.LanguageTranslator = LanguageTranslator;
  */
 class MicrosoftTranslator {
     constructor(apiKey) {
+        this.TranslateUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
+        this.DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
         this.entityMap = {
             "&": "&amp;",
             "<": "&lt;",
@@ -143,73 +144,47 @@ class MicrosoftTranslator {
         return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
     }
     detect(text) {
-        let uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect";
-        let query = `?text=${encodeURI(text)}`;
-        return this.getAccessToken()
-            .then(accessToken => {
-            return request({
-                url: uri + query,
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken
-                }
-            });
-        })
-            .then(lang => Promise.resolve(lang.replace(/<[^>]*>/g, '')));
-    }
-    translateArrayAsync(options) {
-        let from = options.from;
-        let to = options.to;
-        let texts = options.texts;
-        let orgTexts = [];
-        texts.forEach((text, index, array) => {
-            orgTexts.push(text);
-            let escapedText = this.escapeHtml(text);
-            texts[index] = `<string xmlns="http://schemas.microsoft.com/2003/10/Serialization/Arrays">${escapedText}</string>`;
-        });
-        let uri = "https://api.microsofttranslator.com/v2/Http.svc/TranslateArray2";
-        let body = "<TranslateArrayRequest>" +
-            "<AppId />" +
-            `<From>${from}</From>` +
-            "<Options>" +
-            " <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" >generalnn</Category>" +
-            "<ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>" +
-            "<ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-            "<State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-            "<Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-            "<User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />" +
-            "</Options>" +
-            "<Texts>" +
-            texts.join('') +
-            "</Texts>" +
-            `<To>${to}</To>` +
-            "</TranslateArrayRequest>";
-        return this.getAccessToken()
-            .then(accessToken => {
-            return request({
-                url: uri,
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken,
-                    'Content-Type': 'text/xml'
-                },
-                body: body,
-            });
+        if (text.trim() === '') {
+            return Promise.resolve('');
+        }
+        return request({
+            url: this.DetectURL,
+            method: 'POST',
+            headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
+            json: [{ 'text': text }]
         })
             .then(response => {
+            return response[0].language;
+        });
+    }
+    translateArrayAsync(options) {
+        let texts = options.texts;
+        let uri = this.TranslateUrl + '&from=' + options.from + '&to=' + options.to;
+        if (texts.join('').trim() === '') {
+            return Promise.resolve([]);
+        }
+        let uriOptions = {
+            uri: uri,
+            method: 'POST',
+            headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
+            json: texts.map(t => { return { "Text": t }; })
+        };
+        return Promise.resolve(request(uriOptions)
+            .then(response => {
             let results = [];
-            let parser = new xmldom_1.DOMParser();
-            let responseObj = parser.parseFromString(response);
-            let elements = responseObj.getElementsByTagName("TranslateArray2Response");
-            Array.from(elements).forEach((element, index, array) => {
-                let translation = element.getElementsByTagName('TranslatedText')[0].textContent;
-                let alignment = element.getElementsByTagName('Alignment')[0].textContent;
-                translation = this.postProcessor.fixTranslation(orgTexts[index], alignment, translation);
-                let result = { translatedText: translation };
-                results.push(result);
+            response.forEach(responseElement => {
+                responseElement.translations.forEach((translationElement, index, array) => {
+                    let translation = translationElement.text;
+                    if (translationElement.alignment != null) {
+                        let alignment = translationElement.alignment.proj;
+                        translation = this.postProcessor.fixTranslation(options.texts[index], alignment, translation);
+                    }
+                    let result = { translatedText: translation };
+                    results.push(result);
+                });
             });
             return Promise.resolve(results);
-        });
+        }));
     }
 }
 /**
