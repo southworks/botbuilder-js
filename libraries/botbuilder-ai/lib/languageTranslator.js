@@ -117,8 +117,8 @@ exports.LanguageTranslator = LanguageTranslator;
  */
 class MicrosoftTranslator {
     constructor(apiKey) {
-        this.TranslateUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
-        this.DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
+        this.TRANSLATEURL = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
+        this.DETECTURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
         this.apiKey = apiKey;
         this.postProcessor = new PostProcessTranslator();
     }
@@ -130,7 +130,7 @@ class MicrosoftTranslator {
             return Promise.resolve('');
         }
         return request({
-            url: this.DetectURL,
+            url: this.DETECTURL,
             method: 'POST',
             headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
             json: [{ 'text': text }]
@@ -141,7 +141,7 @@ class MicrosoftTranslator {
     }
     translateArrayAsync(options) {
         let texts = options.texts;
-        let uri = `${this.TranslateUrl}&from=${options.from}&to=${options.to}`;
+        let uri = `${this.TRANSLATEURL}&from=${options.from}&to=${options.to}`;
         if (texts.join('').trim() === '') {
             return Promise.resolve([]);
         }

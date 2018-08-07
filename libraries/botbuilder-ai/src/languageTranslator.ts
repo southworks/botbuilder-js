@@ -188,8 +188,8 @@ interface Translator {
  * @private
  */
 class MicrosoftTranslator implements Translator {
-    readonly TranslateUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
-    readonly DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
+    readonly TRANSLATEURL = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
+    readonly DETECTURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
 
     apiKey: string;
     postProcessor: PostProcessTranslator;
@@ -208,7 +208,7 @@ class MicrosoftTranslator implements Translator {
             return Promise.resolve('');
         }
         return request({
-            url: this.DetectURL,
+            url: this.DETECTURL,
             method: 'POST',
             headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
             json: [{'text': text}]
@@ -220,7 +220,7 @@ class MicrosoftTranslator implements Translator {
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
         let texts = options.texts;
-        let uri = `${this.TranslateUrl}&from=${options.from}&to=${options.to}`;
+        let uri = `${this.TRANSLATEURL}&from=${options.from}&to=${options.to}`;
 
         if (texts.join('').trim() === '') {
             return Promise.resolve([]);
