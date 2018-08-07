@@ -220,7 +220,7 @@ class MicrosoftTranslator implements Translator {
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
         let texts = options.texts;
-        let uri: any = this.TranslateUrl + '&from=' + options.from + '&to=' + options.to;
+        let uri = `${this.TranslateUrl}&from=${options.from}&to=${options.to}`;
 
         if (texts.join('').trim() === '') {
             return Promise.resolve([]);
@@ -233,8 +233,7 @@ class MicrosoftTranslator implements Translator {
                 json: texts.map(t => { return {'Text': t }; })
         };
 
-        return Promise.resolve(
-            request(uriOptions)
+        return request(uriOptions)
             .then(response => {
                 let translationResults: TranslationResult[] = [];
                 response.forEach(responseElement => {
@@ -247,8 +246,7 @@ class MicrosoftTranslator implements Translator {
                     translationResults.push(translationResult);
                 });
                 return Promise.resolve(translationResults);
-            })
-        );
+            });
     }
 }
 

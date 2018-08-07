@@ -141,7 +141,7 @@ class MicrosoftTranslator {
     }
     translateArrayAsync(options) {
         let texts = options.texts;
-        let uri = this.TranslateUrl + '&from=' + options.from + '&to=' + options.to;
+        let uri = `${this.TranslateUrl}&from=${options.from}&to=${options.to}`;
         if (texts.join('').trim() === '') {
             return Promise.resolve([]);
         }
@@ -151,7 +151,7 @@ class MicrosoftTranslator {
             headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
             json: texts.map(t => { return { 'Text': t }; })
         };
-        return Promise.resolve(request(uriOptions)
+        return request(uriOptions)
             .then(response => {
             let translationResults = [];
             response.forEach(responseElement => {
@@ -164,7 +164,7 @@ class MicrosoftTranslator {
                 translationResults.push(translationResult);
             });
             return Promise.resolve(translationResults);
-        }));
+        });
     }
 }
 /**
