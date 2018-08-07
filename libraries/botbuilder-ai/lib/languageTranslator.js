@@ -119,14 +119,6 @@ class MicrosoftTranslator {
     constructor(apiKey) {
         this.TranslateUrl = 'https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&includeAlignment=true&includeSentenceLength=true';
         this.DetectURL = 'https://api.cognitive.microsofttranslator.com/detect?api-version=3.0';
-        this.entityMap = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': '&quot;',
-            "'": '&#39;',
-            "/": '&#x2F;'
-        };
         this.apiKey = apiKey;
         this.postProcessor = new PostProcessTranslator();
     }
@@ -139,9 +131,6 @@ class MicrosoftTranslator {
             method: 'POST'
         })
             .then(result => Promise.resolve(result));
-    }
-    escapeHtml(source) {
-        return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
     }
     detect(text) {
         if (text.trim() === '') {
@@ -171,19 +160,17 @@ class MicrosoftTranslator {
         };
         return Promise.resolve(request(uriOptions)
             .then(response => {
-            let results = [];
+            let translationResults = [];
             response.forEach(responseElement => {
-                responseElement.translations.forEach((translationElement, index, array) => {
-                    let translation = translationElement.text;
-                    if (translationElement.alignment != null) {
-                        let alignment = translationElement.alignment.proj;
-                        translation = this.postProcessor.fixTranslation(options.texts[index], alignment, translation);
-                    }
-                    let result = { translatedText: translation };
-                    results.push(result);
-                });
+                let translationElement = responseElement.translations[0];
+                if (translationElement.alignment != null) {
+                    let alignment = translationElement.alignment.proj;
+                    translationElement.text = this.postProcessor.fixTranslation(options.texts[0], alignment, translationElement.text);
+                }
+                let translationResult = { translatedText: translationElement.text };
+                translationResults.push(translationResult);
             });
-            return Promise.resolve(results);
+            return Promise.resolve(translationResults);
         }));
     }
 }

@@ -212,19 +212,6 @@ class MicrosoftTranslator implements Translator {
         .then(result => Promise.resolve(result))
     }
 
-    entityMap: any = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': '&quot;',
-        "'": '&#39;',
-        "/": '&#x2F;'
-    };
-    
-    escapeHtml(source: string) {
-        return String(source).replace(/[&<>"'\/]/g, s => this.entityMap[s]);
-    }
-
     detect(text: string): Promise<string> {
         if (text.trim() === ''){
             return Promise.resolve('')
@@ -258,19 +245,17 @@ class MicrosoftTranslator implements Translator {
         return Promise.resolve(
             request(uriOptions)
             .then(response => {
-                let results: TranslationResult[] = [];
+                let translationResults: TranslationResult[] = [];
                 <ResponseModel[]>response.forEach(responseElement => {
-                    responseElement.translations.forEach((translationElement, index, array) => {
-                        let translation = translationElement.text as string;
-                        if (translationElement.alignment != null) {
-                            let alignment = translationElement.alignment.proj as string;
-                            translation = this.postProcessor.fixTranslation(options.texts[index], alignment, translation);
-                        }
-                        let result: TranslationResult = { translatedText: translation };
-                        results.push(result);
-                    });
+                    let translationElement = responseElement.translations[0];
+                    if (translationElement.alignment != null) {
+                        let alignment = translationElement.alignment.proj as string;
+                        translationElement.text = this.postProcessor.fixTranslation(options.texts[0], alignment, translationElement.text);
+                    }
+                    let translationResult: TranslationResult = { translatedText: translationElement.text };
+                    translationResults.push(translationResult);
                 });
-                return Promise.resolve(results);
+                return Promise.resolve(translationResults);
             })
         );
     }
@@ -553,10 +538,6 @@ export class PostProcessTranslator {
         }
         return this.join(" ", trgWords);
     }
-}
-
-export interface body {
-    text: string;
 }
 
 export interface Alignment {
