@@ -136,21 +136,24 @@ export class LanguageTranslator implements Middleware {
             this.translator.setPostProcessorTemplate([], this.wordDictionary);
         }
 
-        return this.translator.translateArrayAsync({
+        let translateOptions = {
             from: sourceLanguage,
             to: targetLanguage,
-            texts: lines,
+            texts: lines.slice(),
             contentType: 'text/plain'
-        })
+        };
+
+        return this.translator.translateArrayAsync(translateOptions)
         .then((translateResult) => {
+            let postProcessResult:TranslationResult[] = this.translator.postProcessTranslation(translateResult, lines);
             text = '';
-            translateResult.forEach(translatedSentence => {
+            postProcessResult.forEach(translatedSentence => {
                 if (text.length > 0)
                     text += '\n';
                 text += translatedSentence.translatedText;
             });
             message.text = text;
-            return Promise.resolve(translateResult);
+            return Promise.resolve(postProcessResult);
         })
     }
 }
@@ -177,7 +180,9 @@ interface TranslationResult {
  * @private
  */
 interface Translator {
-    translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]>;
+    translateArrayAsync(options: TranslateArrayOptions): Promise<string>;
+
+    postProcessTranslation(response: string, texts: string[]): TranslationResult[];
 
     detect(text: string): Promise<string>;
 
@@ -218,12 +223,14 @@ class MicrosoftTranslator implements Translator {
         })
     }
 
-    translateArrayAsync(options: TranslateArrayOptions): Promise<TranslationResult[]> {
+    translateArrayAsync(options: TranslateArrayOptions): Promise<string> {
+        let from = options.from;
+        let to = options.to;
         let texts = options.texts;
         let uri = `${this.TRANSLATEURL}&from=${options.from}&to=${options.to}`;
 
         if (texts.join('').trim() === '') {
-            return Promise.resolve([]);
+            return Promise.resolve('');
         }
 
         let uriOptions = {
@@ -234,19 +241,22 @@ class MicrosoftTranslator implements Translator {
         };
 
         return request(uriOptions)
-            .then(response => {
-                let translationResults: TranslationResult[] = [];
-                response.forEach(responseElement => {
-                    let translationElement = responseElement.translations[0];
-                    if (translationElement.alignment != null) {
-                        let alignment = translationElement.alignment.proj as string;
-                        translationElement.text = this.postProcessor.fixTranslation(options.texts[0], alignment, translationElement.text);
-                    }
-                    let translationResult: TranslationResult = { translatedText: translationElement.text };
-                    translationResults.push(translationResult);
-                });
-                return Promise.resolve(translationResults);
-            });
+        .then(response => Promise.resolve(JSON.stringify(response)));
+    }
+
+    postProcessTranslation(response: string, orgTexts: string[]): TranslationResult[] {
+        let results: TranslationResult[] = [];
+        JSON.parse(response).foreach(responseElement => {
+            let translationElement = responseElement.translations[0];
+            if (translationElement.alignment != null) {
+                let alignment = translationElement.alignment.proj as string;
+                translationElement.text = this.postProcessor.fixTranslation(orgTexts[0], alignment, translationElement.text);
+            }
+            let translationResult: TranslationResult = { translatedText: translationElement.text };
+            results.push(translationResult);
+        });
+
+        return results;
     }
 }
 
@@ -269,7 +279,6 @@ export class PostProcessTranslator {
                     delete this.wordDictionary[word];
                 }
             });
-            
         }
 
         if(noTranslatePatterns) {
@@ -381,7 +390,7 @@ export class PostProcessTranslator {
     public fixTranslation(sourceMessage: string, alignment: string, targetMessage: string): string {
         let numericMatches = sourceMessage.match(/[0-9]+/g);
         let containsNum = numericMatches != null;
-        
+
         if ((!containsNum && this.noTranslatePatterns.length == 0 && !this.wordDictionary) || alignment.trim() == '') {
             return targetMessage;
         }
@@ -405,10 +414,10 @@ export class PostProcessTranslator {
         }
         
         let alignments = alignment.trim().split(' ');
-        
+
         let srcWords = this.splitSentence(sourceMessage, alignments);
         let trgWords = this.splitSentence(targetMessage, alignments, false);
-        
+    
         let alignMap = this.wordAlignmentParse(alignments, srcWords, trgWords);
 
         if (toBeReplaced.length > 0) {
@@ -440,7 +449,7 @@ export class PostProcessTranslator {
                 });
                                 
                 let wrdNoTranslate = srcWords.slice(srcIndx, srcIndx + newNoTranslateArrayLength)
-                
+
                 wrdNoTranslate.forEach(srcWrds => {
                     trgWords = this.keepSrcWrdInTranslation(alignMap, srcWords, trgWords, srcIndx);
                     srcIndx++;
@@ -483,8 +492,6 @@ export class PostProcessTranslator {
             });
         }
 
-        console.log(toBeReplacedByDictionary);
-        
         if (toBeReplacedByDictionary.length > 0) {
             toBeReplacedByDictionary.forEach(word => {
                 let regExp = new RegExp(word, "i");

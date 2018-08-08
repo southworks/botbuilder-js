@@ -295,3 +295,5 @@ __pycache__/
 
 #derived
 /test-runner/out
+libraries/botbuilder-ai/lib/languageTranslator.js
+libraries/botbuilder-ai/lib/languageTranslator.js.map
