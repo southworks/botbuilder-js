@@ -16,6 +16,8 @@ class TestContext extends TurnContext {
 }
 
 describe('LanguageTranslator', function () {
+    let langTranslator;
+    let detectLangStub;
     this.timeout(10000);
     
     formatResponse = function(text, to, alignment = '') {
@@ -34,6 +36,13 @@ describe('LanguageTranslator', function () {
         return JSON.stringify(response);
     }
 
+    getTranslateStub = function(settings, language) {
+        langTranslator = new LanguageTranslator(settings);
+        detectLangStub  = sinon.stub(langTranslator.translator, "detect");
+        detectLangStub.resolves(language);
+        return sinon.stub(langTranslator.translator, "translateArrayAsync");
+    }
+
     it('should translate en to fr and support html tags in sentences', function (done) {
         
         let toFrenchSettings = {
@@ -41,11 +50,8 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let langTranslator = new LanguageTranslator(toFrenchSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves('en');
-        translateStub.resolves(formatResponse(["salutations >"],['fr']));
+        getTranslateStub(toFrenchSettings, 'en')
+        .resolves(formatResponse(["salutations >"],['fr']));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -60,11 +66,8 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(['0 : vous avez dit " Bonjour "'],['fr'], ['0:0-0:0 1:1-1:1 3:5-3:6 3:5-8:11 7:10-13:15 12:12-16:16 13:17-17:23 18:18-24:24']));
+        getTranslateStub(toFrenchSettings, 'en')
+        .resolves(formatResponse(['0 : vous avez dit " Bonjour "'],['fr'], ['0:0-0:0 1:1-1:1 3:5-3:6 3:5-8:11 7:10-13:15 12:12-16:16 13:17-17:23 18:18-24:24']));
 
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -98,11 +101,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("fr");
-        translateStub.resolves(formatResponse(['Hello Jean mon ami 2018'],['en'],['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24']));
+        getTranslateStub(noTranslateSettings, 'fr')
+        .resolves(formatResponse(['Hello Jean mon ami 2018'],['en'],['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24']));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -141,11 +141,8 @@ describe('LanguageTranslator', function () {
             noTranslatePatterns: { 'en': ['(HI)', '(BYE)'] }
         }
 
-        let langTranslator  = new LanguageTranslator(emptyMessageSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("");
-        translateStub.resolves(formatResponse([''], [''], ['']));
+        getTranslateStub(emptyMessageSettings, '')
+        .resolves(formatResponse([''], [''], ['']));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -173,12 +170,8 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse(['Salutations\nSalut'], ["fr", "fr"]));
+        getTranslateStub(toFrenchSettings, 'en')
+        .resolves(formatResponse(['Salutations\nSalut'], ["fr", "fr"]));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -215,9 +208,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(['Hello Jean mon ami'], ['fr'], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19"]));
+        getTranslateStub(noTranslateSettings, '')
+        .resolves(formatResponse(['Hello Jean mon ami'], ['fr'], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19"]));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -235,9 +227,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(['My perro\'s name is Enzo'], ["en"], ["0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20"]));
+        getTranslateStub(noTranslateSettings, '')
+        .resolves(formatResponse(['My perro\'s name is Enzo'], ["en"], ["0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20"]));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -255,9 +246,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(noTranslateSettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(['My name is l\'etat'], ['en'], ["0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19"]));
+        getTranslateStub(noTranslateSettings, '')
+        .resolves(formatResponse(['My name is l\'etat'], ['en'], ["0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19"]));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -274,8 +264,7 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let langTranslator  = new LanguageTranslator(translateBackSettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
+        let translateStub = getTranslateStub(translateBackSettings, '');
         translateStub.onCall(0).resolves(formatResponse(['bonjour'], ['en']));
         translateStub.onCall(1).resolves(formatResponse(['Salut'], ['fr']));
 
@@ -294,9 +283,8 @@ describe('LanguageTranslator', function () {
             translateBackToUserLanguage: true
         }
 
-        let langTranslator  = new LanguageTranslator(translateBackSettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(['Foo'], ['en']));
+        getTranslateStub(translateBackSettings, '')
+        .resolves(formatResponse(['Foo'], ['en']));
 
         const context = new TestContext({ text: 'hello', type: 'foo' });
         const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
@@ -328,11 +316,8 @@ describe('LanguageTranslator', function () {
         + "La présentation de votre laissez-passer à l'entrée des monuments et des musées "
         + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse";
 
-        let langTranslator  = new LanguageTranslator(toFrenchSettings);
-        let detectLangStub  = sinon.stub(langTranslator.translator, "detect");
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        detectLangStub.resolves("en");
-        translateStub.resolves(formatResponse([translatedMessage], ['fr'], ["262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"]));
+        getTranslateStub(toFrenchSettings, 'en')
+        .resolves(formatResponse([translatedMessage], ['fr'], ["262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"]));
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -350,9 +335,8 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let langTranslator  = new LanguageTranslator(dictionarySettings);
-        let translateStub   = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        translateStub.resolves(formatResponse(['Je suis John'], ['fr'], ["0:0-0:1 2:3-3:6 5:11-8:14"]));
+        getTranslateStub(dictionarySettings, '')
+        .resolves(formatResponse(['Je suis John'], ['fr'], ["0:0-0:1 2:3-3:6 5:11-8:14"]));
 
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
