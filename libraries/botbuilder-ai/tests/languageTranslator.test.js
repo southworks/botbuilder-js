@@ -20,20 +20,15 @@ describe('LanguageTranslator', function () {
     let detectLangStub;
     this.timeout(10000);
     
-    formatResponse = function(text, to, alignment = '') {
-        var response = [text.lengh];
-        
-        if (alignment == '') {
-            for(var i = 0; i<text.length; i++) {
-                response[i] = { translations: [{ text:text[i], to:to[i] }] };
-            }
-        }
-        else {
-            for(var i = 0; i<text.length; i++) {
-                response[i] = { translations: [{ text:text[i], to: to[i], alignment:{ proj:alignment[i] } }] }
-            }
-        }
-        return JSON.stringify(response);
+    formatResponse = function(text, to, alignment) {
+        let mockedResponse = [{
+            translations: [{ 
+                text: text,
+                to: to,
+                translations: { alignment:{ proj: alignment}}
+            }]
+        }]
+        return JSON.stringify(mockedResponse);
     }
 
     getTranslateStub = function(settings, language) {
