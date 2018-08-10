@@ -16,8 +16,6 @@ class TestContext extends TurnContext {
 }
 
 describe('LanguageTranslator', function () {
-    let langTranslator;
-    let detectLangStub;
     this.timeout(10000);
     
     formatResponse = function(text, to, alignment) {
@@ -31,8 +29,8 @@ describe('LanguageTranslator', function () {
     }
 
     resolveTranslationStub = function(settings, language, mockedResponses) {
-        langTranslator = new LanguageTranslator(settings);
-        detectLangStub  = sinon.stub(langTranslator.translator, "detect");
+        let langTranslator = new LanguageTranslator(settings);
+        let detectLangStub = sinon.stub(langTranslator.translator, "detect");
         detectLangStub.resolves(language);
         
         let translator = sinon.stub(langTranslator.translator, "translateArrayAsync");
