@@ -37,6 +37,7 @@ describe('LanguageTranslator', function () {
         mockedResponses.forEach(function (current, index, array) {
             translator.onCall(index).resolves(current);
         });
+        return langTranslator;
     }
 
     it('should translate en to fr and support html tags in sentences', function (done) {
@@ -47,7 +48,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(["salutations >"],['fr'])]
-        resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
+        langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -63,7 +64,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['0 : vous avez dit " Bonjour "'], ['fr'], ['0:0-0:0 1:1-1:1 3:5-3:6 3:5-8:11 7:10-13:15 12:12-16:16 13:17-17:23 18:18-24:24'])];
-        resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
+        langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -97,7 +98,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['Hello Jean mon ami 2018'],['en'],['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19 21:24-21:24'])];
-        resolveTranslationStub(noTranslateSettings, 'fr', mockedResponses);
+        langTranslator = resolveTranslationStub(noTranslateSettings, 'fr', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -137,7 +138,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse([''],[''],[''])];
-        resolveTranslationStub(emptyMessageSettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(emptyMessageSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -166,7 +167,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['Salutations\nSalut'], ["fr", "fr"])];
-        resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
+        langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -204,7 +205,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['Hello Jean mon ami'], ['fr'], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19"])];
-        resolveTranslationStub(noTranslateSettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -223,7 +224,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['My perro\'s name is Enzo'], ["en"], ["0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20"])];
-        resolveTranslationStub(noTranslateSettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -242,7 +243,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['My name is l\'etat'], ['en'], ["0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19"])];
-        resolveTranslationStub(noTranslateSettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -263,7 +264,7 @@ describe('LanguageTranslator', function () {
             formatResponse(['bonjour'], ['en']), 
             formatResponse(['Salut'], ['fr'])
         ]
-        resolveTranslationStub(translateBackSettings, '',mockedResponses);
+        langTranslator = resolveTranslationStub(translateBackSettings, '',mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -281,7 +282,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['Foo'], ['en'])];
-        resolveTranslationStub(translateBackSettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(translateBackSettings, '', mockedResponses);
 
         const context = new TestContext({ text: 'hello', type: 'foo' });
         const testAdapter = new TestAdapter(c => c.sendActivity(context.activity))
@@ -314,7 +315,7 @@ describe('LanguageTranslator', function () {
         + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse";
 
         let mockedResponses = [formatResponse([translatedMessage], ['fr'], ["262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"])];
-        resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
+        langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
@@ -333,7 +334,7 @@ describe('LanguageTranslator', function () {
         }
 
         let mockedResponses = [formatResponse(['Je suis John'], ['fr'], ["0:0-0:1 2:3-3:6 5:11-8:14"])];
-        resolveTranslationStub(dictionarySettings, '', mockedResponses);
+        langTranslator = resolveTranslationStub(dictionarySettings, '', mockedResponses);
 
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
