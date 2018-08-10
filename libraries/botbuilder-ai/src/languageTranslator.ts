@@ -7,7 +7,6 @@
  */
 import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
-import { DOMParser } from "xmldom";
 
 /**
  * Settings used to configure an instance of `LanguageTranslator`.
