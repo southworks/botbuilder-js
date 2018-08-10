@@ -7,7 +7,6 @@
  */
 import { Middleware, TurnContext, ActivityTypes, Activity } from 'botbuilder';
 import * as request from 'request-promise-native';
-import { DOMParser } from "xmldom";
 
 /**
  * Settings used to configure an instance of `LanguageTranslator`.
@@ -220,7 +219,7 @@ class MicrosoftTranslator implements Translator {
         })
         .then(response => {
             return response[0].language;
-        })
+        });
     }
 
     translateArrayAsync(options: TranslateArrayOptions): Promise<string> {
@@ -230,7 +229,7 @@ class MicrosoftTranslator implements Translator {
         let uri = `${this.TRANSLATEURL}&from=${options.from}&to=${options.to}`;
 
         if (texts.join('').trim() === '') {
-            return Promise.resolve('');
+            return Promise.resolve('[]');
         }
 
         let uriOptions = {
@@ -245,15 +244,14 @@ class MicrosoftTranslator implements Translator {
     }
 
     postProcessTranslation(response: string, orgTexts: string[]): TranslationResult[] {
-        let results: TranslationResult[] = [];
-        JSON.parse(response).foreach(responseElement => {
+        let results: TranslationResult[] =
+        JSON.parse(response).map(responseElement => {
             let translationElement = responseElement.translations[0];
             if (translationElement.alignment != null) {
                 let alignment = translationElement.alignment.proj as string;
                 translationElement.text = this.postProcessor.fixTranslation(orgTexts[0], alignment, translationElement.text);
             }
-            let translationResult: TranslationResult = { translatedText: translationElement.text };
-            results.push(translationResult);
+            return { translatedText: translationElement.text };
         });
 
         return results;
@@ -337,9 +335,9 @@ export class PostProcessTranslator {
                 outWrds.push(wrd);
             }
         });
-        
+
         alignSplitWrds = outWrds;
-        
+
         if (this.join("", alignSplitWrds) == this.join("", wrds)) {
             return alignSplitWrds;
         } else {
