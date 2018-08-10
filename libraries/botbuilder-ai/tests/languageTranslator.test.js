@@ -30,12 +30,12 @@ describe('LanguageTranslator', function () {
 
     resolveTranslationStub = function(settings, language, mockedResponses) {
         let langTranslator = new LanguageTranslator(settings);
-        let detectLangStub = sinon.stub(langTranslator.translator, "detect");
+        let detectLangStub = sinon.stub(langTranslator.translator, 'detect');
         detectLangStub.resolves(language);
         
-        let translator = sinon.stub(langTranslator.translator, "translateArrayAsync");
-        mockedResponses.forEach(function (current, index, array) {
-            translator.onCall(index).resolves(current);
+        let translateStub = sinon.stub(langTranslator.translator, 'translateArrayAsync');
+        mockedResponses.forEach(function (current, index) {
+            translateStub.onCall(index).resolves(current);
         });
         return langTranslator;
     }
@@ -47,7 +47,7 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let mockedResponses = [formatResponse(["salutations >"],['fr'])]
+        let mockedResponses = [formatResponse(['salutations >'],['fr'])]
         langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -166,7 +166,7 @@ describe('LanguageTranslator', function () {
             nativeLanguages: ['fr', 'de'],
         }
 
-        let mockedResponses = [formatResponse(['Salutations\nSalut'], ["fr", "fr"])];
+        let mockedResponses = [formatResponse(['Salutations\nSalut'], ['fr', 'fr'])];
         langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -204,7 +204,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['Hello Jean mon ami'], ['fr'], ["0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19"])];
+        let mockedResponses = [formatResponse(['Hello Jean mon ami'], ['fr'], ['0:6-0:4 8:11-6:9 13:15-11:12 17:19-14:19'])];
         langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -223,12 +223,12 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['My perro\'s name is Enzo'], ["en"], ["0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20"])];
+        let mockedResponses = [formatResponse(['My perro\'s name is Enzo'], ['en'], ['0:1-0:1 3:7-3:5 9:10-6:7 9:10-14:15 12:16-9:12 18:21-17:20'])];
         langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
-        .test('mi perro se llama Enzo', "My perro's name is Enzo", 'should have received no translate patterns')
+        .test('mi perro se llama Enzo', 'My perro\'s name is Enzo', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -242,12 +242,12 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['My name is l\'etat'], ['en'], ["0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19"])];
+        let mockedResponses = [formatResponse(['My name is l\'etat'], ['en'], ['0:2-0:1 4:6-3:6 8:10-8:9 12:13-11:13 14:17-15:19'])];
         langTranslator = resolveTranslationStub(noTranslateSettings, '', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
         .use(langTranslator)
-        .test("mon nom est l'etat", "My name is l'etat", 'should have received no translate patterns')
+        .test('mon nom est l\'etat', 'My name is l\'etat', 'should have received no translate patterns')
         .then(() => done())
     });
 
@@ -306,15 +306,15 @@ describe('LanguageTranslator', function () {
         + 'Presenting your pass at the entrance of monuments and museums grants you '
         + 'FREE access with no waiting time at the cash register.';
         
-        let translatedMessage = "Avant votre première visite, "
-        + "de préférence à partir du matin pour profiter pleinement de votre journée, "
-        + "n'oubliez pas d'écrire votre nom, prénom et la date actuelle "
-        + "(sans écraser et de passage) sur le dos de votre laissez-passer "
-        + "afin de l'activer consécutivement pour 2 , 4 ou 6 jours. "
-        + "La présentation de votre laissez-passer à l'entrée des monuments et des musées "
-        + "vous accorde un accès gratuit sans temps d'attente à la caisse enregistreuse";
+        let translatedMessage = 'Avant votre première visite, '
+        + 'de préférence à partir du matin pour profiter pleinement de votre journée, '
+        + 'n\'oubliez pas d\'écrire votre nom, prénom et la date actuelle '
+        + '(sans écraser et de passage) sur le dos de votre laissez-passer '
+        + 'afin de l\'activer consécutivement pour 2 , 4 ou 6 jours. '
+        + 'La présentation de votre laissez-passer à l\'entrée des monuments et des musées '
+        + 'vous accorde un accès gratuit sans temps d\'attente à la caisse enregistreuse';
 
-        let mockedResponses = [formatResponse([translatedMessage], ['fr'], ["262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284"])];
+        let mockedResponses = [formatResponse([translatedMessage], ['fr'], ['262:262-270:270 264:264-272:272 267:268-274:275 270:270-277:277 272:275-279:283 276:276-284:284'])];
         langTranslator = resolveTranslationStub(toFrenchSettings, 'en', mockedResponses);
 
         const testAdapter = new TestAdapter(c => c.sendActivity(c.activity.text))
@@ -333,7 +333,7 @@ describe('LanguageTranslator', function () {
             setUserLanguage: c => Promise.resolve(false)
         }
 
-        let mockedResponses = [formatResponse(['Je suis John'], ['fr'], ["0:0-0:1 2:3-3:6 5:11-8:14"])];
+        let mockedResponses = [formatResponse(['Je suis John'], ['fr'], ['0:0-0:1 2:3-3:6 5:11-8:14'])];
         langTranslator = resolveTranslationStub(dictionarySettings, '', mockedResponses);
 
 
