@@ -1,14 +1,13 @@
 const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const ai = require('../');
-const sinon = require('sinon');
+const nock = require('nock');
+var fs = require('fs');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const endpointKey = process.env.QNAENDPOINTKEY;
-const hostname = process.env.QNAHOSTNAME;
-
-var mock = false;
+const hostname = 'https://botbuilder-sample-qna.azurewebsites.net/qnamaker';
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -21,19 +20,20 @@ class TestContext extends TurnContext {
     }
 }
 
-xdescribe('QnAMaker', function () {
+describe('QnAMaker', function () {    
     this.timeout(10000);
+
+    var nocker = nock('https://botbuilder-sample-qna.azurewebsites.net').persist().post(/qnamaker/);
+    const mockQnA = true;
+
     if (!knowledgeBaseId) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAKNOWLEDGEBASEID environment variable is not defined');
-        mock = true;
     }
     if (!endpointKey) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAENDPOINTKEY environment variable is not defined');
-        mock = true;
     }
     if (!hostname) {
         console.warn('WARNING: skipping QnAMaker test suite because QNAHOSTNAME environment variable is not defined');
-        mock = true;
     }
 
     // Generate endpoints
@@ -42,21 +42,32 @@ xdescribe('QnAMaker', function () {
         endpointKey: endpointKey,
         host: hostname
     }
+
     const endpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
     const unixEndpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
 
+    beforeEach(function(done){
+        var filename = getFilename(this.currentTest.title);
+        if (fs.existsSync(filename) && mockQnA) {
+            const nockedResponse = JSON.parse(fs.readFileSync(filename), 'utf8');
+            nocker.reply(200, nockedResponse);
+        }
+        done();
+    })
+
+    afterEach(function(done){
+        nocker.cleanAll;
+        done();
+    });
+
+    function getFilename (testName) {
+        var filename = testName.replace(/ /g, '_');
+        filename = filename.replace(/"/g, '');
+        return __dirname + `/TestData/qnaMaker/${ filename }.json`;
+    }
+
     it('should work free standing', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
-        let answers = [ {
-                score: 28.54820341616869,
-                Id: 20,
-                answer: "BaseCamp: You can use a damp rag to clean around the Power Pack",
-                source: "Custom Editorial",
-                questions: [ "how do I clean the stove?" ],
-                metadata: [ { name: "category", value: "api" } ]
-              } ]
-
-        if (mock) {sinon.stub(qna, 'callService').resolves(answers);}
 
         return qna.generateAnswer(`how do I clean the stove?`)
             .then(res => {
@@ -88,14 +99,11 @@ xdescribe('QnAMaker', function () {
 
     it('should return 0 answers for questions without an answer.', function () {
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
-        let answers = [ ];
-
-        if (mock) {sinon.stub(qna, 'callService').resolves(answers);}
 
         return qna.generateAnswer(`foo`)
             .then(res => {
                 assert(res);
-                assert(res.length == 0, `returned ${JSON.stringify(res)}`);
+                assert(res.length == 0, `returned ${JSON.stringify(res)}`)
             })
             .then(() => qna.generateAnswer(undefined))
             .then(res => {
@@ -106,9 +114,6 @@ xdescribe('QnAMaker', function () {
     it('should return "false" from answer() if no good answers found', function (done) {
         const context = new TestContext({ text: `foo`, type: 'message' });
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
-        let answers = [ ];
-
-        if (mock) {sinon.stub(qna, 'callService').resolves(answers);}
 
         qna.answer(context).then((found) => {
             assert(!found);
@@ -119,15 +124,6 @@ xdescribe('QnAMaker', function () {
     it('should emit trace info once per call to Answer', function (done) {
         const context = new TestContext({ text: `how do I clean the stove?`, type: 'message'});
         const qna = new ai.QnAMaker(endpoint, { top: 1 });
-        let answers = [ {
-              score: 28.54820341616869,
-              Id: 20,
-              answer: "BaseCamp: You can use a damp rag to clean around the Power Pack",
-              source: "Custom Editorial",
-              questions: [ "how do I clean the stove?" ]
-            } ];
-
-        if (mock) {sinon.stub(qna, 'callService').resolves(answers);}
 
         qna.answer(context)
             .then((found) => {
