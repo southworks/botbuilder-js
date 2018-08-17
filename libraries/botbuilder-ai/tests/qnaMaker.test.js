@@ -55,15 +55,10 @@ describe('QnAMaker', function () {
         done();
     })
 
-    afterEach(function(done){
-        nocker.cleanAll;
-        done();
-    });
-
     function getFilename (testName) {
         var filename = testName.replace(/ /g, '_');
         filename = filename.replace(/"/g, '');
-        return __dirname + `/TestData/qnaMaker/${ filename }.json`;
+        return `${ __dirname }/TestData/qnaMaker/${ filename }.json`;
     }
 
     it('should work free standing', function () {
