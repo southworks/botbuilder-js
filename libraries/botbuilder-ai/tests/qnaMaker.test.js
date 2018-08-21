@@ -7,7 +7,7 @@ var fs = require('fs');
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
 const endpointKey = process.env.QNAENDPOINTKEY;
-const hostname = 'https://botbuilder-sample-qna.azurewebsites.net/qnamaker';
+const hostname = process.env.QNAHOSTNAME || 'botbuilder-test-app';
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -23,34 +23,37 @@ class TestContext extends TurnContext {
 describe('QnAMaker', function () {    
     this.timeout(10000);
 
-    var nocker = nock('https://botbuilder-sample-qna.azurewebsites.net').persist().post(/qnamaker/);
+    var nocker = nock(`https://${ hostname }.azurewebsites.net`).post(/qnamaker/);
     const mockQnA = true;
 
     if (!knowledgeBaseId) {
-        console.warn('WARNING: skipping QnAMaker test suite because QNAKNOWLEDGEBASEID environment variable is not defined');
+        console.warn('WARNING: QnAMaker test suite QNAKNOWLEDGEBASEID environment variable is not defined');
     }
     if (!endpointKey) {
-        console.warn('WARNING: skipping QnAMaker test suite because QNAENDPOINTKEY environment variable is not defined');
+        console.warn('WARNING: QnAMaker test suite QNAENDPOINTKEY environment variable is not defined');
     }
     if (!hostname) {
-        console.warn('WARNING: skipping QnAMaker test suite because QNAHOSTNAME environment variable is not defined');
+        console.warn('WARNING: QnAMaker test suite QNAHOSTNAME environment variable is not defined');
     }
 
     // Generate endpoints
     const endpoint = {
         knowledgeBaseId: knowledgeBaseId,
         endpointKey: endpointKey,
-        host: hostname
+        host: `https://${ hostname }.azurewebsites.net/qnamaker`
     }
-
-    const endpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\r\nHost: ${hostname}\r\nAuthorization: EndpointKey ${endpointKey}\r\nContent-Type: application/json\r\n{"question":"hi"}`;
-    const unixEndpointString = `POST /knowledgebases/${knowledgeBaseId}/generateAnswer\nHost: ${hostname}\nAuthorization: EndpointKey ${endpointKey}\nContent-Type: application/json\n{"question":"hi"}`;
 
     beforeEach(function(done){
         var filename = getFilename(this.currentTest.title);
         if (fs.existsSync(filename) && mockQnA) {
             const nockedResponse = JSON.parse(fs.readFileSync(filename), 'utf8');
-            nocker.reply(200, nockedResponse);
+            if(nockedResponse.length > 0) {
+                nockedResponse.forEach(response => {
+                    nocker.reply(200, response); 
+                });
+            } else {
+                nocker.reply(200, nockedResponse); 
+            }
         }
         done();
     })
