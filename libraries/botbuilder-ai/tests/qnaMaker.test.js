@@ -44,24 +44,26 @@ describe('QnAMaker', function () {
     }
 
     beforeEach(function(done){
-        var filename = getFilename(this.currentTest.title);
+        var testDesc = this.test.parent.title;
+        var filename = getFilename(this.currentTest.title, testDesc);
+
         if (fs.existsSync(filename) && mockQnA) {
             const nockedResponse = JSON.parse(fs.readFileSync(filename), 'utf8');
-            if(nockedResponse.length > 0) {
-                nockedResponse.forEach(response => {
-                    nocker.reply(200, response); 
-                });
-            } else {
-                nocker.reply(200, nockedResponse); 
+            if (nockedResponse.answers.length > 0) {
+                var amountQuestions = nockedResponse.answers[0].questions.length;
+                nocker.times(amountQuestions).replyWithFile(200, filename)
+            }
+            else {
+                nocker.replyWithFile(200, filename);
             }
         }
         done();
     })
 
-    function getFilename (testName) {
+    function getFilename (testName, testDesc) {
         var filename = testName.replace(/ /g, '_');
         filename = filename.replace(/"/g, '');
-        return `${ __dirname }/TestData/qnaMaker/${ filename }.json`;
+        return `${ __dirname }/TestData/${ testDesc }/${ filename }.json`;
     }
 
     it('should work free standing', function () {
