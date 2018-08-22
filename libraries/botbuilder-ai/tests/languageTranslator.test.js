@@ -1,5 +1,4 @@
 const assert = require('assert');
-const sinon = require('sinon');
 const fs = require('fs-extra');
 const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
@@ -29,20 +28,7 @@ function getFilePath (testName) {
 
 describe('LanguageTranslator', function () {
     this.timeout(10000);
-    
-    formatResponse = function(text, to, alignment) {
-        return JSON.stringify([{
-            translations: [{ 
-                text: text,
-                to: to,
-                translations: { alignment:{ proj: alignment}}
-            }]
-        }]);
-    }
 
-    resolveCalls = function(langTranslator, language, mockedResponses) {
-        let detectLangStub = sinon.stub(langTranslator.translator, 'detect');
-        detectLangStub.resolves(language);
     var nockerScope = nock(`https://api.cognitive.microsofttranslator.com`);
 
     beforeEach(function(done){
@@ -67,11 +53,6 @@ describe('LanguageTranslator', function () {
         done();
     });
 
-        let translateStub = sinon.stub(langTranslator.translator, 'translateArrayAsync');
-        mockedResponses.forEach(function (current, index) {
-            translateStub.onCall(index).resolves(current);
-        });
-    }
     afterEach(function(done){
         nock.cleanAll();
         done();
