@@ -20,10 +20,9 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('QnAMaker', function () {    
+describe('QnAMaker', function () {
     this.timeout(10000);
-
-    var nocker = nock(`https://${ hostname }.azurewebsites.net`).post(/qnamaker/);
+    const testFiles = fs.readdirSync(`${ __dirname }/TestData/${ this.title }/`);
     const mockQnA = true;
 
     if (!knowledgeBaseId) {
@@ -44,26 +43,21 @@ describe('QnAMaker', function () {
     }
 
     beforeEach(function(done){
-        var testDesc = this.test.parent.title;
-        var filename = getFilename(this.currentTest.title, testDesc);
-
-        if (fs.existsSync(filename) && mockQnA) {
-            const nockedResponse = JSON.parse(fs.readFileSync(filename), 'utf8');
-            if (nockedResponse.answers.length > 0) {
-                var amountQuestions = nockedResponse.answers[0].questions.length;
-                nocker.times(amountQuestions).replyWithFile(200, filename)
-            }
-            else {
-                nocker.replyWithFile(200, filename);
-            }
+        if (mockQnA) {
+            var filename = replaceCharacters(this.currentTest.title);
+            var arr = testFiles.filter(function(file) { return file.startsWith(filename)} )
+            arr.forEach(file => {
+                nock(`https://${ hostname }.azurewebsites.net`).post(/qnamaker/)
+                .replyWithFile(200, `${ __dirname }/TestData/${ this.test.parent.title }/${ file }`)
+            });
         }
         done();
     })
 
-    function getFilename (testName, testDesc) {
-        var filename = testName.replace(/ /g, '_');
-        filename = filename.replace(/"/g, '');
-        return `${ __dirname }/TestData/${ testDesc }/${ filename }.json`;
+    function replaceCharacters (testName, testDesc) {
+        return testName
+        .replace(/"/g, '')
+        .replace(/ /g, '_');
     }
 
     it('should work free standing', function () {
