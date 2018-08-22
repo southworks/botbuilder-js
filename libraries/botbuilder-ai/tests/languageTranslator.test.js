@@ -1,9 +1,15 @@
 const assert = require('assert');
 const sinon = require('sinon');
+const fs = require('fs-extra');
+const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 
 const translatorKey = '';
+
+// If this is true, then Translator responses will come from JSON files.
+// If this is false, the Translator service will be called.
+const mockTranslator = true;
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -13,6 +19,12 @@ class TestContext extends TurnContext {
             this.sent = activities;
         });
     }
+}
+
+function getFilePath (testName) {
+    var filename = testName.replace(/ /g, '_');
+    filename = filename.replace(/"/g, '');
+    return `${ __dirname }/TestData/LanguageTranslator/${ filename }.json`;
 }
 
 describe('LanguageTranslator', function () {
@@ -31,12 +43,39 @@ describe('LanguageTranslator', function () {
     resolveCalls = function(langTranslator, language, mockedResponses) {
         let detectLangStub = sinon.stub(langTranslator.translator, 'detect');
         detectLangStub.resolves(language);
+    var nockerScope = nock(`https://api.cognitive.microsofttranslator.com`);
+
+    beforeEach(function(done){
+        var filePath = getFilePath(this.currentTest.title);
+        if (fs.existsSync(filePath) && mockTranslator) {
+            const nockedResponse = fs.readJSONSync(filePath);
+            if(nockedResponse.translate && nockedResponse.translate.length == 2){
+                nockerScope.post(/detect/)
+                .reply(200, nockedResponse.detect)
+                .post(/translate/)
+                .reply(200, [nockedResponse.translate[0]])
+                .post(/translate/)
+                .reply(200, [nockedResponse.translate[1]]);
+            }
+            else{
+                nockerScope.post(/detect/)
+                .reply(200, nockedResponse.detect)
+                .post(/translate/)
+                .reply(200, nockedResponse.translate);
+            }
+        }
+        done();
+    });
 
         let translateStub = sinon.stub(langTranslator.translator, 'translateArrayAsync');
         mockedResponses.forEach(function (current, index) {
             translateStub.onCall(index).resolves(current);
         });
     }
+    afterEach(function(done){
+        nock.cleanAll();
+        done();
+    });
 
     it('should translate en to fr and support html tags in sentences', function (done) {
         
