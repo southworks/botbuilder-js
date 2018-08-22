@@ -45,7 +45,7 @@ describe('QnAMaker', function () {
     beforeEach(function(done){
         if (mockQnA) {
             var filename = replaceCharacters(this.currentTest.title);
-            var arr = testFiles.filter(function(file) { return file.startsWith(filename)} )
+            var arr = testFiles.filter(function(file) { return file.startsWith(filename + '.')} )
             arr.forEach(file => {
                 nock(`https://${ hostname }.azurewebsites.net`).post(/qnamaker/)
                 .replyWithFile(200, `${ __dirname }/TestData/${ this.test.parent.title }/${ file }`)
@@ -74,6 +74,22 @@ describe('QnAMaker', function () {
                 assert(res);
                 assert(res.length == 1);
                 assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
+            });
+    });
+
+    it('should return 0 answers for a question with no answer after a succesful call', function () {
+        const qna = new ai.QnAMaker(endpoint, { top: 1 });
+
+        return qna.generateAnswer(`how do I clean the stove?`)
+            .then(res => {
+                assert(res);
+                assert(res.length == 1);
+                assert(res[0].answer.startsWith("BaseCamp: You can use a damp rag to clean around the Power Pack"));
+            })
+            .then(() => qna.generateAnswer('how is the weather?'))
+            .then(res => {
+                assert(res);
+                assert(res.length == 0);
             });
     });
     
