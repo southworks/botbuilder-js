@@ -35,19 +35,13 @@ describe('LanguageTranslator', function () {
         var filePath = getFilePath(this.currentTest.title);
         if (fs.existsSync(filePath) && mockTranslator) {
             const nockedResponse = fs.readJSONSync(filePath);
-            if(nockedResponse.translate && nockedResponse.translate.length == 2){
+            if(nockedResponse.translate){
                 nockerScope.post(/detect/)
-                .reply(200, nockedResponse.detect)
-                .post(/translate/)
-                .reply(200, [nockedResponse.translate[0]])
-                .post(/translate/)
-                .reply(200, [nockedResponse.translate[1]]);
-            }
-            else{
-                nockerScope.post(/detect/)
-                .reply(200, nockedResponse.detect)
-                .post(/translate/)
-                .reply(200, nockedResponse.translate);
+                .reply(200, nockedResponse.detect);
+                nockedResponse.translate.forEach(translationElement => {
+                 nockerScope.post(/translate/)
+                 .reply(200, [translationElement]);
+                });
             }
         }
         done();
