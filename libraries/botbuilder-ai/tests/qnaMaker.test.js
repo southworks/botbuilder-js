@@ -2,7 +2,7 @@ const assert = require('assert');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const ai = require('../');
 const nock = require('nock');
-var fs = require('fs');
+const fs = require('fs');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
@@ -22,7 +22,6 @@ class TestContext extends TurnContext {
 }
 
 describe('QnAMaker', function () {
-    this.timeout(10000);
     const testFiles = fs.readdirSync(`${ __dirname }/TestData/${ this.title }/`);
 
     if (!knowledgeBaseId) {
