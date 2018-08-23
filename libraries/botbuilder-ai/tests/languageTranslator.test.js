@@ -28,7 +28,6 @@ function getFilePath(testName) {
 }
 
 describe('LanguageTranslator', function () {
-    this.timeout(10000);
 
     var nockerScope = nock(`https://api.cognitive.microsofttranslator.com`);
 
@@ -181,7 +180,7 @@ describe('LanguageTranslator', function () {
         .then(() => done());
     });
     
-    it('should bypass calling service in middleware for non-message activities.', function (done) {
+    it('should bypass calling service in middleware for non-message activities', function (done) {
         let intercepted = true;
         let toEnglishSettings = {
             translatorKey: translatorKey,
