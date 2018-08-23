@@ -4,7 +4,8 @@ const nock = require('nock');
 const { TestAdapter, TurnContext } = require('botbuilder');
 const { LanguageTranslator } = require('../');
 
-const translatorKey = '';
+// This can be any endpoint key for calling Language Translator
+const translatorKey = process.env.translatorKey || "MockedKey";
 
 // If this is true, then Translator responses will come from JSON files.
 // If this is false, the Translator service will be called.
@@ -20,7 +21,7 @@ class TestContext extends TurnContext {
     }
 }
 
-function getFilePath (testName) {
+function getFilePath(testName) {
     var filename = testName.replace(/ /g, '_');
     filename = filename.replace(/"/g, '');
     return `${ __dirname }/TestData/LanguageTranslator/${ filename }.json`;
