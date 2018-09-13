@@ -1,4 +1,4 @@
-import { StatePropertyAccessor } from "./botStatePropertyAccessor";
+import { StatePropertyAccessor } from './botStatePropertyAccessor';
 
 export interface PropertyManager {
     /**
