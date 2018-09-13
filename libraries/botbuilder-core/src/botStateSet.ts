@@ -42,11 +42,10 @@ export class BotStateSet {
      * Creates a new AutoSaveStateiMiddleware instance.
      * @param botStates Zero or more BotState plugins to register.
      */
-    public constructor(...botStates: BotState[]) {
+    public botStates: BotState[] = [];
+     public constructor(...botStates: BotState[]) {
         BotStateSet.prototype.add.apply(this, botStates);
     }
-
-    public botStates: BotState[] = [];
 
     /**
      * Registers `BotState` plugins with the set.
@@ -80,6 +79,7 @@ export class BotStateSet {
         const promises: Promise<any>[] = this.botStates.map((botstate: BotState) => botstate.load(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 
@@ -99,6 +99,7 @@ export class BotStateSet {
         const promises: Promise<void>[] = this.botStates.map((botstate: BotState) => botstate.saveChanges(context, force));
 
         await Promise.all(promises);
+
         return;
     }
 }

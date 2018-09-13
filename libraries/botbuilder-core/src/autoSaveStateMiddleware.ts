@@ -43,16 +43,15 @@ export class AutoSaveStateMiddleware implements Middleware {
      * Creates a new AutoSaveStateiMiddleware instance.
      * @param botStates Zero or more BotState plugins to register.
      */
+    public botStateSet: BotStateSet;
     constructor(...botStates: BotState[]) {
         this.botStateSet = new BotStateSet();
         if (botStates) {
-            for (let botState of botStates) {
+            for (const botState of botStates) {
                 this.botStateSet.add(botState);
             }
         }
     }
-
-    public botStateSet: BotStateSet;
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         await next();
@@ -67,6 +66,7 @@ export class AutoSaveStateMiddleware implements Middleware {
         botStates.forEach((botstate: BotState) => {
             this.botStateSet.add(botstate);
         });
+
         return this;
     }
 

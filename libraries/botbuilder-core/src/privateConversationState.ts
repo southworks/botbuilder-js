@@ -52,6 +52,7 @@ export class PrivateConversationState extends BotState {
         super(storage, (context: TurnContext) => {
             // Calculate storage key
             const key: string = this.getStorageKey(context);
+
             return key ? Promise.resolve(key) : Promise.reject(new Error(NO_KEY));
         });
     }
@@ -77,6 +78,7 @@ export class PrivateConversationState extends BotState {
         if (!userId) {
             throw new Error('missing activity.from.id');
         }
+
         return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
     }
 }
