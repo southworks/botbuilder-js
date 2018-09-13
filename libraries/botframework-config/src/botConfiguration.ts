@@ -290,6 +290,7 @@ export class BotConfiguration extends BotConfigurationBase {
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
+                            // tslint:disable-next-line:typedef
                             let p = await exec(command);
                             var json: string = p.stdout;
                             // make sure it's json
@@ -319,6 +320,7 @@ export class BotConfiguration extends BotConfigurationBase {
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
+                            // tslint:disable-next-line:typedef
                             let p = await exec(command);
                             var json: string = p.stdout;
                             // make sure it's json
@@ -348,6 +350,7 @@ export class BotConfiguration extends BotConfigurationBase {
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
+                            // tslint:disable-next-line:typedef
                             let p = await exec(command);
                             var json: string = p.stdout;
                             // make sure it's json
