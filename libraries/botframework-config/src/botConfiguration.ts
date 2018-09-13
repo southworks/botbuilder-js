@@ -271,7 +271,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
     // export the services from the bot file as resource files and recipe file
     public async export(folder: string, exportOptions?: Partial<ExportOptions>): Promise<BotRecipe> {
-        let options: Partial<ExportOptions> = Object.assign({ download: true }, exportOptions);
+        let options: Partial<ExportOptions> = { download: true, ...exportOptions};
 
         let recipe: BotRecipe = new BotRecipe();
 
