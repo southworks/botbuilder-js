@@ -14,6 +14,7 @@ import * as encrypt from './encrypt';
 import { ExportOptions } from './exportOptions';
 import { ConnectedService } from './models';
 import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
+// tslint:disable-next-line:no-var-requires no-require-imports
 let exec = util.promisify(require('child_process').exec);
 
 interface InternalBotConfig {
@@ -276,6 +277,7 @@ export class BotConfiguration extends BotConfigurationBase {
     }
 
     // export the services from the bot file as resource files and recipe file
+    // tslint:disable-next-line:cyclomatic-complexity
     public async export(folder: string, exportOptions?: Partial<ExportOptions>): Promise<BotRecipe> {
         let options = Object.assign({ download: true }, exportOptions);
 
