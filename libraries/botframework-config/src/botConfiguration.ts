@@ -25,6 +25,11 @@ export class BotConfiguration extends BotConfigurationBase {
 
     private internal: InternalBotConfig = {};
 
+    // Generate a key for encryption
+    public static generateKey(): string {
+        return encrypt.generateKey();
+    }
+
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         // tslint:disable-next-line:prefer-const
         const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
@@ -75,6 +80,17 @@ export class BotConfiguration extends BotConfigurationBase {
         const json: string = txtfile.readSync(botpath);
         const bot: BotConfiguration = BotConfiguration.internalLoad(json, secret);
         bot.internal.location = botpath;
+
+        return bot;
+    }
+
+    private static internalLoad(json: string, secret?: string): BotConfiguration {
+        const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
+
+        const hasSecret: boolean = !!bot.secretKey;
+        if (hasSecret) {
+            bot.decrypt(secret);
+        }
 
         return bot;
     }
@@ -131,44 +147,6 @@ export class BotConfiguration extends BotConfigurationBase {
     // save the config file back over original (blocking)
     public saveSync(secret?: string): void {
         return this.saveAsSync(this.internal.location, secret);
-    }
-
-    private savePrep(secret?: string): void {
-        if (!!secret) {
-            this.validateSecretKey(secret);
-        }
-
-        // make sure that all dispatch serviceIds still match services that are in the bot
-        for (const service of this.services) {
-            if (service.type === ServiceTypes.Dispatch) {
-                const dispatchService: IDispatchService = <IDispatchService>service;
-                const validServices: string[] = [];
-                for (const dispatchServiceId of dispatchService.serviceIds) {
-                    for (const this_service of this.services) {
-                        if (this_service.id === dispatchServiceId) {
-                            validServices.push(dispatchServiceId);
-                        }
-                    }
-                }
-                dispatchService.serviceIds = validServices;
-            }
-        }
-    }
-
-    private static internalLoad(json: string, secret?: string): BotConfiguration {
-        const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
-
-        const hasSecret: boolean = !!bot.secretKey;
-        if (hasSecret) {
-            bot.decrypt(secret);
-        }
-
-        return bot;
-    }
-
-    // Generate a key for encryption
-    public static generateKey(): string {
-        return encrypt.generateKey();
     }
 
     public clearSecret(): void {
@@ -487,6 +465,28 @@ export class BotConfiguration extends BotConfigurationBase {
         }
         await fsx.writeFile(folder + `/bot.recipe`, JSON.stringify(recipe, null, 2), { encoding: 'utf8' });
         return recipe;
+    }
+
+    private savePrep(secret?: string): void {
+        if (!!secret) {
+            this.validateSecretKey(secret);
+        }
+
+        // make sure that all dispatch serviceIds still match services that are in the bot
+        for (const service of this.services) {
+            if (service.type === ServiceTypes.Dispatch) {
+                const dispatchService: IDispatchService = <IDispatchService>service;
+                const validServices: string[] = [];
+                for (const dispatchServiceId of dispatchService.serviceIds) {
+                    for (const this_service of this.services) {
+                        if (this_service.id === dispatchServiceId) {
+                            validServices.push(dispatchServiceId);
+                        }
+                    }
+                }
+                dispatchService.serviceIds = validServices;
+            }
+        }
     }
 }
 
