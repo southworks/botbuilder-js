@@ -14,7 +14,7 @@ import * as encrypt from './encrypt';
 import { ExportOptions } from './exportOptions';
 import { ConnectedService } from './models';
 import { IBlobStorageService, IBotConfiguration, IConnectedService, ICosmosDBService, IDispatchService, IEndpointService, IFileService, IGenericService, ILuisService, IQnAService, ServiceTypes } from './schema';
-let exec = util.promisify(require('child_process').exec);
+let exec: Function = util.promisify(require('child_process').exec);
 
 interface InternalBotConfig {
     location?: string;
@@ -271,27 +271,27 @@ export class BotConfiguration extends BotConfigurationBase {
 
     // export the services from the bot file as resource files and recipe file
     public async export(folder: string, exportOptions?: Partial<ExportOptions>): Promise<BotRecipe> {
-        let options = Object.assign({ download: true }, exportOptions);
+        let options: Partial<ExportOptions> = Object.assign({ download: true }, exportOptions);
 
-        let recipe = new BotRecipe();
+        let recipe: BotRecipe = new BotRecipe();
 
         await fsx.ensureDir(folder);
 
-        let index = 0;
+        let index: number = 0;
         for (let service of this.services) {
             index++;
 
             switch (service.type) {
                 case ServiceTypes.Dispatch:
                     {
-                        let luisService = <ILuisService>service;
+                        let luisService: ILuisService = <ILuisService>service;
                         if (options.download) {
-                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            let command: string = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
                             let p = await exec(command);
-                            var json = p.stdout;
+                            var json: string = p.stdout;
                             // make sure it's json
                             JSON.parse(json);
                             await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
@@ -313,14 +313,14 @@ export class BotConfiguration extends BotConfigurationBase {
                     break;
                 case ServiceTypes.Luis:
                     {
-                        let luisService = <ILuisService>service;
+                        let luisService: ILuisService = <ILuisService>service;
                         if (options.download) {
-                            let command = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
+                            let command: string = `luis export version --appId ${luisService.appId} --authoringKey ${luisService.authoringKey} --versionId "${luisService.version}"`;
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
                             let p = await exec(command);
-                            var json = p.stdout;
+                            var json: string = p.stdout;
                             // make sure it's json
                             JSON.parse(json);
                             await fsx.writeFile(folder + `/${luisService.id}.luis`, json, { encoding: 'utf8' });
@@ -342,14 +342,14 @@ export class BotConfiguration extends BotConfigurationBase {
 
                 case ServiceTypes.QnA:
                     {
-                        let qnaService = <IQnAService>service;
+                        let qnaService: IQnAService = <IQnAService>service;
                         if (options.download) {
-                            let command = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
+                            let command: string = `qnamaker export kb --kbId ${qnaService.kbId} --environment prod --subscriptionKey ${qnaService.subscriptionKey} --hostname ${qnaService.hostname} --endpointKey ${qnaService.endpointKey}`;
                             if (options.progress) {
                                 options.progress(service, command, index, this.services.length);
                             }
                             let p = await exec(command);
-                            var json = p.stdout;
+                            var json: string = p.stdout;
                             // make sure it's json
                             JSON.parse(json);
                             await fsx.writeFile(folder + `/${qnaService.id}.qna`, json, { encoding: 'utf8' });
@@ -436,7 +436,7 @@ export class BotConfiguration extends BotConfigurationBase {
                             options.progress(service, '', index, this.services.length);
                         }
                         console.warn(`WARNING: Generic services cannot be cloned and all configuration data will be passed unchanged and unencrypted `);
-                        let genericService = <IGenericService>service;
+                        let genericService: IGenericService = <IGenericService>service;
                         let genericResource: IGenericResource = {
                             type: ServiceTypes.Generic,
                             id: service.id,
