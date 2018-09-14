@@ -56,6 +56,7 @@ export class CosmosDbStorage implements Storage {
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
+    // tslint:disable-next-line:max-line-length
     public constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
