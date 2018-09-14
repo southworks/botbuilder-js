@@ -66,10 +66,10 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     }
 
     public toJSON(): IBotConfiguration {
-        const newConfig = <IBotConfiguration>{};
+        const newConfig: IBotConfiguration = <IBotConfiguration>{};
         Object.assign(newConfig, this);
         delete (<any>newConfig).internal;
-        newConfig.services = this.services.slice().map((service) => (<ConnectedService>service).toJSON());
+        newConfig.services = this.services.slice().map((service: IConnectedService) => (<ConnectedService>service).toJSON());
         return newConfig;
     }
 
@@ -158,13 +158,13 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
             switch (service.type) {
                 case ServiceTypes.Bot:
                     {
-                        let botService = <IBotService>service;
+                        const botService: IBotService = <IBotService>service;
 
                         // old bot service records may not have the appId on the bot, but we probably have it already on an endpoint
                         if (!botService.appId) {
                             for(const s of this.services){
-                                if (s.type == ServiceTypes.Endpoint) {
-                                    const endpoint = <IEndpointService>s;
+                                if (s.type === ServiceTypes.Endpoint) {
+                                    const endpoint: IEndpointService = <IEndpointService>s;
                                     if (endpoint.appId) {
                                         botService.appId = endpoint.appId;
                                         break;
