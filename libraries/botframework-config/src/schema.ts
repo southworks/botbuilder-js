@@ -90,7 +90,7 @@ export interface ICosmosDBService extends IAzureService {
 
     // endpoint/uri for CosmosDB
     endpoint: string;
-    
+
     // key for accessing CosmosDB
     key: string;
 
