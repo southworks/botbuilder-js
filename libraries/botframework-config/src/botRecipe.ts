@@ -42,15 +42,16 @@ export interface IGenericResource extends IUrlResource {
 
 // This is class which allows you to manipulate in memory representations of bot configuration with no nodejs depedencies
 export class BotRecipe {
-    public version = '1.0';
+    public version: string = '1.0';
     public resources: IResource[] = [];
 
+    // tslint:disable-next-line:no-empty
     constructor() {
     }
 
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
-        const botRecipe = new BotRecipe();
-        let { version, resources  } = source;
+        const botRecipe: BotRecipe = new BotRecipe();
+        const { version, resources  } = source;
         Object.assign(botRecipe, { resources, version });
         return botRecipe;
     }
