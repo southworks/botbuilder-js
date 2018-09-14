@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext } from './dialogContext';
 import { DialogReason, DialogTurnResult } from './dialog';
+import { DialogContext } from './dialogContext';
 
 export interface WaterfallStepInfo<O extends object> {
     // The index of the current waterfall step being executed.
@@ -28,7 +28,7 @@ export interface WaterfallStepInfo<O extends object> {
      * Used to skip to the next waterfall step.
      * @param result (Optional) result to pass to the next step.
      */
-    onNext: (result?: any) => Promise<DialogTurnResult>;
+    onNext(result?: any): Promise<DialogTurnResult>;
 
 }
 

@@ -7,13 +7,13 @@
  */
 
 import {
+    ChannelValidation,
     ClaimsIdentity,
     ConnectorClient,
     JwtTokenValidation,
     MicrosoftAppCredentials,
     OAuthApiClient,
-    SimpleCredentialProvider,
-    ChannelValidation
+    SimpleCredentialProvider
 } from 'botframework-connector';
 
 import {

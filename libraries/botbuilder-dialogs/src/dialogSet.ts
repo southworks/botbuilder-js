@@ -29,7 +29,7 @@ import { DialogContext, DialogState } from './dialogContext';
  * const userState = new UserState(memoryStorage);
  * const dialogs = new DialogSet();
  * const userProfile = userState.createProperty('profile');
- * 
+ *
  * dialogs.add(new WaterfallDialog('fillProfile', [
  *     async (step) => {
  *         step.values.profile = {};
@@ -139,7 +139,7 @@ import { DialogContext, DialogState } from './dialogContext';
  *
  *         // Continue execution if there's an "active" dialog
  *         await dc.continueDialog();
- * 
+ *
  *         if (!context.responded && isMessage) {
  *             // Greet user and fill in profile if missing
  *             const user = await userState.get(context);
@@ -193,8 +193,9 @@ export class DialogSet {
             throw new Error(`DialogSet.add(): A dialog with an id of '${dialog.id}' already added.`);
         }
 
-         this.dialogs[dialog.id] = dialog;
-         return this;
+        this.dialogs[dialog.id] = dialog;
+
+        return this;
     }
 
     /**

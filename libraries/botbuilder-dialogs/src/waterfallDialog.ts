@@ -62,6 +62,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      */
     public addStep(step: WaterfallStep<O>): WaterfallDialog<O> {
         this.steps.push(step);
+
         return this;
     }
 
@@ -104,7 +105,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
 
             // Create step context
             const nextCalled: boolean = false;
-            const step = new WaterfallStepContext<O>(dc, {
+            const step: WaterfallStepContext<O> = new WaterfallStepContext<O>(dc, {
                 index: index,
                 options: <O>state.options,
                 reason: reason,
