@@ -110,7 +110,6 @@ export class ComponentDialog<O extends object = {}> extends Dialog<O> {
         return this.dialogs.find(dialogId);
     }
 
-
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         return innerDC.beginDialog(this.initialDialogId, options);
     }
