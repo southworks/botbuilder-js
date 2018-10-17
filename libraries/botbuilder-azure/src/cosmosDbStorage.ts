@@ -7,7 +7,7 @@
  */
 
 import { Storage, StoreItems } from 'botbuilder';
-import { DocumentClient, UriFactory, ConnectionPolicy } from 'documentdb';
+import { RequestOptions, DocumentClient, UriFactory, ConnectionPolicy } from 'documentdb';
 import { CosmosDBKeyEscape } from "./cosmosDbKeyEscape";
 import * as semaphore from 'semaphore';
 const _semaphore = semaphore(1);
@@ -35,6 +35,14 @@ export interface CosmosDbStorageSettings {
      * The Collection ID.
      */
      collectionId: string;
+     /**
+      * Cosmos DB RequestOptions that are passed when the database is created.
+      */
+     databaseCreationRequestOptions: RequestOptions;
+     /**
+      * Cosmos DB RequestOptiones that are passed when the document collection is created.
+      */
+     documentCollectionRequestOptions: RequestOptions;
 }
 
 /**
@@ -69,6 +77,8 @@ export class CosmosDbStorage implements Storage {
     private settings: CosmosDbStorageSettings;
     private client: DocumentClient;
     private collectionExists: Promise<string>;
+    private documentCollectionCreationRequestOption: RequestOptions;
+    private databaseCreationRequestOption: RequestOptions;
 
     /**
      * Creates a new ConsmosDbStorage instance.
@@ -93,6 +103,8 @@ export class CosmosDbStorage implements Storage {
         }
 
         this.client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
+        this.databaseCreationRequestOption = settings.databaseCreationRequestOptions;
+        this.documentCollectionCreationRequestOption = settings.documentCollectionRequestOptions;
     }
 
     public read(keys: string[]): Promise<StoreItems> {
@@ -222,8 +234,8 @@ export class CosmosDbStorage implements Storage {
             this.collectionExists = new Promise((resolve, reject) => {
                 _semaphore.take(() => {
                     let result = this.collectionExists ? this.collectionExists :
-                        getOrCreateDatabase(this.client, this.settings.databaseId)
-                        .then((databaseLink: string) => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
+                        getOrCreateDatabase(this.client, this.settings.databaseId, this.databaseCreationRequestOption)
+                        .then((databaseLink: string) => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId, this.documentCollectionCreationRequestOption));
                     _semaphore.leave();
                     resolve(result);
                 });
@@ -237,7 +249,7 @@ export class CosmosDbStorage implements Storage {
 /**
  * @private
  */
-function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promise<string> {
+function getOrCreateDatabase(client: DocumentClient, databaseId: string, databaseCreationRequestOption: RequestOptions): Promise<string> {
     const querySpec: {
         query: string;
         parameters: {
@@ -255,7 +267,7 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
             if (results.length === 1) { return resolve(results[0]._self); }
 
             // create db
-            client.createDatabase({ id: databaseId }, (db_create_err: any, databaseLink: any) => {
+            client.createDatabase({ id: databaseId }, databaseCreationRequestOption, (db_create_err: any, databaseLink: any) => {
                 if (db_create_err) { return reject(db_create_err); }
                 resolve(databaseLink._self);
             });
@@ -266,7 +278,7 @@ function getOrCreateDatabase(client: DocumentClient, databaseId: string): Promis
 /**
  * @private
  */
-function getOrCreateCollection(client: DocumentClient, databaseLink: string, collectionId: string): Promise<string> {
+function getOrCreateCollection(client: DocumentClient, databaseLink: string, collectionId: string, documentCollectionCreationRequestOption: RequestOptions): Promise<string> {
     const querySpec: {
         query: string;
         parameters: {
@@ -283,7 +295,7 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
             if (err) { return reject(err); }
             if (results.length === 1) { return resolve(results[0]._self); }
 
-            client.createCollection(databaseLink, { id: collectionId }, (err2: any, collectionLink: any) => {
+            client.createCollection(databaseLink, { id: collectionId }, documentCollectionCreationRequestOption, (err2: any, collectionLink: any) => {
                 if (err2) { return reject(err2); }
                 resolve(collectionLink._self);
             });
