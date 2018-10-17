@@ -8,6 +8,8 @@
 
 import { Storage, StoreItems } from 'botbuilder';
 import { DocumentBase, DocumentClient, UriFactory } from 'documentdb';
+import * as sem from 'semaphore';
+const _semaphore = sem(1);
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
@@ -213,8 +215,15 @@ export class CosmosDbStorage implements Storage {
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
-            this.collectionExists = getOrCreateDatabase(this.client, this.settings.databaseId)
-                .then((databaseLink: string) => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
+            this.collectionExists = new Promise((resolve, reject) => {
+                _semaphore.take(() => {
+                    let result = this.collectionExists ? this.collectionExists :
+                        getOrCreateDatabase(this.client, this.settings.databaseId)
+                        .then((databaseLink: string) => getOrCreateCollection(this.client, databaseLink, this.settings.collectionId));
+                    _semaphore.leave();
+                    resolve(result);
+                });
+            });
         }
 
         return this.collectionExists;
