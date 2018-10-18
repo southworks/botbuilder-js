@@ -8,6 +8,7 @@
 
 import { Storage, StoreItems } from 'botbuilder';
 import { DocumentClient, UriFactory, ConnectionPolicy } from 'documentdb';
+import { CosmosDBKeyEscape } from "./cosmosDbKeyEscape";
 import * as semaphore from 'semaphore';
 const _semaphore = semaphore(1);
 
@@ -297,23 +298,5 @@ function getOrCreateCollection(client: DocumentClient, databaseLink: string, col
  * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
  */
 function sanitizeKey(key: string): string {
-    const badChars: string[] = ['\\', '?', '/', '#', '\t', '\n', '\r'];
-    let sb: string = '';
-    for (const ch of key) {
-        let isBad: boolean = false;
-        for (const badChar of badChars) {
-            if (ch === badChar) {
-                // We cannot use % because DocumentClient will try to re-encode the % with encodeURI()
-                // tslint:disable-next-line:prefer-template
-                sb += '*' + ch.charCodeAt(0).toString(16);
-                isBad = true;
-                break;
-            }
-        }
-        if (!isBad) {
-            sb += ch;
-        }
-    }
-
-    return sb;
+    return CosmosDBKeyEscape.escapeKey(key);
 }
