@@ -19,6 +19,6 @@ export module CosmosDBKeyEscape {
             return key;
         }
 
-        return keySplitted.reduce((result, c) => result + illegalKeyCharacterReplacementMap.has(c) ? illegalKeyCharacterReplacementMap.get(c) : c, '');
+        return keySplitted.reduce((result, c) => result + (illegalKeyCharacterReplacementMap.has(c) ? illegalKeyCharacterReplacementMap.get(c) : c), '');
     }
 }
