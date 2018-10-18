@@ -120,7 +120,7 @@ export class CosmosDbStorage implements Storage {
             value: string;
         }[] = keys.map((key: string, ix: number) => ({
             name: `@id${ix}`,
-            value: sanitizeKey(key)
+            value: CosmosDBKeyEscape.escapeKey(key)
         }));
 
         const querySpec: {
@@ -177,7 +177,7 @@ export class CosmosDbStorage implements Storage {
                 // The ETag information is updated as an _etag attribute in the document metadata.
                 delete changesCopy.eTag;
                 const documentChange: DocumentStoreItem = {
-                    id: sanitizeKey(k),
+                    id: CosmosDBKeyEscape.escapeKey(k),
                     realId: k,
                     document: changesCopy
                 };
@@ -214,7 +214,7 @@ export class CosmosDbStorage implements Storage {
             Promise.all(keys.map((k: string) =>
                 new Promise((resolve: any, reject: any): void =>
                     this.client.deleteDocument(
-                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, sanitizeKey(k)),
+                        UriFactory.createDocumentUri(this.settings.databaseId, this.settings.collectionId, CosmosDBKeyEscape.escapeKey(k)),
                         (err: any, data: any): void =>
                             err && err.code !== 404 ? reject(err) : resolve()
                         )
