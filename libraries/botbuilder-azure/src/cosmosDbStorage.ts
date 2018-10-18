@@ -94,6 +94,22 @@ export class CosmosDbStorage implements Storage {
             throw new Error('The settings parameter is required.');
         }
 
+        if(!settings.serviceEndpoint || settings.serviceEndpoint.trim() === '') {
+            throw new Error('The settings service Endpoint is required.');
+        }
+
+        if(!settings.authKey || settings.authKey.trim() === '') {
+            throw new Error('The settings authKey is required.');
+        }
+
+        if(!settings.databaseId || settings.databaseId.trim() === '') {
+            throw new Error('The settings dataBase ID is required.');
+        }
+
+        if(!settings.collectionId || settings.collectionId.trim() === '') {
+            throw new Error('The settings collection ID is required.')
+        }
+
         this.settings = {...settings};
 
         // Invoke collectionPolicy delegate to further customize settings
