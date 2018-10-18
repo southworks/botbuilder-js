@@ -29,6 +29,7 @@
     "semaphore": "^1.1.0"
   },
   "devDependencies": {
+    "@types/documentdb": "^1.10.5",
     "@types/mocha": "^2.2.47",
     "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",

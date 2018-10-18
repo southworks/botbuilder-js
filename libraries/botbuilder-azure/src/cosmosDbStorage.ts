@@ -7,9 +7,12 @@
  */
 
 import { Storage, StoreItems } from 'botbuilder';
-import { DocumentBase, DocumentClient, UriFactory } from 'documentdb';
-import * as sem from 'semaphore';
-const _semaphore = sem(1);
+import { DocumentClient, UriFactory, ConnectionPolicy } from 'documentdb';
+import * as semaphore from 'semaphore';
+const _semaphore = semaphore(1);
+
+// @types/documentdb does not have DocumentBase definition
+const DocumentBase = require('documentdb').DocumentBase;
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
@@ -74,7 +77,7 @@ export class CosmosDbStorage implements Storage {
      */
     public constructor(
         settings: CosmosDbStorageSettings,
-        connectionPolicyConfigurator: (policy: DocumentBase.ConnectionPolicy) => void = null
+        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null
     ) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
@@ -83,7 +86,7 @@ export class CosmosDbStorage implements Storage {
         this.settings = {...settings};
 
         // Invoke collectionPolicy delegate to further customize settings
-        const policy: DocumentBase.ConnectionPolicy = new DocumentBase.ConnectionPolicy();
+        const policy: ConnectionPolicy = new DocumentBase.ConnectionPolicy();
         if (connectionPolicyConfigurator && typeof connectionPolicyConfigurator === 'function') {
             connectionPolicyConfigurator(policy);
         }
