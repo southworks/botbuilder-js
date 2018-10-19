@@ -16,32 +16,32 @@ describe('CosmosDBKeyEscape', function() {
 
     it('should not change a valid key', function() {
         let validKey = 'Abc12345';
-        let sanitazedKey = CosmosDBKeyEscape.escapeKey(validKey);
-        assert.equal(validKey, sanitazedKey, `${validKey} should be equal to ${sanitazedKey}`)
+        let sanitizedKey = CosmosDBKeyEscape.escapeKey(validKey);
+        assert.equal(validKey, sanitizedKey, `${validKey} should be equal to ${sanitizedKey}`)
     });
 
     it('should escape illegal characters - case with \'?\'', function() {
         // Ascii code of "?" is "3f"
-        let sanitazedKey = CosmosDBKeyEscape.escapeKey('?test?');
-        assert.equal(sanitazedKey, '*3ftest*3f');
+        let sanitizedKey = CosmosDBKeyEscape.escapeKey('?test?');
+        assert.equal(sanitizedKey, '*3ftest*3f');
     });
 
     it('should escape illegal characters - case with \'/\'', function() {
         // Ascii code of "/" is "2f"
-        let sanitazedKey = CosmosDBKeyEscape.escapeKey('/test/');
-        assert.equal(sanitazedKey, '*2ftest*2f');
+        let sanitizedKey = CosmosDBKeyEscape.escapeKey('/test/');
+        assert.equal(sanitizedKey, '*2ftest*2f');
     });
 
     it('should escape illegal characters - case with \'\\\'', function() {        
         // Ascii code of "\" is "5c"
-        let sanitazedKey = CosmosDBKeyEscape.escapeKey('\\test\\');
-        assert.equal(sanitazedKey, '*5ctest*5c');
+        let sanitizedKey = CosmosDBKeyEscape.escapeKey('\\test\\');
+        assert.equal(sanitizedKey, '*5ctest*5c');
     })
 
     it('should escape illegal characters - case with \'#\'', function() {
         // Ascii code of "#" is "23"
-        let sanitazedKey = CosmosDBKeyEscape.escapeKey('#test#');
-        assert.equal(sanitazedKey, '*23test*23');
+        let sanitizedKey = CosmosDBKeyEscape.escapeKey('#test#');
+        assert.equal(sanitizedKey, '*23test*23');
     })
 
     it('should escape illegal characters - case with \'*\'', function() {        
