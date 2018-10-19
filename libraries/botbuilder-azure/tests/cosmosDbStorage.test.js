@@ -229,10 +229,13 @@ testStorage = function () {
         assert.throws(() => new CosmosDbStorage(), Error, 'constructor should have thrown error about missing settings.');
     });
 
-    it('read with no key should throw', function() {
+    it('read with no key should return no values', function() {
         let storage = new CosmosDbStorage(getSettings(), policyConfigurator);
-        assert.throws(() => storage.read(), Error, 'read() should have thrown error about missing keys.');
-        assert.throws(() => storage.read([]), Error, 'read() should have thrown error about missing keys.');
+        return storage.read([])
+            .then((result) => {
+                assert(result !== null, 'read method should returns an object');
+                assert.deepEqual(result, {}, 'read method should returns an empty object');
+            });
     });
 
     it('write with null/undefined StoreItems should throw', function() {

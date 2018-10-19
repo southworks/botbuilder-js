@@ -109,7 +109,8 @@ export class CosmosDbStorage implements Storage {
 
     public read(keys: string[]): Promise<StoreItems> {
         if (!keys || keys.length === 0) {
-            throw new Error('Please provide at least one key to read from storage.');
+            // No keys passed in, no result to return.
+            return Promise.resolve({});
         }
 
         const parameterSequence: string = Array.from(Array(keys.length).keys())
