@@ -63,9 +63,19 @@ function createActivities(conversationId = '_conversationId', timestamp = new Da
     return activities;
 }
 
+function fixActivities(activities, scopeData) {
+    for (let i = 0; i < activities.length; i++) {
+        let activity = activities[i];
+        let scope = scopeData[i];
+
+        activity.id = scope.id;
+        activity.timestamp = new Date(scope.timestamp);
+    }
+}
+
 testStorage = function () {
 
-    xit('bad args', function () {
+    it('bad args', function () {
         let storage = new AzureBlobTranscriptStore(settings);
         return base._badArgs(storage)
             .then(messages => {
@@ -77,19 +87,13 @@ testStorage = function () {
     it('log activity', function () {
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
-                // context.scopes.forEach(cs => {
-                //     cs.filteringPath(function(path) {
-                //         let fixedPath = path.replace(/[0-9a-fA-F]{15}\-[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/i, '8d63dad9fbaa600-bf6620f6-437a-4b45-abcc-ca3888c18be6');
-                //         return fixedPath;
-                //     })
-                // });
-
-                // let activity = createActivity('bf6620f6-437a-4b45-abcc-ca3888c18be6', new Date('2018-10-29T14:48:43.795Z'));
-                // let activity = createActivitiesFromScope(context.scopes, '_logActivity').pop();
-
                 let scopeData = getDataFromScopes(context.scopes)[0];
 
-                let activity = createActivities('_logActivity', new Date(scopeData.timestamp), scopeData.id, 1).pop();
+                let activity = null;
+
+                if (scopeData) {
+                    activity = createActivities('_logActivity', new Date(scopeData.timestamp), scopeData.id, 1).pop();
+                }
 
                 let storage = new AzureBlobTranscriptStore(settings);
                 return base._logActivity(storage, activity)
@@ -99,18 +103,27 @@ testStorage = function () {
             });
     })
 
-    xit('log multiple activities', function () {
+    it('log multiple activities', function () {
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
+                let scopeData = getDataFromScopes(context.scopes);
+                let activities = createActivities('_logMultipleActivities', new Date(), 1, 5);
+
+                if (activities.length === scopeData.length) {
+                    fixActivities(activities, scopeData);
+                } else {
+                    activities = null;
+                }
+
                 let storage = new AzureBlobTranscriptStore(settings);
-                return base._logMultipleActivities(storage, useParallel)
+                return base._logMultipleActivities(storage, useParallel, activities)
                     .then(() => assert(true))
                     .catch(handleConnectionError)
                     .then(nockDone);
             });
     })
 
-    xit('delete transcript', function () {
+    it('delete transcript', function () {
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
                 let scopeData = getDataFromScopes(context.scopes);
@@ -119,17 +132,8 @@ testStorage = function () {
                 let activities2 = createActivities('_deleteConversation2', new Date(), 1, 5);
 
                 if (scopeData.length === (activities.length + activities2.length)) {
-                    for(let i = 0; i < activities.length; i++) {
-                        let activity = activities[i];
-                        activity.id = scopeData[i].id;
-                        activity.timestamp = new Date(scopeData[i].timestamp);
-                    }
-    
-                    for(let i = 0; i < activities2.length; i++) {
-                        let activity = activities2[i];
-                        activity.id = scopeData[10 + i].id;
-                        activity.timestamp = new Date(scopeData[10 + i].timestamp);
-                    }
+                    fixActivities(activities, scopeData.slice(0, activities.length));
+                    fixActivities(activities2, scopeData.slice(activities.length));
                 } else {
                     activities = null;
                     activities2 = null;
@@ -151,13 +155,7 @@ testStorage = function () {
                 let activities = createActivities('_getTranscriptActivitiesPaging', new Date(), 1, 50);
 
                 if (activities.length === scopeData.length) {
-                    for (let i = 0; i < activities.length; i++) {
-                        let activity = activities[i];
-                        let scope = scopeData[i];
-
-                        activity.id = scope.id;
-                        activity.timestamp = new Date(scope.timestamp);
-                    }
+                    fixActivities(activities, scopeData)
                 } else {
                     activities = null;
                 }
@@ -178,13 +176,7 @@ testStorage = function () {
                 let activities = createActivities('_getTranscriptActivitiesStartDate', new Date(), 1, 50);
 
                 if (activities.length === scopeData.length) {
-                    for (let i = 0; i < activities.length; i++) {
-                        let activity = activities[i];
-                        let scope = scopeData[i];
-
-                        activity.id = scope.id;
-                        activity.timestamp = new Date(scope.timestamp);
-                    }
+                    fixActivities(activities, scopeData)
                 } else {
                     activities = null;
                 }
@@ -197,11 +189,27 @@ testStorage = function () {
             });
     })
 
-    xit('list transcripts', function () {
+    it('list transcripts', function () {
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
+                let scopeData = getDataFromScopes(context.scopes);
+
+                var conversationIds = [];
+                for (let i = 1; i <= 100; i++) {
+                    conversationIds.push(`_ListConversations${i}`)
+                }
+
+                var activities = [].concat(...conversationIds.map(cId => createActivities(cId, new Date(), 1, 1)));
+
+                if (activities.length === scopeData.length) {
+                    fixActivities(activities, scopeData);
+                } else {
+                    activities = null;
+                    conversationIds = null;
+                }
+
                 let storage = new AzureBlobTranscriptStore(settings);
-                return base._listTranscripts(storage, useParallel)
+                return base._listTranscripts(storage, useParallel, activities, conversationIds)
                     .then(() => assert(true))
                     .catch(handleConnectionError)
                     .then(nockDone);

@@ -142,12 +142,7 @@ function logActivity(store) {
     var date = new Date();
     var activity = createActivities(conversationId, date, 1).pop();
 
-    return store.logActivity(activity)
-        .then(() => store.getTranscriptActivities('test', conversationId))
-        .then((result) => {
-            assert.equal(result.items.length, 1);
-            assert.equal(JSON.stringify(result.items[0]), JSON.stringify(activity));
-        });
+    return logWrappedActivity(store, activity);
 }
 
 function logWrappedActivity(store, activity) {
@@ -166,10 +161,17 @@ exports._logActivity = function _logActivity(store, activity) {
     return logActivity(store);
 }
 
-exports._logMultipleActivities = function _logMultipleActivities(store, useParallel = true) {
+function logMultipleActivities(store, useParallel) {
     var conversationId = '_logMultipleActivities';
     var start = new Date();
     var activities = createActivities(conversationId, start);
+
+    return logMultipleWrappedActivities(store, useParallel, activities);
+}
+
+function logMultipleWrappedActivities(store, useParallel, activities) {
+    var conversationId = activities[0].conversation.id;
+    var start = activities[0].timestamp;
 
     // log activities
     var writes = activities.map(a => () => store.logActivity(a));
@@ -211,6 +213,14 @@ exports._logMultipleActivities = function _logMultipleActivities(store, useParal
     });
 }
 
+exports._logMultipleActivities = function _logMultipleActivities(store, useParallel = true, activities = null) {
+    if (activities) {
+        return logMultipleWrappedActivities(store, useParallel, activities);
+    } else {
+        return logMultipleActivities(store, useParallel);
+    }
+}
+
 function deleteTranscript(store, useParallel) {
     var conversationId = '_deleteConversation';
     var conversationId2 = '_deleteConversation2';
@@ -218,39 +228,12 @@ function deleteTranscript(store, useParallel) {
     var activities = createActivities(conversationId, start);
     var activities2 = createActivities(conversationId2, start);
 
-    // log all activities
-    var writes = activities.concat(activities2)
-        .map(a => () => store.logActivity(a));
-
-    // wait for all writes
-    return resolvePromises(writes, useParallel).then(() => {
-        return Promise.all([
-            // test A
-            store.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                assert.equal(pagedResult.items.length, activities.length);
-                // delete!
-                store.deleteTranscript('test', conversationId).then(() => {
-                    return Promise.all([
-                        // check deleted
-                        store.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                            assert.equal(pagedResult.items.length, 0);
-                        }),
-                        // check second transcript still exists
-                        store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
-                            assert.equal(pagedResult.items.length, activities2.length);
-                        })
-                    ])
-                })
-            }),
-            // test B
-            store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
-                assert.equal(pagedResult.items.length, activities2.length);
-            })
-        ]);
-    });
+    return deleteTranscriptWithActivities(store, useParallel, activities, activities2);
 }
 
 function deleteTranscriptWithActivities(store, useParallel, activities, activities2)  {
+    activities = activities;
+    activities2 = activities2;
     var conversationId = activities[0].conversation.id;
     var conversationId2 = activities2[0].conversation.id;
     // log all activities
@@ -293,37 +276,11 @@ exports._deleteTranscript = function _deleteTranscript(store, useParallel = true
 }
 
 function getTranscriptActivities(store, useParallel) {
-    return new Promise((resolve, reject) => {
-        var conversationId = '_getTranscriptActivitiesPaging';
-        var date = new Date();
-        var activities = createActivities(conversationId, date, 50);
-        // log in parallel batches of 10
-        var groups = group(activities, 10);
-        return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(async () => {
-            var actualPageSize = 0;
-            var pagedResult = {};
-            var seen = [];
-            do {
-                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken);
-                assert(pagedResult);
-                assert(pagedResult.items);
+    var conversationId = '_getTranscriptActivitiesPaging';
+    var date = new Date();
+    var activities = createActivities(conversationId, date, 50);
 
-                if (!actualPageSize) {
-                    actualPageSize = pagedResult.items.length;
-                } else if (actualPageSize === pagedResult.items.length) {
-                    assert(pagedResult.continuationToken)
-                }
-                pagedResult.items.forEach(item => {
-                    assert(!seen.includes(item.id));
-                    seen.push(item.id);
-                });
-            } while (pagedResult.continuationToken);
-            assert.equal(seen.length, activities.length);
-            activities.forEach(activity => assert(seen.includes(activity.id)));
-            resolve();
-        }).catch(error => reject(error));
-    });
+    return getTranscriptWrappedActivities(store, useParallel, activities);
 }
 
 function getTranscriptWrappedActivities(store, useParallel, activities) {
@@ -366,39 +323,11 @@ exports._getTranscriptActivities = function _getTranscriptActivities(store, useP
 }
 
 function getTranscriptActivitiesStartDate(store, useParallel) {
-    return new Promise((resolve, reject) => {
-        var conversationId = '_getTranscriptActivitiesStartDate';
-        var date = new Date();
-        var activities = createActivities(conversationId, date, 50);
-        // log in parallel batches of 10
-        var groups = group(activities, 10);
-        return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
-        .then(async () => {
-            var actualPageSize = 0;
-            var pagedResult = {};
-            var seen = [];
-            var referenceDate = new Date(date.getTime() + (50 * 60 * 1000));
-            do {
-                pagedResult = await store.getTranscriptActivities('test', conversationId, pagedResult.continuationToken, referenceDate);
-                assert(pagedResult);
-                assert(pagedResult.items);
+    var conversationId = '_getTranscriptActivitiesStartDate';
+    var date = new Date();
+    var activities = createActivities(conversationId, date, 50);
 
-                if (!actualPageSize) {
-                    actualPageSize = pagedResult.items.length;
-                } else if (actualPageSize === pagedResult.items.length) {
-                    assert(pagedResult.continuationToken)
-                }
-                pagedResult.items.forEach(item => {
-                    assert(!seen.includes(item.id));
-                    seen.push(item.id);
-                });
-            } while (pagedResult.continuationToken);
-            assert.equal(seen.length, activities.length / 2);
-            activities.filter(a => a.timestamp.getTime() >= referenceDate.getTime()).forEach(activity => assert(seen.includes(activity.id)));
-            activities.filter(a => a.timestamp.getTime() < referenceDate.getTime()).forEach(activity => assert(!seen.includes(activity.id)));
-            resolve();
-        }).catch(error => reject(error));
-    });
+    return getTranscriptWrappedActivitiesStartDate(store, useParallel, activities);
 }
 
 function getTranscriptWrappedActivitiesStartDate(store, useParallel, activities) {
@@ -444,16 +373,20 @@ exports._getTranscriptActivitiesStartDate = function _getTranscriptActivitiesSta
     return getTranscriptActivitiesStartDate(store, useParallel);
 }
 
-exports._listTranscripts = function _listTranscripts(store, useParallel = true) {
+function listTranscripts(store, useParallel) {
+    var conversationIds = [];
+    var start = new Date();
+    for (let i = 1; i <= 100; i++) {
+        conversationIds.push(`_ListConversations${i}`)
+    }
+
+    var activities = [].concat(...conversationIds.map(cId => createActivities(cId, start, 1)));
+
+    return listTranscriptsWrappedActivities(store, useParallel, activities, conversationIds);
+}
+
+function listTranscriptsWrappedActivities(store, useParallel, activities, conversationIds) {
     return new Promise((resolve, reject) => {
-        var conversationIds = [];
-        var start = new Date();
-        for (let i = 1; i <= 100; i++) {
-            conversationIds.push(`_ListConversations${i}`)
-        }
-
-        var activities = [].concat(...conversationIds.map(cId => createActivities(cId, start, 1)));
-
         // log in parallel batches of 10
         var groups = group(activities, 10);
         return promiseSeq(groups.map(group => () => resolvePromises(group.map(item => () => store.logActivity(item)), useParallel)))
@@ -483,4 +416,11 @@ exports._listTranscripts = function _listTranscripts(store, useParallel = true) 
             resolve();
         }).catch(error => reject(error));
     });
+}
+
+exports._listTranscripts = function _listTranscripts(store, useParallel = true, activities = null, conversationIds = null) {
+    if (activities && conversationIds) {
+        return listTranscriptsWrappedActivities(store, useParallel, activities, conversationIds)
+    }
+    return listTranscripts(store, useParallel);
 }
