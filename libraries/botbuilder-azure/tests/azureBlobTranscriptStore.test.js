@@ -22,7 +22,9 @@ const reset = (done) => {
     if ( mode !== MockMode.lockdown ) {
         let settings = getSettings();
         let client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
-        client.deleteContainerIfExists(settings.containerName, (err, result) => done());
+        client.deleteContainerIfExists(settings.containerName, (err, result) => {
+            done()
+        });
     } else {
         done();
     }
@@ -128,8 +130,8 @@ testStorage = function () {
             .then(({nockDone, context}) => {
                 let scopeData = getDataFromScopes(context.scopes);
                 
-                let activities = createActivities('_deleteConversation', new Date(), 1, 5);
-                let activities2 = createActivities('_deleteConversation2', new Date(), 1, 5);
+                let activities = createActivities('_deleteConversation', new Date(), 1, 1);
+                let activities2 = createActivities('_deleteConversation2', new Date(), 1, 1);
 
                 if (scopeData.length === (activities.length + activities2.length)) {
                     fixActivities(activities, scopeData.slice(0, activities.length));

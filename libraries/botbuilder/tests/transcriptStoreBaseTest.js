@@ -225,8 +225,8 @@ function deleteTranscript(store, useParallel) {
     var conversationId = '_deleteConversation';
     var conversationId2 = '_deleteConversation2';
     var start = new Date();
-    var activities = createActivities(conversationId, start);
-    var activities2 = createActivities(conversationId2, start);
+    var activities = createActivities(conversationId, start, 1);
+    var activities2 = createActivities(conversationId2, start, 1);
 
     return deleteTranscriptWithActivities(store, useParallel, activities, activities2);
 }
@@ -264,7 +264,7 @@ function deleteTranscriptWithActivities(store, useParallel, activities, activiti
             store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
                 assert.equal(pagedResult.items.length, activities2.length);
             })
-        ]);
+        ])
     });
 }
 

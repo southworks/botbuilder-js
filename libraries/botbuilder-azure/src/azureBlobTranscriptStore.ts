@@ -199,12 +199,14 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
         return this.ensureContainerExists()
         .then((container: azure.BlobService.ContainerResult) => this.getConversationsBlobs([], container.name, prefix, token))
-        .then((blobs: azure.BlobService.BlobResult[]) => Promise.all(
-            blobs.map((blob: azure.BlobService.BlobResult) => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))
-        ))
-        .then((results: boolean[]) => {
-            return;
-        });
+        .then((blobs: azure.BlobService.BlobResult[]) => { 
+                let test = Promise.all(
+                blobs.map((blob: azure.BlobService.BlobResult) => {
+                    return this.client.deleteBlobIfExistsAsync(blob.container, blob.name)
+                }));
+                return test.then(() => { return Promise.resolve(null)})
+            }
+        )
     }
 
     private blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
@@ -371,7 +373,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             storageAccessKey,
             host
         ).withFilter(new azure.LinearRetryPolicyFilter(5, 500));
-
+            
         // create BlobServiceAsync by using denodeify to create promise wrappers around cb functions
         // tslint:disable-next-line:prefer-object-spread
         return Object.assign(blobService as any, {
