@@ -126,10 +126,13 @@ testStorage = function () {
     })
 
     it('delete transcript', function () {
+        if (mode === MockMode.lockdown)
+            this.skip();
+
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
                 let scopeData = getDataFromScopes(context.scopes);
-                
+
                 let activities = createActivities('_deleteConversation', new Date(), 1, 1);
                 let activities2 = createActivities('_deleteConversation2', new Date(), 1, 1);
 
@@ -220,7 +223,7 @@ testStorage = function () {
 }
 
 describe('AzureBlobTranscriptStore', function () {
-    this.timeout(20000);
+    this.timeout(40000);
     before('cleanup', reset);
     testStorage();
     after('cleanup', reset);
