@@ -200,10 +200,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
         return this.ensureContainerExists()
         .then((container: azure.BlobService.ContainerResult) => this.getConversationsBlobs([], container.name, prefix, token))
         .then((blobs: azure.BlobService.BlobResult[]) => Promise.all(
-                blobs.map((blob: azure.BlobService.BlobResult) =>
-                    this.client.deleteBlobIfExistsAsync(blob.container, blob.name))
-                ))
-        .then(() => { return; });
+            blobs.map((blob: azure.BlobService.BlobResult) => this.client.deleteBlobIfExistsAsync(blob.container, blob.name))
+        ))
+        .then((results: boolean[]) => {
+            return;
+        });
     }
 
     private blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
