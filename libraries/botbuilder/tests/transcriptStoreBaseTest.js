@@ -40,16 +40,16 @@ function createActivities(conversationId, ts, count = 5) {
     return activities;
 }
 
-exports.createActivity = function createActivity(conversationId, ts, id, rNumber) {
+exports.createActivity = function createActivity(conversationId, timestamp, activityId, recipientNumber) {
     let activities = [];
-    
+
     activities.push({
         type: ActivityTypes.Message,
-        timestamp: ts,
-        id: uuid(),
-        text: rNumber.toString(),
+        timestamp: timestamp,
+        id: activityId,
+        text: recipientNumber.toString(),
         channelId: 'test',
-        from: { id: `User${rNumber}` },
+        from: { id: `User${recipientNumber}` },
         conversation: { id: conversationId },
         recipient: { id: 'Bot1', name: '2' },
         serviceUrl: 'http://foo.com/api/messages'
@@ -57,13 +57,13 @@ exports.createActivity = function createActivity(conversationId, ts, id, rNumber
 
     activities.push({
         type: ActivityTypes.Message,
-        timestamp: ts,
-        id: id,
-        text: rNumber.toString(),
+        timestamp: timestamp,
+        id: activityId,
+        text: recipientNumber.toString(),
         channelId: 'test',
         from: { id: 'Bot1', name: '2' },
         conversation: { id: conversationId },
-        recipient: { id: `User${rNumber}` },
+        recipient: { id: `User${recipientNumber}` },
         serviceUrl: 'http://foo.com/api/messages'
     });
 
@@ -222,55 +222,53 @@ exports._logMultipleActivities = function _logMultipleActivities(store, useParal
 }
 
 function deleteTranscript(store, useParallel) {
-    var conversationId = '_deleteConversation';
-    var conversationId2 = '_deleteConversation2';
+    var firstConversationId = '_deleteConversation';
+    var secondConversationId = '_deleteConversation2';
     var start = new Date();
-    var activities = createActivities(conversationId, start, 1);
-    var activities2 = createActivities(conversationId2, start, 1);
+    var firstActivities = createActivities(firstConversationId, start, 1);
+    var secondActivities = createActivities(secondConversationId, start, 1);
 
-    return deleteTranscriptWithActivities(store, useParallel, activities, activities2);
+    return deleteTranscriptWithActivities(store, useParallel, firstActivities, secondActivities);
 }
 
-function deleteTranscriptWithActivities(store, useParallel, activities, activities2)  {
-    activities = activities;
-    activities2 = activities2;
-    var conversationId = activities[0].conversation.id;
-    var conversationId2 = activities2[0].conversation.id;
+function deleteTranscriptWithActivities(store, useParallel, firstActivities, secondActivities) {
+    var firstConversationId = firstActivities[0].conversation.id;
+    var secondConversationId = secondActivities[0].conversation.id;
     // log all activities
-    var writes = activities.concat(activities2)
+    var writes = firstActivities.concat(secondActivities)
         .map(a => () => store.logActivity(a));
 
     // wait for all writes
     return resolvePromises(writes, useParallel).then(() => {
         return Promise.all([
             // test A
-            store.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                assert.equal(pagedResult.items.length, activities.length);
+            store.getTranscriptActivities('test', firstConversationId).then(pagedResult => {
+                assert.equal(pagedResult.items.length, firstActivities.length);
                 // delete!
-                store.deleteTranscript('test', conversationId).then(() => {
+                store.deleteTranscript('test', firstConversationId).then(() => {
                     return Promise.all([
                         // check deleted
-                        store.getTranscriptActivities('test', conversationId).then(pagedResult => {
+                        store.getTranscriptActivities('test', firstConversationId).then(pagedResult => {
                             assert.equal(pagedResult.items.length, 0);
                         }),
                         // check second transcript still exists
-                        store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
-                            assert.equal(pagedResult.items.length, activities2.length);
+                        store.getTranscriptActivities('test', secondConversationId).then(pagedResult => {
+                            assert.equal(pagedResult.items.length, secondActivities.length);
                         })
                     ])
                 })
             }),
             // test B
-            store.getTranscriptActivities('test', conversationId2).then(pagedResult => {
-                assert.equal(pagedResult.items.length, activities2.length);
+            store.getTranscriptActivities('test', secondConversationId).then(pagedResult => {
+                assert.equal(pagedResult.items.length, secondActivities.length);
             })
         ])
     });
 }
 
-exports._deleteTranscript = function _deleteTranscript(store, useParallel = true, activities = null, activities2 = null) {
-    if (activities && activities2) {
-        return deleteTranscriptWithActivities(store, useParallel, activities, activities2)
+exports._deleteTranscript = function _deleteTranscript(store, useParallel = true, firstActivities = null, secondActivities = null) {
+    if (firstActivities && secondActivities) {
+        return deleteTranscriptWithActivities(store, useParallel, firstActivities, secondActivities)
     }
     return deleteTranscript(store, useParallel);
 }

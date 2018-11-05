@@ -22,9 +22,7 @@ const reset = (done) => {
     if ( mode !== MockMode.lockdown ) {
         let settings = getSettings();
         let client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
-        client.deleteContainerIfExists(settings.containerName, (err, result) => {
-            done()
-        });
+        client.deleteContainerIfExists(settings.containerName, (err, result) => done());
     } else {
         done();
     }
@@ -126,26 +124,28 @@ testStorage = function () {
     })
 
     it('delete transcript', function () {
-        if (mode === MockMode.lockdown)
+        if (mode === MockMode.lockdown) {
+            console.warn('Test is skipped because it does not work in \'lockdown\' mode. It will be fixed later')
             this.skip();
+        }
 
         return usingNock(this.test, mode)
             .then(({nockDone, context}) => {
                 let scopeData = getDataFromScopes(context.scopes);
 
-                let activities = createActivities('_deleteConversation', new Date(), 1, 1);
-                let activities2 = createActivities('_deleteConversation2', new Date(), 1, 1);
+                let firstConversation = createActivities('_deleteConversation', new Date(), 1, 1);
+                let secondConversation = createActivities('_deleteConversation2', new Date(), 1, 1);
 
-                if (scopeData.length === (activities.length + activities2.length)) {
-                    fixActivities(activities, scopeData.slice(0, activities.length));
-                    fixActivities(activities2, scopeData.slice(activities.length));
+                if (scopeData.length === (firstConversation.length + secondConversation.length)) {
+                    fixActivities(firstConversation, scopeData.slice(0, firstConversation.length));
+                    fixActivities(secondConversation, scopeData.slice(secondConversation.length));
                 } else {
-                    activities = null;
-                    activities2 = null;
+                    firstConversation = null;
+                    secondConversation = null;
                 }
 
                 let storage = new AzureBlobTranscriptStore(settings);
-                return base._deleteTranscript(storage, useParallel, activities, activities2)
+                return base._deleteTranscript(storage, useParallel, firstConversation, secondConversation)
                     .then(() => assert(true))
                     .catch(handleConnectionError)
                     .then(nockDone);
@@ -223,7 +223,7 @@ testStorage = function () {
 }
 
 describe('AzureBlobTranscriptStore', function () {
-    this.timeout(40000);
+    this.timeout(20000);
     before('cleanup', reset);
     testStorage();
     after('cleanup', reset);
