@@ -1,4 +1,12 @@
-(new Function('require', 'const env = (global || window); if (!env.hasOwnProperty("FormData")) { env.FormData = require("form-data"); }; if (!env.hasOwnProperty("fetch")) { env.fetch = require("node-fetch"); }'))(require);
+const env = (new Function('return (global || window);'))();
+
+if (!env.hasOwnProperty("FormData")) {
+    env.FormData = require('form-data');
+};
+
+if (!env.hasOwnProperty("fetch")) {
+    env.fetch = require('node-fetch');
+}
 
 import { TokenResponse } from './connectorApi/models/mappers';
 
