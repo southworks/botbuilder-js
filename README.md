@@ -9,7 +9,7 @@ This repository contains code for the JavaScript version of the Microsoft Bot Fr
 
 This repo is part the [Microsoft Bot Framework](https://github.com/microsoft/botframework) - a comprehensive framework for building enterprise-grade conversational AI experiences.
 
- | Branch | Description        | Build Status | Coverage Status | Windows Functional Tests Status | Linux Functional Tests Status |
+ | Branch | Description        | Build Status | Coverage Status | Windows Bot Deployment Status | Linux Bot Deployment Status |
  |----|---------------|--------------|-----------------|-----------------|-----------------|
 |Master | 4.5.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=master)| | 
 |4.4 | 4.4.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460&branch=4.4)|[![Coverage Status](https://coveralls.io/repos/github/Microsoft/botbuilder-js/badge.svg?branch=4.4)](https://coveralls.io/github/Microsoft/botbuilder-js?branch=4.4)| | 
