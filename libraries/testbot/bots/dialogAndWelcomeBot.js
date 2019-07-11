@@ -15,7 +15,6 @@ class DialogAndWelcomeBot extends DialogBot {
                 if (membersAdded[cnt].id !== context.activity.recipient.id) {
                     const welcomeCard = CardFactory.adaptiveCard(WelcomeCard);
                     await context.sendActivity({ attachments: [welcomeCard] });
-                    await dialog.run(context, conversationState.createProperty('DialogState'));
                 }
             }
 
