@@ -60,7 +60,7 @@ describe('Test Azure Bot', function(){
         const conversationId = await getConversationId(directLineClient);
         await sendMessage(directLineClient, conversationId);
         const messages = await getMessages(directLineClient, conversationId);
-        const result = messages.filter((message) => message.text.includes('you said'));                
-        assert(result[0].text == `you said "${ userMessage }" 0`, `test fail`);
+        const result = messages.filter((message) => message.text.includes('city'));                
+        assert(result[0].text == `To what city would you like to travel?`);
     });
 });
