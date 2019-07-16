@@ -25,7 +25,10 @@ module.exports = {
         'radix': 'error',                
         'no-var': "error",        
         "one-var": ["error", { var: "never", let: "never", const: "never" }],               
-        'curly': ["error", "all"],           
         "spaced-comment": ["warn", "always"],
+        'curly': ["error"],           
+        '@typescript-eslint/explicit-function-return-type': ["error", {allowExpressions: true}],                        
+        'semi': 'error', 
+        'brace-style': ["error", "stroustrup"]
     },
 }; 
