@@ -287,12 +287,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /**/node_modules
-
-# Only include in git extensions.json file for eslint plugin in vscode
-!.vscode/
-.vscode/*
-!.vscode/extensions.json
-
+/**/.vscode
 /**/*.VC.db
 #coverage
 /**/coverage
