@@ -56,7 +56,7 @@ export enum LuisApikeys {
 
 export class LuisClient {
     protected _basePath: string = '';
-    protected defaultHeaders: any = {};
+    protected _defaultHeaders: any = {};
     protected _useQuerystring: boolean = false;
 
     protected authentications = {
@@ -110,7 +110,7 @@ export class LuisClient {
         const localVarPath = this.getLocalURL(appId);
 
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams = this.defaultHeaders
+        let localVarHeaderParams = this._defaultHeaders;
         let localVarFormParams: any = {};
 
         // verify required parameter 'query' is not null or undefined
@@ -212,7 +212,7 @@ export class LuisClient {
         const localVarPath = this.getLocalURL(appId);
 
         let localVarQueryParameters: any = {};
-        let localVarHeaderParams = (Object as any).assign({}, this.defaultHeaders) as any;
+        let localVarHeaderParams = (Object as any).assign({}, this._defaultHeaders) as any;
         let localVarFormParams: any = {};
 
         // verify required parameter 'appId' is not null or undefined
