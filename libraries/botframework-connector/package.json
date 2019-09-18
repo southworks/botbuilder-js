@@ -21,13 +21,14 @@
   "dependencies": {
     "@azure/ms-rest-js": "1.2.6",
     "@types/jsonwebtoken": "7.2.8",
-    "@types/node": "^10.12.18",
+    "@types/node": "^12.7.5",
     "base64url": "^3.0.0",
     "botframework-schema": "4.1.6",
     "form-data": "^2.3.3",
     "jsonwebtoken": "8.0.1",
     "nock": "^10.0.3",
     "node-fetch": "^2.2.1",
+    "openid-client": "^3.7.2",
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {

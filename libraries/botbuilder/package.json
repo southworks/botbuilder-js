@@ -20,7 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^10.12.18",
+    "@types/node": "^12.7.5",
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
     "filenamify": "^4.1.0",
