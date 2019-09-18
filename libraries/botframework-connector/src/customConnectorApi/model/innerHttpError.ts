@@ -14,7 +14,7 @@
 /**
 * Object representing inner http error
 */
-export class InnerHttpError {
+export class InnerHttpError2 {
     /**
     * HttpStatusCode from failed request
     */
@@ -39,7 +39,7 @@ export class InnerHttpError {
         }    ];
 
     static getAttributeTypeMap() {
-        return InnerHttpError.attributeTypeMap;
+        return InnerHttpError2.attributeTypeMap;
     }
 }
 

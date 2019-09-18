@@ -1,5 +1,6 @@
 export * from './attachmentsApi';
 export * from './conversationsApi';
+export * from './customAuth';
 export * from './model';
 
 

@@ -20,7 +20,7 @@ import { ChannelAccount } from './model/channelAccount';
 import { ConversationParameters } from './model/conversationParameters';
 import { ConversationResourceResponse } from './model/conversationResourceResponse';
 import { ConversationsResult } from './model/conversationsResult';
-import { ErrorResponse } from './model/errorResponse';
+import { ErrorResponse2 } from './model/errorResponse';
 import { PagedMembersResult } from './model/pagedMembersResult';
 import { ResourceResponse } from './model/resourceResponse';
 import { Transcript } from './model/transcript';
@@ -120,7 +120,7 @@ export class ConversationsApi {
             body: ObjectSerializer.serialize(parameters, "ConversationParameters")
         };
 
-        this.authentications.default.applyToRequest(localVarRequestOptions);
+        await Promise.resolve(this.authentications.default.applyToRequest(localVarRequestOptions));
 
         if (Object.keys(localVarFormParams).length) {
             if (localVarUseFormData) {

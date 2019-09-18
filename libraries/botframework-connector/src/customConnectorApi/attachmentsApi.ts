@@ -15,7 +15,7 @@ import http = require('http');
 
 /* tslint:disable:no-unused-locals */
 import { AttachmentInfo } from './model/attachmentInfo';
-import { ErrorResponse } from './model/errorResponse';
+import { ErrorResponse2 } from './model/errorResponse';
 
 import { ObjectSerializer, Authentication, VoidAuth } from './model/models';
 

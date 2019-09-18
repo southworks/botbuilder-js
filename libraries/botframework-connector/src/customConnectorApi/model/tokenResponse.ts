@@ -14,7 +14,7 @@
 /**
 * A response that includes a user token
 */
-export class TokenResponse {
+export class TokenResponse2 {
     /**
     * The channelId of the TokenResponse
     */
@@ -57,7 +57,7 @@ export class TokenResponse {
         }    ];
 
     static getAttributeTypeMap() {
-        return TokenResponse.attributeTypeMap;
+        return TokenResponse2.attributeTypeMap;
     }
 }
 

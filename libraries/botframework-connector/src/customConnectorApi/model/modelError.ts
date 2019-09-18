@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { InnerHttpError } from './innerHttpError';
+import { InnerHttpError2 } from './innerHttpError';
 
 /**
 * Object representing error information
@@ -24,7 +24,7 @@ export class ModelError {
     * Error message
     */
     'message'?: string;
-    'innerHttpError'?: InnerHttpError;
+    'innerHttpError'?: InnerHttpError2;
 
     static discriminator: string | undefined = undefined;
 
@@ -42,7 +42,7 @@ export class ModelError {
         {
             "name": "innerHttpError",
             "baseName": "innerHttpError",
-            "type": "InnerHttpError"
+            "type": "InnerHttpError2"
         }    ];
 
     static getAttributeTypeMap() {

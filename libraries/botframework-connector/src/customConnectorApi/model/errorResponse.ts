@@ -14,7 +14,7 @@
 /**
 * An HTTP API response
 */
-export class ErrorResponse {
+export class ErrorResponse2 {
     'error'?: Error;
 
     static discriminator: string | undefined = undefined;
@@ -27,7 +27,7 @@ export class ErrorResponse {
         }    ];
 
     static getAttributeTypeMap() {
-        return ErrorResponse.attributeTypeMap;
+        return ErrorResponse2.attributeTypeMap;
     }
 }
 

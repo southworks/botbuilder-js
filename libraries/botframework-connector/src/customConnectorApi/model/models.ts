@@ -100,11 +100,11 @@ import { ConversationsResult } from './conversationsResult';
 import { DeliveryModes } from './deliveryModes';
 import { EndOfConversationCodes } from './endOfConversationCodes';
 import { Entity } from './entity';
-import { ErrorResponse } from './errorResponse';
+import { ErrorResponse2 } from './errorResponse';
 import { Fact } from './fact';
 import { GeoCoordinates } from './geoCoordinates';
 import { HeroCard } from './heroCard';
-import { InnerHttpError } from './innerHttpError';
+import { InnerHttpError2 } from './innerHttpError';
 import { InputHints } from './inputHints';
 import { InstallationUpdateActionTypes } from './installationUpdateActionTypes';
 import { MediaCard } from './mediaCard';
@@ -146,7 +146,7 @@ import { Thing } from './thing';
 import { ThumbnailCard } from './thumbnailCard';
 import { ThumbnailUrl } from './thumbnailUrl';
 import { TokenRequest } from './tokenRequest';
-import { TokenResponse } from './tokenResponse';
+import { TokenResponse2 } from './tokenResponse';
 import { Transcript } from './transcript';
 import { VideoCard } from './videoCard';
 
@@ -191,11 +191,11 @@ let typeMap: {[index: string]: any} = {
     "DeliveryModes": DeliveryModes,
     "EndOfConversationCodes": EndOfConversationCodes,
     "Entity": Entity,
-    "ErrorResponse": ErrorResponse,
+    "ErrorResponse": ErrorResponse2,
     "Fact": Fact,
     "GeoCoordinates": GeoCoordinates,
     "HeroCard": HeroCard,
-    "InnerHttpError": InnerHttpError,
+    "InnerHttpError": InnerHttpError2,
     "InputHints": InputHints,
     "InstallationUpdateActionTypes": InstallationUpdateActionTypes,
     "MediaCard": MediaCard,
@@ -237,7 +237,7 @@ let typeMap: {[index: string]: any} = {
     "ThumbnailCard": ThumbnailCard,
     "ThumbnailUrl": ThumbnailUrl,
     "TokenRequest": TokenRequest,
-    "TokenResponse": TokenResponse,
+    "TokenResponse": TokenResponse2,
     "Transcript": Transcript,
     "VideoCard": VideoCard,
 }
