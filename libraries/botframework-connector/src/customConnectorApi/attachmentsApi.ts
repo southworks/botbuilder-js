@@ -92,6 +92,7 @@ export class AttachmentsApi {
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
+
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
@@ -132,6 +133,7 @@ export class AttachmentsApi {
         let formParams: any = {};
         let url = new URL(path);
         let useFormData = false;
+        
         let requestOptions = {
             method: 'GET',
             qs: queryParameters,
