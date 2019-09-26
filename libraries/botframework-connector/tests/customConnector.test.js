@@ -57,11 +57,6 @@ function setHeaderForTest(test) {
     }
 }
 
-
-
-
-    
-
 describe('CustomConnector getToken', async function() {
 
     before(async function() {
