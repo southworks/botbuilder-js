@@ -1,23 +1,13 @@
+require('dotenv').config({path: __dirname + '/.env'});
+const fs = require('fs-extra');
+const path = require('path');
 const assert = require('assert');
 const customBotframeworkConnector = require('../lib');
+const { MockMode, usingNock } = require('./mockHelper');
+const nock = require('nock');
 
-const userId = 'UK8CH2281:TKGSUQHQE';
 const baseUri = 'https://api.botframework.com';
-const authAppId = '2cd87869-38a0-4182-9251-d056e8f0ac24';
-const authAppPassword = '2.30Vs3VQLKt974F';
 const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.6.0; Windows_NT 10.0.17763; x64)';
-var mock = false;
-const trueUserId = process.env['TRUE_USER_ID'];
-const wrongUserId = process.env['WRONG_USER_ID'];
-const appId = process.env['APP_ID'];
-const appPassword = process.env['APP_PASSWORD'];
-const connectionName = 'authname';
-const channelId = 'emulator';
-
-var createConversation = () => ({
-    members: [ user ],
-    bot: bot
-});
 
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
@@ -26,71 +16,117 @@ const bot = {
     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
 };
 
+var createConversation = () => ({
+    members: [ user ],
+    bot: bot
+});
 
-describe('CustomConnector getToken', function() {
+/*
+** To use this test select one of these modes:
+** -MockMode.lockdown to use the test with the mocked files.
+** -MockMode.record to use the test normal and record new mock files.
+** -MockMode.wild to use the test without mocks and without recording.
+*/
+const mode = MockMode.wild;
 
-    it('should throw expected 401 error message.', function(done) {
-            
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(authAppId, authAppPassword); 
-        const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
+// Set up this variables in your .env file
+const userId = process.env['USER_ID'];
+const connectionName = process.env['CONNECTION_NAME'];
+const appId = process.env['APP_ID'];
+const appPassword = process.env['APP_PASSWORD'];
+const channelId = 'emulator';
 
-        let options = {
-            headers: {
-                'Authorization': `Bearer FakeToken`
-            },
-            channelId: channelId
-        };
+let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredentials;
+let customClient = customBotframeworkConnector.CustomTokenApiClient;
+let options;
 
-        customClient.userToken.getToken(userId, connectionName, options)
-            .then((response) => {
-                assert(response._response.status === 401);
-                done();
-            }).catch((onreject) => {
-                done(onreject.message);
-            });
+function setHeaderForTest(test) {
+    if(mode === MockMode.lockdown) {
+        try {
+            const fileLocation = `${ path.join(__dirname, 'TestData', test.parent.title) }\\${ test.title.replace(/ /g, '_') }.json`;
+            let file = fs.readFileSync(fileLocation);
+            let jsonFile = JSON.parse(file);
+            let authToken = jsonFile[0].reqheaders.authorization[0];
+            options = {
+                channelId: 'emulator',
+                headers: { 'authorization': [authToken] }
+            };
+        } catch(e) {
+            throw new Error('No recorded object has been provided for this test.');
+        }        
+    }
+}
+
+
+
+
     
+
+describe('CustomConnector getToken', async function() {
+
+    before(async function() {
+        customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
+        customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
+        bearerToken = await customCredentials.getToken(true);
+        authToken = `Bearer ${ bearerToken }`;
+        const custHeader = { 'authorization': [authToken] };
+
+        options = {
+            channelId: 'emulator',
+            headers: custHeader
+        };      
     });
 
-    it('should throw expected 404 error message.', function(done) {
+    beforeEach(function(done) {
+        nock.cleanAll();
+        nock.enableNetConnect();
+        done();
+    });
+
+    it('should throw expected 401 error message.', function() {
+
+        return usingNock(this.test, mode)
+            .then(({ nockDone }) => {
+
+                let options = {
+                    channelId: 'emulator',
+                    headers: { 'authorization': ['Bearer fakeToken'] }
+                };
+
+                return (customClient.userToken.getToken('04cb9d92-5faf-446e-8393-74720c952e22', connectionName, options))
+                    .then((response) => {
+                        assert(response._response.status === 401);
+                    })
+                    .then(nockDone);
+            });    
+    });
+
+    it('should throw expected 404 error message.', function() {
         this.timeout(100000);
-        
-        let options = {
-            channelId: channelId
-        };
-
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-        const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-
-        customClient.userToken.getToken(wrongUserId, connectionName, options)
-            .then((response) => {
-                assert(response._response.status === 404);
-                done();
-            }).catch((onreject) => {
-                done(onreject.message);
-            });
-    
+        setHeaderForTest(this.test);
+        return usingNock(this.test, mode)
+            .then(( {nockDone }) => {                
+                return (customClient.userToken.getToken('04cb9d92-5faf-446e-8393-74720c952e22', connectionName, options))
+                    .then((response) => {
+                        assert(response._response.status === 404);                        
+                    })
+                    .then(nockDone);
+            });    
     });
 
-    it('should throw expected 200 message.', function(done) {
-        
-        let options = {
-            channelId: channelId
-        };
-
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-        const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-        
-        customClient.userToken.getToken(trueUserId, connectionName, options)
-            .then((response) => {
-                assert(response._response.status === 200);
-                done();
-            });
+    it('should throw expected 200 message.', async function() {
+        setHeaderForTest(this.test);        
+        return usingNock(this.test, mode)
+            .then(async ({ nockDone }) => {                
+                return (customClient.userToken.getToken(userId, connectionName, options))
+                    .then((response) => {
+                        assert(response._response.status === 200);
+                    })
+                    .then(nockDone);
+            });    
     });
 
     it('should throw on null userId', function(done) {
-
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-        const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
         customClient.userToken.getToken(null, 'mockConnection')
             .then((result) => {
@@ -102,10 +138,8 @@ describe('CustomConnector getToken', function() {
 
     it('should throw on null connectionName', function(done) {
 
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-        const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
-        customClient.userToken.getToken(trueUserId, null)
+        customClient.userToken.getToken(userId, null)
             .then((result) => {
                 assert.fail();
             }, (error) => {
@@ -118,7 +152,7 @@ describe('CustomConnector getToken', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
-        customClient.userToken.getToken(trueUserId, 'invalid')
+        customClient.userToken.getToken(userId, 'invalid')
             .then((result) => {
                 assert.equal(result.token, null);
                 done();
@@ -131,7 +165,7 @@ describe('CustomConnector getToken', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
-        customClient.userToken.getToken(trueUserId, connectionName, { code: null })
+        customClient.userToken.getToken(userId, connectionName, { code: null })
             .then((result) => {
                 assert(result.channelId);
                 assert(result.connectionName);
@@ -147,7 +181,7 @@ describe('CustomConnector signOut', function() {
 
     it('should throw expected 401 error message.', function(done) {
             
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(authAppId, authAppPassword); 
+        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F'); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
         let options = {
@@ -178,7 +212,7 @@ describe('CustomConnector signOut', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
         
-        customClient.userToken.signOut(trueUserId, options)
+        customClient.userToken.signOut(userId, options)
             .then((response) => {
                 assert(response._response.status === 200);
                 done();
@@ -206,7 +240,7 @@ describe('CustomConnector signOut', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
 
-        customClient.userToken.signOut(trueUserId)
+        customClient.userToken.signOut(userId)
             .then((result) => {
                 assert(result._response);
                 assert.equal(result._response.status, 200);
@@ -219,7 +253,7 @@ describe('CustomConnector signOut', function() {
 describe('getAadTokens', function() {
     it('should throw on null userId', function(done) {
 
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(authAppId, authAppPassword); 
+        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
         customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: ['http://localhost' ]})
@@ -230,10 +264,10 @@ describe('getAadTokens', function() {
             }).then(done, done);
     });
     it('should throw on null connectionName', function(done) {
-        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(authAppId, authAppPassword); 
+        const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
 
-        customClient.userToken.getAadTokens(trueUserId, null, { resourceUrls: ['http://localhost' ]})
+        customClient.userToken.getAadTokens(userId, null, { resourceUrls: ['http://localhost' ]})
             .then((result) => {
                 assert.fail();
             }, (error) => {
@@ -247,7 +281,7 @@ describe('getAadTokens', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
 
-        customClient.userToken.getAadTokens(trueUserId, connectionName, { resourceUrls: [baseUri]})
+        customClient.userToken.getAadTokens(userId, connectionName, { resourceUrls: [baseUri]})
             .then((result) => {
                 assert(result.channelId);
                 assert(result.connectionName);
@@ -278,7 +312,7 @@ describe('getTokenStatus', function() {
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
 
-        customClient.userToken.getTokenStatus(trueUserId)
+        customClient.userToken.getTokenStatus(userId)
             .then((result) => {
                 assert(result[0].connectionName);
                 assert.notEqual(result[0].hasToken, null);
@@ -336,3 +370,4 @@ describe('customTokenApiClient Construction', function() {
         done();
     });
 });
+   

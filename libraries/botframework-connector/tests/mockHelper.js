@@ -10,7 +10,7 @@ const MockMode = Object.freeze({
     'lockdown': 'lockdown'
 });
 
-function usingNock(test, mode, options = null) {
+async function usingNock(test, mode, options = null) {
     const testDirectory = getMockDirectory(test);
     const testFile = getFormatedNockFileName(test);
 
