@@ -124,7 +124,9 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions);       
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['Authorization'] === undefined)){
+            await this.credentials.signRequest(requestOptions);
+        }       
 
         return this.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions);
     }
@@ -179,7 +181,7 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
         
-        if (options.headers === undefined || (options.headers !== undefined && options.headers['authorization'] === undefined)){
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['Authorization'] === undefined)){
             await this.credentials.signRequest(requestOptions);
         }
 
@@ -226,7 +228,9 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions);
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['Authorization'] === undefined)){
+            await this.credentials.signRequest(requestOptions);
+        }
 
         return this.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions);  
     }
@@ -271,7 +275,9 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions);
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['Authorization'] === undefined)){
+            await this.credentials.signRequest(requestOptions);
+        }
 
         return new Promise<Models.UserTokenSignOutResponse>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {         

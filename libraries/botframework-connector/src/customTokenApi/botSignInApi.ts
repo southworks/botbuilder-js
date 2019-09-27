@@ -101,7 +101,9 @@ export class BotSignInApi {
             userAgent: this.userAgent
         };
 
-        await this.credentials.signRequest(requestOptions); 
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['Authorization'] === undefined)){
+            await this.credentials.signRequest(requestOptions);
+        }
               
         return new Promise<Models.BotSignInGetSignInUrlResponse>((resolve, reject) => {
             fetch(url, requestOptions).then(response => {         
