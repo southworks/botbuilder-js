@@ -262,28 +262,24 @@ describe('Token API tests', async function() {
     });
     
     xdescribe('customTokenApiClient Construction', function() {
-        it('should not throw on http url', function() {
-            let client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri });
-            return usingNock(this.test, mode)
-                .then(() => {
-                    return (assert(client));
-                });
-        });
-
-        it('should throw on null credentials', function() {
-            
-            var client = new customBotframeworkConnector.CustomTokenApiClient(null, {
-                baseuri: baseUri
+        it('should not throw on http url', function(done) {
+            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
+            var client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, {
+                baseUri: baseUri
             });
-            return usingNock(this.test,mode)
-                .then(({nockDone}) => {
-                    try {
-                        assert.fail();
-                    } catch (err) {
-                        assert(!!err.message);
-                        nockDone();
-                    }
+            assert(client);
+            done();
+        });
+        it('should throw on null credentials', function(done) {
+            try {
+                var client = new customBotframeworkConnector.CustomTokenApiClient(null, {
+                    baseUri: baseUri
                 });
+                assert.fail();
+            } catch (err) {
+                assert(!!err.message);
+            }
+            done();
         });
     });
     
