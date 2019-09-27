@@ -202,9 +202,10 @@ describe('Token API tests', async function() {
         });
     
         it('should return token', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
-                    return (customClient.userToken.getTokenStatus(userId))
+                    return (customClient.userToken.getTokenStatus(userId, options))
                         .then((result) => {
                             assert(result[0].connectionName);
                             assert.notEqual(result[0].hasToken, null);
@@ -217,6 +218,7 @@ describe('Token API tests', async function() {
     
     describe('botSignIn', function() {
         it('should return a valid sign in url', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
                     const urlRegex = /https:\/\/token.botframework.com\/api\/oauth\/signin\?signin=.*/i;
@@ -228,7 +230,7 @@ describe('Token API tests', async function() {
                         MsAppId: appId
                     };
                     const finalState = Buffer.from(JSON.stringify(state)).toString('base64');
-                    return (customClient.botSignIn.getSignInUrl(finalState))
+                    return (customClient.botSignIn.getSignInUrl(finalState, options))
                         .then((result) => {
                             assert.equal(result._response.status, 200);
                             assert(result._response.bodyAsText.match(urlRegex));
@@ -262,7 +264,17 @@ describe('Token API tests', async function() {
         });
     });
     
-    describe('CustomConnector signOut', function() {    
+    describe('CustomConnector signOut', function() {
+        it('should throw on null userId', function(done) {
+            customClient.userToken.signOut(null)
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                })
+                .then(done);
+        });
+
         it('should throw expected 401 error message.', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
@@ -282,6 +294,7 @@ describe('Token API tests', async function() {
         });
     
         it('should throw expected 200 message.', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
                     return (customClient.userToken.signOut(userId, options))
@@ -294,24 +307,12 @@ describe('Token API tests', async function() {
                         .then(nockDone);
                 });
         });
-    
-        it('should throw on null userId', function() {
-            return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-                    return (customClient.userToken.signOut(null))
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
-        });
 
         it('should return a response', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
-                    return (customClient.userToken.signOut(userId))
+                    return (customClient.userToken.signOut(userId, options))
                         .then((result) => {
                             assert(result._response);
                             assert.equal(result._response.status, 200);
@@ -331,7 +332,7 @@ function setHeaderForTest(test) {
             let authToken = jsonFile[0].reqheaders.authorization[0];
             options = {
                 channelId: 'emulator',
-                headers: { 'authorization': [authToken] }
+                headers: { 'Authorization': [authToken] }
             };
         } catch(e) {
             throw new Error('No recorded object has been provided for this test.');
