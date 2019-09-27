@@ -182,7 +182,6 @@ describe('Token API tests', async function() {
     });
 
     describe('getAadTokens', function() {
-    
         it('should throw on null userId', function() {
             return usingNock(this.test, mode)
                 .then(({nockDone}) => {
@@ -196,7 +195,6 @@ describe('Token API tests', async function() {
                 });
         });
         it('should throw on null connectionName', function() {
-    
             return usingNock(this.test,mode)
                 .then(({nockDone}) => {
                     return (customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]}))
@@ -228,31 +226,30 @@ describe('Token API tests', async function() {
         
     });
     
-    xdescribe('getTokenStatus', function() {
-        it('should throw on null userId', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
-    
-            customClient.userToken.getTokenStatus(null)
-                .then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.message);
-                }).then(done, done);
+    describe('getTokenStatus', function() {
+        it('should throw on null userId', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    return (customClient.userToken.getTokenStatus(null))
+                        .then((result) => {
+                            assert.fail();
+                        }, (error) => {
+                            assert(!!error.message);
+                        })
+                        .then(nockDone);
+                });
         });
     
-        //We don't know which variables are valid to test this method. The API has no documentation. to get values like channel id, is needed to change in
-        // the deserializeResponse method on userTokenapi the json to text, it returns a TokenStatus with undefined objects. 200
-        it('should return token', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
-    
-            customClient.userToken.getTokenStatus(userId)
-                .then((result) => {
-                    assert(result[0].connectionName);
-                    assert.notEqual(result[0].hasToken, null);
-                    assert(result[0].serviceProviderDisplayName);
-                    done();
+        it('should return token', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    return (customClient.userToken.getTokenStatus(userId))
+                        .then((result) => {
+                            assert(result[0].connectionName);
+                            assert.notEqual(result[0].hasToken, null);
+                            assert(result[0].serviceProviderDisplayName);
+                        })
+                        .then(nockDone);
                 });
         });
     });
