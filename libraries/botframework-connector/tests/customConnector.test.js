@@ -24,7 +24,7 @@ var createConversation = () => ({
 ** -MockMode.record to use the test normal and record new mock files.
 ** -MockMode.wild to use the test without mocks and without recording.
 */
-const mode = MockMode.lockdown;
+const mode = MockMode.wild;
 
 // Set up this variables in your .env file
 const userId = process.env['USER_ID'];
@@ -51,7 +51,7 @@ describe('Token API tests', async function() {
         customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
         bearerToken = await customCredentials.getToken(true);
         authToken = `Bearer ${ bearerToken }`;
-        const custHeader = { 'authorization': [authToken] };
+        const custHeader = { 'Authorization': [authToken] };
 
         options = {
             channelId: channelId,
@@ -65,13 +65,31 @@ describe('Token API tests', async function() {
         done();
     });
 
-    xdescribe('CustomConnector getToken', async function() {
+    describe('CustomConnector getToken', async function() {
+        it('should throw on null userId', function(done) {
+            customClient.userToken.getToken(null, 'mockConnection')
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                }).then(done, done);
+        });
+    
+        it('should throw on null connectionName', function(done) {
+            customClient.userToken.getToken(userId, null)
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                }).then(done, done);
+        });
+
         it('should throw expected 401 error message.', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {    
                     let options = {
                         channelId: channelId,
-                        headers: { 'authorization': ['Bearer fakeToken'] }
+                        headers: { 'Authorization': ['Bearer fakeToken'] }
                     };    
                     return (customClient.userToken.getToken(fakeUserId, connectionName, options))
                         .then((response) => {
@@ -108,32 +126,6 @@ describe('Token API tests', async function() {
                         .then(nockDone);
                 });    
         });
-    
-        it('should throw on null userId', function() {
-            return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-                    return (customClient.userToken.getToken(null, 'mockConnection'))
-                        .then((response) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
-        });
-    
-        it('should throw on null connectionName', function() {
-            return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-                    return (customClient.userToken.getToken(userId, null))
-                        .then((response) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
-        });
         
         it('should return null on invalid connection string', function() {
             setHeaderForTest(this.test);
@@ -164,30 +156,21 @@ describe('Token API tests', async function() {
     });
 
     describe('getAadTokens', function() {
-        it('should throw on null userId', function() {
-            return usingNock(this.test, mode)
-                .then(({nockDone}) => {
-                    return (customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]}, options))
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
+        it('should throw on null userId', function(done) {
+            customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]})
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                }).then(done, done);
         });
-        it('should throw on null connectionName', function() {
-            return usingNock(this.test,mode)
-                .then(({nockDone}) => {
-                    return (customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]}, options))
-                        .then((result) => {
-                            assert.fail();
-                        },
-                        (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
+        it('should throw on null connectionName', function(done) {
+            customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]})
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                }).then(done, done);
         });
     
         //We don't know which variables are valid to test this method. The API has no documentation. 404
@@ -208,18 +191,14 @@ describe('Token API tests', async function() {
         
     });
     
-    xdescribe('getTokenStatus', function() {
-        it('should throw on null userId', function() {
-            return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-                    return (customClient.userToken.getTokenStatus(null))
-                        .then((result) => {
-                            assert.fail();
-                        }, (error) => {
-                            assert(!!error.message);
-                        })
-                        .then(nockDone);
-                });
+    describe('getTokenStatus', function() {
+        it('should throw on null userId', function(done) {
+            customClient.userToken.getTokenStatus(null)
+                .then((result) => {
+                    assert.fail();
+                }, (error) => {
+                    assert(!!error.message);
+                }).then(done, done);
         });
     
         it('should return token', function() {
@@ -236,7 +215,7 @@ describe('Token API tests', async function() {
         });
     });
     
-    xdescribe('botSignIn', function() {
+    describe('botSignIn', function() {
         it('should return a valid sign in url', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
@@ -261,7 +240,7 @@ describe('Token API tests', async function() {
         });
     });
     
-    xdescribe('customTokenApiClient Construction', function() {
+    describe('customTokenApiClient Construction', function() {
         it('should not throw on http url', function(done) {
             const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
             var client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, {
@@ -283,12 +262,12 @@ describe('Token API tests', async function() {
         });
     });
     
-    xdescribe('CustomConnector signOut', function() {    
+    describe('CustomConnector signOut', function() {    
         it('should throw expected 401 error message.', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
                     let options = {
-                        headers: { 'authorization': `Bearer FakeToken` },
+                        headers: { 'Authorization': `Bearer FakeToken` },
                         channelId: channelId,
                         connectionName : connectionName
                     };
