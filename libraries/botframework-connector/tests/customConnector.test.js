@@ -87,7 +87,7 @@ describe('Token API tests', async function() {
         done();
     });
 
-    describe('CustomConnector getToken', async function() {
+    xdescribe('CustomConnector getToken', async function() {
         it('should throw expected 401 error message.', function() {
     
             return usingNock(this.test, mode)
@@ -181,30 +181,33 @@ describe('Token API tests', async function() {
         });    
     });
 
-    xdescribe('getAadTokens', function() {
+    describe('getAadTokens', function() {
     
-        it('should throw on null userId', function(done) {
-    
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-    
-            customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]})
-                .then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.message);
-                }).then(done, done);
+        it('should throw on null userId', function() {
+            return usingNock(this.test, mode)
+                .then(({nockDone}) => {
+                    return (customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]}))
+                        .then((result) => {
+                            assert.fail();
+                        }, (error) => {
+                            assert(!!error.message);
+                        })
+                        .then(nockDone);
+                });
         });
-        it('should throw on null connectionName', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
+        it('should throw on null connectionName', function() {
     
-            customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]})
-                .then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.message);
-                }).then(done, done);
+            return usingNock(this.test,mode)
+                .then(({nockDone}) => {
+                    return (customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]}))
+                        .then((result) => {
+                            assert.fail();
+                        },
+                        (error) => {
+                            assert(!!error.message);
+                        })
+                        .then(nockDone);
+                });
         });
     
         //We don't know which variables are valid to test this method. The API has no documentation. 404
