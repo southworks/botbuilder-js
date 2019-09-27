@@ -58,6 +58,15 @@ function setHeaderForTest(test) {
     }
 }
 
+/*
+** Steps to obtain a response 200 in getToken method:
+** 1.- Run an authentication bot which you could log in with you azure account (https://github.com/southworks/BotBuilder-Samples/tree/master/samples/javascript_nodejs/18.bot-authentication)
+** 2.- Open Bot Framework Emulator
+** 3.- Interact with you bot and log in
+** 4.- Get the user id 
+** 5.- Call the method using the id obtained in the last step
+*/
+
 describe('CustomConnector getToken', async function() {
 
     before(async function() {
@@ -273,7 +282,7 @@ describe('getAadTokens', function() {
     });
 
     //We don't know which variables are valid to test this method. The API has no documentation. 404
-    it('should return token', function(done) {
+    xit('should return token', function(done) {
 
         const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
         const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
