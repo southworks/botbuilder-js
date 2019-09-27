@@ -6,15 +6,12 @@ const customBotframeworkConnector = require('../lib');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 
+const channelId = 'emulator';
+const fakeUserId = '04cb9d92-5faf-446e-8393-74720c952e22';
 const baseUri = 'https://api.botframework.com';
 const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.6.0; Windows_NT 10.0.17763; x64)';
-
-const user = {
-    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
-};
-const bot = {
-    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
-};
+const user = { id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE' };
+const bot = { id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE' };
 
 var createConversation = () => ({
     members: [ user ],
@@ -27,36 +24,17 @@ var createConversation = () => ({
 ** -MockMode.record to use the test normal and record new mock files.
 ** -MockMode.wild to use the test without mocks and without recording.
 */
-const mode = MockMode.wild;
+const mode = MockMode.lockdown;
 
 // Set up this variables in your .env file
 const userId = process.env['USER_ID'];
-const fakeUserId = '04cb9d92-5faf-446e-8393-74720c952e22';
-const connectionName = process.env['CONNECTION_NAME'];
 const appId = process.env['APP_ID'];
 const appPassword = process.env['APP_PASSWORD'];
-const channelId = 'emulator';
+const connectionName = process.env['CONNECTION_NAME'];
 
 let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredentials;
 let customClient = customBotframeworkConnector.CustomTokenApiClient;
 let options;
-
-function setHeaderForTest(test) {
-    if(mode === MockMode.lockdown) {
-        try {
-            const fileLocation = `${ path.join(__dirname, 'TestData', test.parent.title) }\\${ test.title.replace(/ /g, '_') }.json`;
-            let file = fs.readFileSync(fileLocation);
-            let jsonFile = JSON.parse(file);
-            let authToken = jsonFile[0].reqheaders.authorization[0];
-            options = {
-                channelId: 'emulator',
-                headers: { 'authorization': [authToken] }
-            };
-        } catch(e) {
-            throw new Error('No recorded object has been provided for this test.');
-        }        
-    }
-}
 
 /*
 ** Steps to obtain a response 200 in getToken method:
@@ -97,7 +75,10 @@ describe('Token API tests', async function() {
                     };    
                     return (customClient.userToken.getToken(fakeUserId, connectionName, options))
                         .then((response) => {
-                            assert(response._response.status === 401);
+                            assert.equal(response._response.status, 401);
+                        })
+                        .catch((error) => {
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });    
@@ -117,7 +98,7 @@ describe('Token API tests', async function() {
         });
     
         it('should throw expected 200 message.', async function() {
-            setHeaderForTest(this.test);        
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(async ({ nockDone }) => {                
                     return (customClient.userToken.getToken(userId, connectionName, options))
@@ -155,9 +136,10 @@ describe('Token API tests', async function() {
         });
         
         it('should return null on invalid connection string', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
-                    return (customClient.userToken.getToken(userId, 'invalid'))
+                    return (customClient.userToken.getToken(userId, 'invalid', options))
                         .then((result) => {
                             assert.equal(result.token, null);
                         })
@@ -166,9 +148,12 @@ describe('Token API tests', async function() {
         });
         
         it('should return token with no magic code', function() {
+            setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(({ nockDone}) => {
-                    return (customClient.userToken.getToken(userId, connectionName, { code: null }))
+                    let codeOptions = Object.assign({}, options);
+                    codeOptions.code = null;
+                    return (customClient.userToken.getToken(userId, connectionName, codeOptions))
                         .then((result) => {
                             assert(result.connectionName);
                             assert(result.token);
@@ -178,11 +163,11 @@ describe('Token API tests', async function() {
         });    
     });
 
-    xdescribe('getAadTokens', function() {
+    describe('getAadTokens', function() {
         it('should throw on null userId', function() {
             return usingNock(this.test, mode)
                 .then(({nockDone}) => {
-                    return (customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]}))
+                    return (customClient.userToken.getAadTokens(null, 'mockConnection', { resourceUrls: [baseUri ]}, options))
                         .then((result) => {
                             assert.fail();
                         }, (error) => {
@@ -194,7 +179,7 @@ describe('Token API tests', async function() {
         it('should throw on null connectionName', function() {
             return usingNock(this.test,mode)
                 .then(({nockDone}) => {
-                    return (customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]}))
+                    return (customClient.userToken.getAadTokens(userId, null, { resourceUrls: [baseUri ]}, options))
                         .then((result) => {
                             assert.fail();
                         },
@@ -276,7 +261,7 @@ describe('Token API tests', async function() {
         });
     });
     
-    describe('customTokenApiClient Construction', function() {
+    xdescribe('customTokenApiClient Construction', function() {
         it('should not throw on http url', function() {
             let client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri });
             return usingNock(this.test, mode)
@@ -284,6 +269,7 @@ describe('Token API tests', async function() {
                     return (assert(client));
                 });
         });
+
         it('should throw on null credentials', function() {
             
             var client = new customBotframeworkConnector.CustomTokenApiClient(null, {
@@ -301,7 +287,7 @@ describe('Token API tests', async function() {
         });
     });
     
-    describe('CustomConnector signOut', function() {    
+    xdescribe('CustomConnector signOut', function() {    
         it('should throw expected 401 error message.', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
@@ -361,3 +347,19 @@ describe('Token API tests', async function() {
     });
 });
    
+function setHeaderForTest(test) {
+    if(mode === MockMode.lockdown) {
+        try {
+            const fileLocation = `${ path.join(__dirname, 'TestData', test.parent.title) }\\${ test.title.replace(/ /g, '_') }.json`;
+            let file = fs.readFileSync(fileLocation);
+            let jsonFile = JSON.parse(file);
+            let authToken = jsonFile[0].reqheaders.authorization[0];
+            options = {
+                channelId: 'emulator',
+                headers: { 'authorization': [authToken] }
+            };
+        } catch(e) {
+            throw new Error('No recorded object has been provided for this test.');
+        }        
+    }
+}
