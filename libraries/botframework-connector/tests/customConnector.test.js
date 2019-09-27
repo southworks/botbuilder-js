@@ -76,7 +76,7 @@ describe('Token API tests', async function() {
         const custHeader = { 'authorization': [authToken] };
 
         options = {
-            channelId: 'emulator',
+            channelId: channelId,
             headers: custHeader
         };      
     });
@@ -89,15 +89,12 @@ describe('Token API tests', async function() {
 
     xdescribe('CustomConnector getToken', async function() {
         it('should throw expected 401 error message.', function() {
-    
             return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-    
+                .then(({ nockDone }) => {    
                     let options = {
-                        channelId: 'emulator',
+                        channelId: channelId,
                         headers: { 'authorization': ['Bearer fakeToken'] }
-                    };
-    
+                    };    
                     return (customClient.userToken.getToken(fakeUserId, connectionName, options))
                         .then((response) => {
                             assert(response._response.status === 401);
@@ -181,7 +178,7 @@ describe('Token API tests', async function() {
         });    
     });
 
-    describe('getAadTokens', function() {
+    xdescribe('getAadTokens', function() {
         it('should throw on null userId', function() {
             return usingNock(this.test, mode)
                 .then(({nockDone}) => {
@@ -226,7 +223,7 @@ describe('Token API tests', async function() {
         
     });
     
-    describe('getTokenStatus', function() {
+    xdescribe('getTokenStatus', function() {
         it('should throw on null userId', function() {
             return usingNock(this.test, mode)
                 .then(({ nockDone }) => {
@@ -255,125 +252,112 @@ describe('Token API tests', async function() {
     });
     
     xdescribe('botSignIn', function() {
-    
-        //To make this test pass the signature of getSignInUrl was changed, adding a empty object as initializer of options variable in null cases.
-        it('should return a valid sign in url', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri} );
-    
-            const urlRegex = /https:\/\/token.botframework.com\/api\/oauth\/signin\?signin=.*/i;
-            var conversation = createConversation();
-            conversation.user = user;
-            const state = {
-                ConnectionName: 'github',
-                Conversation: conversation,
-                MsAppId: appId
-            };
-            const finalState = Buffer.from(JSON.stringify(state)).toString('base64');
-            customClient.botSignIn.getSignInUrl(finalState)
-                .then((result) => {
-                    assert.equal(result._response.status, 200);
-                    assert(result._response.bodyAsText.match(urlRegex));
-                    done();
-                }, (error) => {
-                    assert.fail(error);
-                });              
+        it('should return a valid sign in url', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    const urlRegex = /https:\/\/token.botframework.com\/api\/oauth\/signin\?signin=.*/i;
+                    var conversation = createConversation();
+                    conversation.user = user;
+                    const state = {
+                        ConnectionName: 'github',
+                        Conversation: conversation,
+                        MsAppId: appId
+                    };
+                    const finalState = Buffer.from(JSON.stringify(state)).toString('base64');
+                    return (customClient.botSignIn.getSignInUrl(finalState))
+                        .then((result) => {
+                            assert.equal(result._response.status, 200);
+                            assert(result._response.bodyAsText.match(urlRegex));
+                        }, (error) => {
+                            assert.fail(error);
+                        })
+                        .then(nockDone);
+                });           
         });
     });
     
-    xdescribe('customTokenApiClient Construction', function() {
-        it('should not throw on http url', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            var client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, {
-                baseUri: baseUri
+    describe('customTokenApiClient Construction', function() {
+        it('should not throw on http url', function() {
+            let client = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri });
+            return usingNock(this.test, mode)
+                .then(() => {
+                    return (assert(client));
+                });
+        });
+        it('should throw on null credentials', function() {
+            
+            var client = new customBotframeworkConnector.CustomTokenApiClient(null, {
+                baseuri: baseUri
             });
-            assert(client);
-            done();
-        });
-        it('should throw on null credentials', function(done) {
-            try {
-                var client = new customBotframeworkConnector.CustomTokenApiClient(null, {
-                    baseUri: baseUri
+            return usingNock(this.test,mode)
+                .then(({nockDone}) => {
+                    try {
+                        assert.fail();
+                    } catch (err) {
+                        assert(!!err.message);
+                        nockDone();
+                    }
                 });
-                assert.fail();
-            } catch (err) {
-                assert(!!err.message);
-            }
-            done();
         });
     });
     
-    xdescribe('CustomConnector signOut', function() {
-    
-        it('should throw expected 401 error message.', function(done) {
-                
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F'); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-    
-            let options = {
-                headers: {
-                    'Authorization': `Bearer FakeToken`
-                },
-                channelId: channelId,
-                connectionName : connectionName
-            };
-    
-            customClient.userToken.signOut(userId, options)
-                .then((response) => {
-                    assert(response._response.status === 401);
-                    done();
-                }).catch((onreject) => {
-                    done(onreject.message);
-                });
-        
-        });
-    
-        it('should throw expected 200 message.', function(done) {
-            
-            let options = {
-                channelId: channelId,
-                connectionName : connectionName
-            };
-    
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-            
-            customClient.userToken.signOut(userId, options)
-                .then((response) => {
-                    assert(response._response.status === 200);
-                    done();
-                });
-        
-        });
-    
-        it('should throw on null userId', function(done) {
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri, userAgent: userAgent } );
-    
-            customClient.userToken.signOut(null)
-                .then((result) => {
-                    assert.fail();
-                }, (error) => {
-                    assert(!!error.message);
-                }).then(done, done);
-        });
-    
-    
-        //Proof again when we change the deserialize method. 
-        //Response 200 description not response body.
-        it('should return a response', function(done) {
-    
-            const customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
-            const customClient = new customBotframeworkConnector.CustomTokenApiClient(customCredentials, { baseUri: baseUri } );
-    
-            customClient.userToken.signOut(userId)
-                .then((result) => {
-                    assert(result._response);
-                    assert.equal(result._response.status, 200);
-                    done();
+    describe('CustomConnector signOut', function() {    
+        it('should throw expected 401 error message.', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    let options = {
+                        headers: { 'authorization': `Bearer FakeToken` },
+                        channelId: channelId,
+                        connectionName : connectionName
+                    };
+                    return (customClient.userToken.signOut(userId, options))
+                        .then((response) => {
+                            assert.equal(response._response.status, 401);
+                        }).catch((reject) => {
+                            assert.fail(reject.message);
+                        })
+                        .then(nockDone);
                 });
         });
     
+        it('should throw expected 200 message.', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    return (customClient.userToken.signOut(userId, options))
+                        .then((response) => {
+                            assert.equal(response._response.status, 200);
+                        })
+                        .catch((error) => {
+                            assert.fail(error.message);
+                        })
+                        .then(nockDone);
+                });
+        });
+    
+        it('should throw on null userId', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    return (customClient.userToken.signOut(null))
+                        .then((result) => {
+                            assert.fail();
+                        }, (error) => {
+                            assert(!!error.message);
+                        })
+                        .then(nockDone);
+                });
+        });
+
+        it('should return a response', function() {
+            return usingNock(this.test, mode)
+                .then(({ nockDone }) => {
+                    return (customClient.userToken.signOut(userId))
+                        .then((result) => {
+                            assert(result._response);
+                            assert.equal(result._response.status, 200);
+                        })
+                        .then(nockDone);
+                });
+        });    
     });
 });
    
