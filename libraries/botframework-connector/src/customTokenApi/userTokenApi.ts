@@ -49,14 +49,14 @@ export class UserTokenApi {
         return this._basePath;
     }
 
-    private async deserializeResponse<T>(url, requestOptions, type): Promise<T> {
+    private async deserializeResponse<T>(url, requestOptions): Promise<T> {
         return new Promise<T>((resolve) => {
             fetch(url, requestOptions).then(response => {         
                 let httpResponse: http.IncomingMessage = response;
                 
                 if (response.status &&  response.status >= HttpStatus.OK && response.status < HttpStatus.MULTIPLE_CHOICES) { 
                     response.json().then(result => {
-                        let _body: T = ObjectSerializer.deserialize(result, type);
+                        let _body: T = ObjectSerializer.deserialize(result);
                         let _bodyAsText: string = _body == undefined? "" : ObjectSerializer.deserialize(result, "string");
                         let _response = Object.assign(httpResponse, {bodyAsText: _bodyAsText, parsedBody: _body});
                         let toReturn: T = _body == undefined? Object.assign( {_response: _response}) : Object.assign(_body, {_response: _response});
@@ -126,7 +126,7 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);       
 
-        return this.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions, "{ [key: string]: TokenResponse; }");
+        return this.deserializeResponse<Models.UserTokenGetAadTokensResponse>(url, requestOptions);
     }
     /**
      * 
@@ -162,7 +162,7 @@ export class UserTokenApi {
             localQueryParameters['channelId'] = ObjectSerializer.serialize(options.channelId, "string");
         }
 
-        if (options.code !== undefined) {
+        if (options.code !== undefined && options.code !== null) {
             localQueryParameters['code'] = ObjectSerializer.serialize(options.code, "string");
         }        
 
@@ -179,12 +179,11 @@ export class UserTokenApi {
             userAgent: this.userAgent
         };
         
-        if (options.headers['authorization'] === undefined){
+        if (options.headers === undefined || (options.headers !== undefined && options.headers['authorization'] === undefined)){
             await this.credentials.signRequest(requestOptions);
         }
-        
 
-        return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions, "TokenResponse");
+        return this.deserializeResponse<Models.UserTokenGetTokenResponse>(url, requestOptions);
     }
     /**
      * 
@@ -229,7 +228,7 @@ export class UserTokenApi {
 
         await this.credentials.signRequest(requestOptions);
 
-        return this.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions, "Array<TokenStatus>");  
+        return this.deserializeResponse<Models.UserTokenGetTokenStatusResponse>(url, requestOptions);  
     }
     /**
      * 
