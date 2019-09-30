@@ -7,16 +7,13 @@ const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 
 const channelId = 'emulator';
-const fakeUserId = '04cb9d92-5faf-446e-8393-74720c952e22';
 const baseUri = 'https://api.botframework.com';
 const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.6.0; Windows_NT 10.0.17763; x64)';
-const user = { id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE' };
-const bot = { id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE' };
-
-var createConversation = () => ({
-    members: [ user ],
-    bot: bot
-});
+//This userId is not real and only used to get a 404 in getToken
+const fakeUserId = '04cb9d92-5faf-446e-8393-74720c952e22';
+let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredentials;
+let customClient = customBotframeworkConnector.CustomTokenApiClient;
+let options;
 
 /*
 ** To use this test select one of these modes:
@@ -24,17 +21,20 @@ var createConversation = () => ({
 ** -MockMode.record to use the test normal and record new mock files.
 ** -MockMode.wild to use the test without mocks and without recording.
 */
-const mode = MockMode.lockdown;
+const mode = MockMode.wild;
 
 // Set up this variables in your .env file
-const userId = process.env['USER_ID'];
+const userId = process.env['USER_ID'] || 'mockedUserId';
 const appId = process.env['APP_ID'];
 const appPassword = process.env['APP_PASSWORD'];
-const connectionName = process.env['CONNECTION_NAME'];
+const connectionName = process.env['CONNECTION_NAME'] || 'authname';
+const user = { id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE' };
+const bot = { id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE' };
 
-let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredentials;
-let customClient = customBotframeworkConnector.CustomTokenApiClient;
-let options;
+var createConversation = () => ({
+    members: [ user ],
+    bot: bot
+});
 
 /*
 ** Steps to obtain a response 200 in getToken method:
@@ -56,7 +56,7 @@ describe('Token API tests', async function() {
         options = {
             channelId: channelId,
             headers: custHeader
-        };      
+        };
     });
 
     beforeEach(function(done) {
@@ -91,7 +91,7 @@ describe('Token API tests', async function() {
                         channelId: channelId,
                         headers: { 'Authorization': ['Bearer fakeToken'] }
                     };    
-                    return (customClient.userToken.getToken(fakeUserId, connectionName, options))
+                    return (customClient.userToken.getToken(userId, connectionName, options))
                         .then((response) => {
                             assert.equal(response._response.status, 401);
                         })
@@ -241,7 +241,8 @@ describe('Token API tests', async function() {
                         Conversation: conversation,
                         MsAppId: appId
                     };
-                    const finalState = Buffer.from(JSON.stringify(state)).toString('base64');
+                    const finalState = mode === MockMode.lockdown? 
+                        getFinalStateForTest(this.test):Buffer.from(JSON.stringify(state)).toString('base64');
                     return (customClient.botSignIn.getSignInUrl(finalState, options))
                         .then((result) => {
                             assert.equal(result._response.status, 200);
@@ -311,7 +312,7 @@ describe('Token API tests', async function() {
                 .then(({ nockDone }) => {
                     return (customClient.userToken.signOut(userId, options))
                         .then((response) => {
-                            assert(result._response);
+                            assert(response._response);
                             assert.equal(response._response.status, 200);
                         })
                         .catch((error) => {
@@ -322,20 +323,34 @@ describe('Token API tests', async function() {
         });  
     });
 });
-   
+
+function getFinalStateForTest(test) {
+    if(mode === MockMode.lockdown) {
+        let jsonFile = getFileAsJson(test);
+        let path = jsonFile[0].path;
+        let state = path.match(/=(.*?)%/g).toString();
+        return state.substring(1, state.length - 1) + '=';
+    }
+}
+
 function setHeaderForTest(test) {
     if(mode === MockMode.lockdown) {
-        try {
-            const fileLocation = `${ path.join(__dirname, 'TestData', test.parent.title) }\\${ test.title.replace(/ /g, '_') }.json`;
-            let file = fs.readFileSync(fileLocation);
-            let jsonFile = JSON.parse(file);
-            let authToken = jsonFile[0].reqheaders.authorization[0];
-            options = {
-                channelId: 'emulator',
-                headers: { 'Authorization': [authToken] }
-            };
-        } catch(e) {
-            throw new Error('No recorded object has been provided for this test.');
-        }        
+        let jsonFile = getFileAsJson(test);
+        let authToken = jsonFile[0].reqheaders.authorization[0];
+        options = {
+            channelId: channelId,
+            headers: { 'Authorization': [authToken] }
+        };        
     }
+}
+
+function getFileAsJson(test){
+    try {
+        const fileLocation = `${ path.join(__dirname, 'TestData', test.parent.title) }\\${ test.title.replace(/ /g, '_') }.json`;
+        let file = fs.readFileSync(fileLocation);
+        let jsonFile = JSON.parse(file);
+        return jsonFile;
+    } catch(e) {
+        throw new Error('No recorded object has been provided for this test.');
+    }    
 }
