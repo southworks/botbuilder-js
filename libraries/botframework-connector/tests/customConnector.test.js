@@ -9,8 +9,6 @@ const nock = require('nock');
 const channelId = 'emulator';
 const baseUri = 'https://api.botframework.com';
 const userAgent = 'Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.6.0; Windows_NT 10.0.17763; x64)';
-//This userId is not real and only used to get a 404 in getToken
-const fakeUserId = '04cb9d92-5faf-446e-8393-74720c952e22';
 let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredentials;
 let customClient = customBotframeworkConnector.CustomTokenApiClient;
 let options;
@@ -21,9 +19,9 @@ let options;
 ** -MockMode.record to use the test normal and record new mock files.
 ** -MockMode.wild to use the test without mocks and without recording.
 */
-const mode = MockMode.wild;
 
 // Set up this variables in your .env file
+const mode = process.env['MOCK_MODE'] || MockMode.lockdown;
 const userId = process.env['USER_ID'] || 'mockedUserId';
 const appId = process.env['APP_ID'];
 const appPassword = process.env['APP_PASSWORD'];
@@ -107,7 +105,7 @@ describe('Token API tests', async function() {
             setHeaderForTest(this.test);
             return usingNock(this.test, mode)
                 .then(( {nockDone }) => {                
-                    return (customClient.userToken.getToken(fakeUserId, connectionName, options))
+                    return (customClient.userToken.getToken('invalidUserId', connectionName, options))
                         .then((response) => {
                             assert.equal(response._response.status, 404);                        
                         })
