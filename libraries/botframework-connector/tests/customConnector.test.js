@@ -28,7 +28,7 @@
 **      * CONNECTION_NAME (name given to the connection in the bot)
 **
 **  HOW TO GET VALID APP_ID AND APP_PASSWORD
-**  To create a new app you need an Azure AD Application in azure portal,
+**  To get this values you need an Azure AD Application in azure portal,
 **  you can create a new app registration or use the one you used to create your bot.
 **  https://docs.microsoft.com/en-us/azure/bot-service/bot-service-resources-bot-framework-faq?view=azure-bot-service-4.0#app-registration
 **
