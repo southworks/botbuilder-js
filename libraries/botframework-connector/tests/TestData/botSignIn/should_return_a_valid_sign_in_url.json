@@ -1,0 +1,59 @@
+[
+    {
+        "scope": "https://api.botframework.com:443",
+        "method": "GET",
+        "path": "/api/botsignin/GetSignInUrl?state=mockedState%3D&channelId=emulator",
+        "body": "",
+        "status": 200,
+        "response": [
+            "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f22e66dbb6a1eddbddb566ff3e57852b5e775b6c8afaafaed785a2dee66abe26e95addbf9dda6b85816cbdf437e7cb6f730fbf4c1e4e1def9f9bd7bfbbbe77b0ff767f70e76b3fb0fee9ddfdf3ff8",
+            "74faff001251f84557000000"
+        ],
+        "rawHeaders": [
+            "Cache-Control",
+            "no-cache",
+            "Pragma",
+            "no-cache",
+            "Transfer-Encoding",
+            "chunked",
+            "Content-Type",
+            "text/html; charset=utf-8",
+            "Content-Encoding",
+            "gzip",
+            "Expires",
+            "-1",
+            "Vary",
+            "Accept-Encoding",
+            "Server",
+            "Microsoft-IIS/10.0",
+            "x-ms-request-id",
+            "|caec9439d19058458e581e57e98c40cc.9ae2c843_",
+            "X-Content-Type-Options",
+            "nosniff",
+            "Strict-Transport-Security",
+            "max-age=31536000",
+            "Date",
+            "Fri, 27 Sep 2019 20:13:21 GMT",
+            "Connection",
+            "close"
+        ],
+        "reqheaders": {
+            "content-type": [
+                "application/json; charset=utf-8"
+            ],
+            "authorization": [
+                "Bearer mockedToken"
+            ],
+            "accept": [
+                "*/*"
+            ],
+            "accept-encoding": [
+                "gzip,deflate"
+            ],
+            "connection": [
+                "close"
+            ],
+            "host": "api.botframework.com"
+        }
+    }
+]

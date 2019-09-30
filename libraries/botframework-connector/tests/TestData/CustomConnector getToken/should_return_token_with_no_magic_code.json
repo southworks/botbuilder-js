@@ -1,0 +1,59 @@
+[
+    {
+        "scope": "https://api.botframework.com:443",
+        "method": "GET",
+        "path": "/api/usertoken/GetToken?userId=mockedUserId&connectionName=authname&channelId=emulator",
+        "body": "",
+        "status": 200,
+        "response": [
+            "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f227ef16f9ca4e947d36ab9cca76d512d5f648bfca347e947d9ba9d2ff1fb881bb4d5db7c89cff3ebefece4bff771f165f19ddfeb27777fa2787ef29df564effe4fffd4ebb34fcf963ff9e5178b55f693e5ead5e4d9c5ee176fdedefff2ab9f2cb26f3f7bf7ddc5aafe7dca9f3c7bfe7b3f7b3bf9fc3bdf99fcf4b31ffcd4b3e3dde7df7db1f3ea274f01673ef97c0ab8afbffac1d9ee8be2ac395b5eecce4e08eee2d94ffc3ef75eddfbbdf71ebe9d95df7939d9f9c92f7fea072fbe3bd979d8bcfeeec5f5ecf3f2d9f49ada2fdad54fddbafd771e8e6930f3d9777f823a3dbbfae2e9b1fcff7a877f3e7f43bf3f3d6e7f9f1fd0cf13f9ccfb3f105e4def7d41ef7ea79a7dfbd5d5f407d5e5f37b2f76a6d7f7ef65dfbdff76726ff683e78bfbe5ece461f1c54f7f75f5c50f7eaafce27af7ed4fbdf9e2fef337af163ff5dd2fdadfe7cdabf9eff37ab7f8a9cf4f77bef8eed9fe8b1f3c79fbc50f2e2ecf8aab22fbeeb39db39faedebd78f3fbdc7ff1d3a73b5f3ebdd8a53ed7bfcfe2f729befce9d3dd173ffd76ef8b373fb1ffe5d3af68e03fb93fa5817ff1e6abbd2fdffc3eefbe7c3add7ff1faaaf87dbefbe2a741c02f4ef8f76b82577cf11a847ab69a5c13a1de3efbc9afbe7ab6fbfc07f3173ff1d5b3273ff17bff3e3bb3a7cf5e66e593cf27bb67bb5f7dfbe25dfe6cfe13cf770e6832bf7837f9c99f5cffc4deab9f7cb5f770fee2ab875f7df774f7bbaf16bb2fb39ffcea1d31c1b3d9f249f3ddc5b3c577df3c7bfeeaf4d5d94fbdddfdee9bc5c1e54ffca0bcfaeaf461f9e2db2fee7ff7f31797b367af9efcc477a7efa66f9e2d5fbed929685cf3c9ef7d567c5936c5f4dbb3b718ffe4bb3f353f2b7780ebd5f4d9c3b7d9effde26af2f9b3fb93c5b396996df16c77f6f97ce7a77eef173b5fbcb96018d36f3f1106f8e917c5177b67f7bf78337bfbfcbb3f71ef8ba7bf4ffbe2e957bb44ffe28bef7e75fdfccd4fcd7feaa7a744d32768f7eef7119a5c4d3f2fdf8674faa9f9e4bb6593ffe4c3f5eff3dddd129fbfba47b82e6625cd39cfd34fed957b3ff5ddfbe716aff2c57cb27cb5fa7dbe3be3efb3dffbc9fca73e7f2530dfbcbd7a4ef3f6fca74fdf7df97affdd1727e8e33ef5f115f8e8cdeff3ddfb3b34efcbc9f5936f4f17cfd63fb5f7933bb3cf0f0a1adb65c67cfa9df2f7f9e9dfe7fe174f69de5fefd0f8cef69fbff9893d9aeff6cba72434273bd72f7efa3bc54f2d7ee2075f3c257eda3bc3bba0dbce4f1584db4f7fc17fcfbe5bbe157c88977fc0bc4ffc7441ff3fdd79019c962f7e1afc74f676779e7df76afdd5e227e73f75f2e4c5ef43b4785ebe28278b9fb898dc7b423f09ceb79f5c4ff67e6a35f9fcab8b9ffcbd5f94d3e2feeb9ffaeeb3b767cf7ef2073ff57b9fc9bba734377be54f3f7ffbac999cd07bdf25fe937e563fb5777f35291ffe60061c897edfbdfe4e3df9bd5fac78ee972f767f1fe05dfed4d32fca9fbc7ef3f6ddeffde2deece5ecdb4f4e684ebefa8937cf7e9fecbbbbcfbefbf6d5d9ab9d176fbe584eef3d7f333bfba9b2dc7ff1f4a73e7df3dd29c64b3465dabdaf1ce2dd5d1ae3bbd9777fd2cdefd2cdeff3c5ec9ae66cf953bff7ab9dc9ce931f4ceefde44ef6edd9e574d192ecbfb89c8087963f7935c118deffbd9d0cfd2daadd57df5dbdfda9a7dff9f4bbcf7ef2db3ff9f6ed0f5ebdf9a9bdaf9e7ef5839ff88a15e71ed199c677f6eef94fb35eda27fa9d4fefd19897244ff77eb2c05cbffaead94ffee4ee8bd3d76fbef3f9ecf75e7df95d92bdd9dbf219f1e7db2fbffbf0f77af3f68bfbb3dde9d58bdffb3befbe7a73f683c9d357eb2f4e9ffd3e2f4ebef3d0c09c7dfee22deb93373fb1fbe2cd57f4ffe9bb2f963be3dffbf9eef1f67796f5d3cbafeebdfbfcf4a77f7aa778b87ffeede73fb17dfef217ddffe9dfffe23bdf79f38c98edf7af5e5dced6d3bd9faebfac49ae26afebeb6576f1fbcf9af5e7bff7d9c3e68bd557dffd7dcacb570f9e1e2f2f773f2f9eef",
+            "7ffaf0f7f9fddbb3fcf7fef6f1dbaf8ecf9e3fa87faf2f8fafcbf2275efcde7bf5ef5f55cf9ecd1faede3c7cf97b3f3f79b7f39d77af96dff9c9dfebe1577b937767eba7d34f1f4cbe9aeebe594f7ed169fe530f5fb5c57cf983fb6f9e7ea7ac7fffc957bfcffefdabe7ab17df3e6d8b1fbcfcf2a7bff8a9e92fda3dd97f727cb5fbe957f7da5fb4f3e6f7d9fffdaf67cb2fcfaf7f51f99d2fcfa7cf57df99bfbe9ade5fffe007e5e9eeabddc9e73f785ded7df193d5ea275e9d6e7ff9e4ecc5c1f6deefff7bef56bbbf7ff6538b2f9ffcc4e7bb2f5f7efbc5c9c38383f3cbed1f14cfae0ef62e27fbbff797e76797f7767fefc56256fc040dfaf7faeac97affd5bdeb8bdfffd9d9f9d565352fdaabd9f9db07bff717bfcfc1f147bf71f24bfe1f35839fd99f070000"
+        ],
+        "rawHeaders": [
+            "Cache-Control",
+            "no-cache",
+            "Pragma",
+            "no-cache",
+            "Content-Length",
+            "1848",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "Content-Encoding",
+            "gzip",
+            "Expires",
+            "-1",
+            "Vary",
+            "Accept-Encoding",
+            "Server",
+            "Microsoft-IIS/10.0",
+            "x-ms-request-id",
+            "|3cad93191367e74ebc9f842a2f57c76d.f111240a_",
+            "X-Content-Type-Options",
+            "nosniff",
+            "Strict-Transport-Security",
+            "max-age=31536000",
+            "Date",
+            "Fri, 27 Sep 2019 20:13:20 GMT",
+            "Connection",
+            "close"
+        ],
+        "reqheaders": {
+            "content-type": [
+                "application/json; charset=utf-8"
+            ],
+            "authorization": [
+                "Bearer mockedToken"
+            ],
+            "accept": [
+                "*/*"
+            ],
+            "accept-encoding": [
+                "gzip,deflate"
+            ],
+            "connection": [
+                "close"
+            ],
+            "host": "api.botframework.com"
+        }
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "scope": "https://api.botframework.com:443",
+        "method": "GET",
+        "path": "/api/usertoken/GetTokenStatus?userId=mockedUserId&channelId=emulator",
+        "body": "",
+        "status": 200,
+        "response": [
+            "1f8b0800000000000400edbd07601c499625262f6dca7b7f4af54ad7e074a10880601324d8904010ecc188cde692ec1d69472329ab2a81ca6556655d661640cced9dbcf7de7befbdf7de7befbdf7ba3b9d4e27f7dfff3f5c6664016cf6ce4adac99e2180aac81f3f7e7c1f3f22bef71b2769fa8bf14f9a7e34ad96cb7cda16d5f245b6c83f7a947e94addbf912bf8fb4c93c6bde546ff3257dd9d6ebdc7cdce4f56531cd5fd6d56531cbeba745b32ab36b03e5f807eb3a4f8f09f2659e3e2d6aeaa3aaafd3cbbd8ff0fa2f612037e3b01743e23c2b9b6f068bdf38f9feff036c62e63c0d010000"
+        ],
+        "rawHeaders": [
+            "Cache-Control",
+            "no-cache",
+            "Pragma",
+            "no-cache",
+            "Content-Length",
+            "231",
+            "Content-Type",
+            "application/json; charset=utf-8",
+            "Content-Encoding",
+            "gzip",
+            "Expires",
+            "-1",
+            "Vary",
+            "Accept-Encoding",
+            "Server",
+            "Microsoft-IIS/10.0",
+            "x-ms-request-id",
+            "|67963bf69a0a2242b36e58b6ba62c7fd.63307224_",
+            "X-Content-Type-Options",
+            "nosniff",
+            "Strict-Transport-Security",
+            "max-age=31536000",
+            "Date",
+            "Fri, 27 Sep 2019 20:13:21 GMT",
+            "Connection",
+            "close"
+        ],
+        "reqheaders": {
+            "content-type": [
+                "application/json; charset=utf-8"
+            ],
+            "authorization": [
+                "Bearer mockedToken"
+            ],
+            "accept": [
+                "*/*"
+            ],
+            "accept-encoding": [
+                "gzip,deflate"
+            ],
+            "connection": [
+                "close"
+            ],
+            "host": "api.botframework.com"
+        }
+    }
+]

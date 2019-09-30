@@ -1,0 +1,50 @@
+[
+    {
+        "scope": "https://api.botframework.com:443",
+        "method": "GET",
+        "path": "/api/usertoken/GetToken?userId=invalidUserId&connectionName=authname&channelId=emulator",
+        "body": "",
+        "status": 404,
+        "response": "",
+        "rawHeaders": [
+            "Cache-Control",
+            "no-cache",
+            "Pragma",
+            "no-cache",
+            "Expires",
+            "-1",
+            "Server",
+            "Microsoft-IIS/10.0",
+            "x-ms-request-id",
+            "|a66a4d6ebabe314eb5564bfd106d950e.63307221_",
+            "X-Content-Type-Options",
+            "nosniff",
+            "Strict-Transport-Security",
+            "max-age=31536000",
+            "Date",
+            "Fri, 27 Sep 2019 20:13:18 GMT",
+            "Connection",
+            "close",
+            "Content-Length",
+            "0"
+        ],
+        "reqheaders": {
+            "content-type": [
+                "application/json; charset=utf-8"
+            ],
+            "authorization": [
+                "Bearer mockedToken"
+            ],
+            "accept": [
+                "*/*"
+            ],
+            "accept-encoding": [
+                "gzip,deflate"
+            ],
+            "connection": [
+                "close"
+            ],
+            "host": "api.botframework.com"
+        }
+    }
+]
