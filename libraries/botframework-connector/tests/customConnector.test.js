@@ -24,7 +24,7 @@ var createConversation = () => ({
 ** -MockMode.record to use the test normal and record new mock files.
 ** -MockMode.wild to use the test without mocks and without recording.
 */
-const mode = MockMode.wild;
+const mode = MockMode.lockdown;
 
 // Set up this variables in your .env file
 const userId = process.env['USER_ID'];
@@ -109,7 +109,10 @@ describe('Token API tests', async function() {
                 .then(( {nockDone }) => {                
                     return (customClient.userToken.getToken(fakeUserId, connectionName, options))
                         .then((response) => {
-                            assert(response._response.status === 404);                        
+                            assert.equal(response._response.status, 404);                        
+                        })
+                        .catch((error) => {
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });    
@@ -121,7 +124,10 @@ describe('Token API tests', async function() {
                 .then(async ({ nockDone }) => {                
                     return (customClient.userToken.getToken(userId, connectionName, options))
                         .then((response) => {
-                            assert(response._response.status === 200);
+                            assert.equal(response._response.status, 200);
+                        })
+                        .catch((error) => {
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });    
@@ -134,6 +140,9 @@ describe('Token API tests', async function() {
                     return (customClient.userToken.getToken(userId, 'invalid', options))
                         .then((result) => {
                             assert.equal(result.token, null);
+                        })
+                        .catch((error) => {
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });
@@ -211,6 +220,9 @@ describe('Token API tests', async function() {
                             assert.notEqual(result[0].hasToken, null);
                             assert(result[0].serviceProviderDisplayName);
                         })
+                        .catch((error) => {
+                            assert.fail(error.message);
+                        })
                         .then(nockDone);
                 });
         });
@@ -235,7 +247,7 @@ describe('Token API tests', async function() {
                             assert.equal(result._response.status, 200);
                             assert(result._response.bodyAsText.match(urlRegex));
                         }, (error) => {
-                            assert.fail(error);
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });           
@@ -286,8 +298,8 @@ describe('Token API tests', async function() {
                     return (customClient.userToken.signOut(userId, options))
                         .then((response) => {
                             assert.equal(response._response.status, 401);
-                        }).catch((reject) => {
-                            assert.fail(reject.message);
+                        }).catch((error) => {
+                            assert.fail(error.message);
                         })
                         .then(nockDone);
                 });
@@ -299,6 +311,7 @@ describe('Token API tests', async function() {
                 .then(({ nockDone }) => {
                     return (customClient.userToken.signOut(userId, options))
                         .then((response) => {
+                            assert(result._response);
                             assert.equal(response._response.status, 200);
                         })
                         .catch((error) => {
@@ -306,20 +319,7 @@ describe('Token API tests', async function() {
                         })
                         .then(nockDone);
                 });
-        });
-
-        it('should return a response', function() {
-            setHeaderForTest(this.test);
-            return usingNock(this.test, mode)
-                .then(({ nockDone }) => {
-                    return (customClient.userToken.signOut(userId, options))
-                        .then((result) => {
-                            assert(result._response);
-                            assert.equal(result._response.status, 200);
-                        })
-                        .then(nockDone);
-                });
-        });    
+        });  
     });
 });
    
