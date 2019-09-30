@@ -69,15 +69,6 @@ var createConversation = () => ({
     bot: bot
 });
 
-/*
-** Steps to obtain a response 200 in getToken method:
-** 1.- Run an authentication bot which you could log in with you azure account (https://github.com/southworks/BotBuilder-Samples/tree/master/samples/javascript_nodejs/18.bot-authentication)
-** 2.- Open Bot Framework Emulator
-** 3.- Interact with you bot and log in
-** 4.- Get the user id 
-** 5.- Call the method using the id obtained in the last step
-*/
-
 describe('Token API tests', async function() {
     before(async function() {
         customCredentials = new customBotframeworkConnector.CustomMicrosoftAppCredentials(appId, appPassword); 
