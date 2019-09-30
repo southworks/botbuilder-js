@@ -1,3 +1,45 @@
+/*
+** WORKING WITH THESE TESTS
+**  TO RUN MOCKED:
+**  1. Supply .env with (all must be valid):
+**      * Set MOCK_MODE=lockdown or leave empty
+**      * APP_ID (application ID)
+**      * APP_PASSWORD (client secret)
+**  2. If you are using samples you recorded, also provide:
+**      * CHAT_USER_ID (from conversation with the bot, the same used to record)
+**      * CONNECTION_NAME (name given to the connection in the bot, the same used to record)
+**
+**  TO RUN LIVE UNMOCKED, WITHOUT RECORDING:
+**  1. Set up a bot in Azure and configure a connection
+**  2. Supply .env with (all must be valid)
+**      * Set MOCK_MODE=wild
+**      * APP_ID (application ID used in the bot)
+**      * APP_PASSWORD (client secret used in the bot)
+**      * CHAT_USER_ID (from conversation with the bot)
+**      * CONNECTION_NAME (name given to the connection in the bot)
+**
+**  TO RUN LIVE AND RECORD:
+**  1. Set up a bot in Azure and configure a connection
+**  2. Supply .env with (all must be valid)
+**      * Set MOCK_MODE=record
+**      * APP_ID (application ID used in the bot)
+**      * APP_PASSWORD (client secret used in the bot)
+**      * CHAT_USER_ID (from conversation with the bot)
+**      * CONNECTION_NAME (name given to the connection in the bot)
+**
+**  HOW TO GET VALID APP_ID AND APP_PASSWORD
+**  To create a new app you need an Azure AD Application in azure portal,
+**  you can create a new app registration or use the one you used to create you bot.
+**  https://docs.microsoft.com/en-us/azure/bot-service/bot-service-resources-bot-framework-faq?view=azure-bot-service-4.0#app-registration
+**
+**  HOW TO SET UP A BOT
+**  To set up a bot in azure you can use the sample https://github.com/southworks/BotBuilder-Samples/tree/master/samples/javascript_nodejs/18.bot-authentication
+**  and follow the instructions in GitHub "deploy your bot to azure" and "add authentication to your bot"
+**
+**  To get a valid user id interact with your bot and log in from emulator,
+**  you must be logged to get a 200 answer in getToken.
+*/
+
 require('dotenv').config({path: __dirname + '/.env'});
 const fs = require('fs-extra');
 const path = require('path');
@@ -13,16 +55,9 @@ let customCredentials = customBotframeworkConnector.CustomMicrosoftAppCredential
 let customClient = customBotframeworkConnector.CustomTokenApiClient;
 let options;
 
-/*
-** To use this test select one of these modes:
-** -MockMode.lockdown to use the test with the mocked files.
-** -MockMode.record to use the test normal and record new mock files.
-** -MockMode.wild to use the test without mocks and without recording.
-*/
-
 // Set up this variables in your .env file
 const mode = process.env['MOCK_MODE'] || MockMode.lockdown;
-const userId = process.env['USER_ID'] || 'mockedUserId';
+const userId = process.env['CHAT_USER_ID'] || 'mockedUserId';
 const appId = process.env['APP_ID'];
 const appPassword = process.env['APP_PASSWORD'];
 const connectionName = process.env['CONNECTION_NAME'] || 'authname';
