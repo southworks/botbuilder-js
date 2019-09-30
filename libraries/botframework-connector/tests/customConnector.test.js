@@ -29,12 +29,12 @@
 **
 **  HOW TO GET VALID APP_ID AND APP_PASSWORD
 **  To create a new app you need an Azure AD Application in azure portal,
-**  you can create a new app registration or use the one you used to create you bot.
+**  you can create a new app registration or use the one you used to create your bot.
 **  https://docs.microsoft.com/en-us/azure/bot-service/bot-service-resources-bot-framework-faq?view=azure-bot-service-4.0#app-registration
 **
 **  HOW TO SET UP A BOT
 **  To set up a bot in azure you can use the sample https://github.com/southworks/BotBuilder-Samples/tree/master/samples/javascript_nodejs/18.bot-authentication
-**  and follow the instructions in GitHub "deploy your bot to azure" and "add authentication to your bot"
+**  and follow the instructions in GitHub "deploy your bot to azure" and "add authentication to your bot".
 **
 **  To get a valid user id interact with your bot and log in from emulator,
 **  you must be logged to get a 200 answer in getToken.
