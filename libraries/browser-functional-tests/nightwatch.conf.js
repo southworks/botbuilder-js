@@ -1,49 +1,41 @@
 const chromedriver = require('chromedriver');
+const seleniumServer = require('selenium-server');
 
 module.exports = {
     src_folders: ['tests'],
     page_objects_path: 'tests/tests_pages',
-    webdriver: {
-        start_process: true,
-        server_path: 'node_modules/.bin/chromedriver',
-        port: 9515
-    },
-
-    test_workers: {
-        enabled: false,
-        workers: 'auto'
-    },
     test_settings: {
-        default: {
-            webdriver: {
-                start_process: true,
-                server_path: chromedriver.path,
-                port: 9515,
-                cli_args: ['--port=9515']
-            },
-            desiredCapabilities: {
-                browserName: 'chrome',
-                javascriptEnabled: true,
-                acceptSslCerts: true,
-                chromeOptions: {
-                    args: ['headless', 'disable-gpu']
-                }
-            }
-        },
         chrome: {
             webdriver: {
                 start_process: true,
                 server_path: chromedriver.path,
                 port: 9515,
-                cli_args: ['--port=9515']
+                cli_args: ['--port=9515', '--verbose']
             },
             desiredCapabilities: {
                 browserName: 'chrome',
                 javascriptEnabled: true,
                 acceptSslCerts: true,
-                chromeOptions: {
-                    args: ['headless', 'disable-gpu']
+                loggingPrefs: {
+                    'driver': 'INFO',
+                    'server': 'INFO',
+                    'browser': 'INFO'
                 }
+            }
+        },
+        edge: {
+            selenium: {
+                start_process: true,
+                server_path: seleniumServer.path,
+                host: '127.0.0.1',
+                port: 4444,
+                cli_args: {
+                    'webdriver.edge.driver': 'tests/bin/MicrosoftWebDriver-EdgeHTML.exe'
+                }
+            },
+            desiredCapabilities: {
+                browserName: "MicrosoftEdge",
+                acceptSslCerts: true
             }
         }
     }

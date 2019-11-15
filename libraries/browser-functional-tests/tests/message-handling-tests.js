@@ -46,7 +46,10 @@ async function assertMessageIsPresentInPage(pageInstance, textSearch, assertMess
         for (let index = 0; (index < messagesWebElements.value.length); index++) {
             const webElement = messagesWebElements.value[index];
             messagesListPromises.push(new Promise(function(resolve){
-                pageInstance.api.elementIdText(webElement.ELEMENT, function(elementText) {
+                // Workaround for different implementations of the WebDriver API
+                // This will be fixed when all browsers makes use of Selenium Server v4 which is compliant with the W3C WebDriver standards
+                var elementId = webElement.ELEMENT != undefined ? webElement.ELEMENT : webElement.values()[0];
+                pageInstance.api.elementIdText(elementId, function(elementText) {
                     resolve(elementText.value == textSearch);
                 });
             }));
@@ -57,6 +60,7 @@ async function assertMessageIsPresentInPage(pageInstance, textSearch, assertMess
             let messageExists = results.some(function (value) {
                 return value;
             });
+            // Check if any of the existing messages was equal to the needle.
             pageInstance.assert.strictEqual(messageExists, true, assertMessage);
         });
     });
