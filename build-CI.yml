@@ -1,0 +1,37 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+trigger:
+    - master
+
+pr:
+    - master
+    
+pool:
+  vmImage: 'vs2017-win2016'
+    
+steps:
+
+- task: NodeTool@0
+  displayName: 'Install Node.js'
+  inputs:
+    versionSpec: '10.x'
+    
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    verbose: false 
+  
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: 'custom'
+    verbose: false
+    customCommand: 'run build'
+    
+- task: Npm@1
+  displayName: 'npm run test'
+  inputs:
+    command: 'custom'
+    verbose: false
+    customCommand: 'run test'
