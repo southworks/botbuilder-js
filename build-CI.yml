@@ -13,21 +13,14 @@ pool:
 steps:
 
 - task: NodeTool@0
-  displayName: 'Install Node.js'
+  displayName: 'Use Node 10.'
   inputs:
-    versionSpec: '10.x'
+    versionSpec: 10.x
     
 - task: Npm@1
   displayName: 'npm install'
   inputs:
     command: 'install'
-  
-- task: Npm@1
-  displayName: 'npm run build'
-  inputs:
-    command: 'custom'
-    verbose: false
-    customCommand: 'run build'
     
 - task: Npm@1
   displayName: 'npm run test'
