@@ -18,7 +18,7 @@ steps:
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create Bot Resource Group'
   inputs:
-    azureSubscription: '$(AzureSubscription)'
+    azureSubscription: 'southworks'
     resourceGroupName: '$(TestBotName)'
     location: 'Central US'
     csmFile: 'libraries/functional-tests/functionaltestbot/template/windows/template.json'
@@ -27,7 +27,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Prepare Bot to Deploy'
   inputs:
-    azureSubscription: '$(AzureSubscription)'
+    azureSubscription: 'southworks'
     scriptLocation: inlineScript
     inlineScript: |
      call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot" --lang Javascript
@@ -45,7 +45,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Create Direct Line'
   inputs:
-    azureSubscription: '$(AzureSubscription)'
+    azureSubscription: 'southworks'
     scriptLocation: inlineScript
     inlineScript: |
      call az webapp deployment source config-zip --resource-group "$(TestBotName)" --name "$(TestBotName)" --src "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot/testbot.zip"
@@ -82,7 +82,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Delete Resource Group'
   inputs:
-    azureSubscription: '$(AzureSubscription)'
+    azureSubscription: 'southworks'
     scriptLocation: inlineScript
     inlineScript: 'call az group delete -n "$(TestBotName)" --yes'
   condition: always()
