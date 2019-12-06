@@ -23,7 +23,7 @@ steps:
     verbose: false
 
 - task: Npm@1
-  displayName: 'npm functional-test'
+  displayName: 'npm test'
   inputs:
     command: custom
     verbose: false
