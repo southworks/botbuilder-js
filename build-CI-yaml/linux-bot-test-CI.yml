@@ -1,0 +1,108 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+trigger:
+    - master
+    
+pr:
+    - master
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+variables:
+  TestBotName: 'TestBotGAZLinux'
+
+steps:
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Create Bot Resource Group'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    resourceGroupName: '$(TestBotName)'
+    location: 'Central US'
+    csmFile: 'libraries/functional-tests/functionaltestbot/template/linux/template.json'
+    overrideParameters: '-botName "$(TestBotName)" -sku {"name":"S1","tier":"Standard","size":"S1","family":"S","capacity":1} -linuxFxVersion "NODE|10.14" -location "West US" -appId "$(TestBotAppId)" -appSecret "$(TestBotAppSecret)"'
+
+- task: AzureCLI@1
+  displayName: 'Prepare Bot to Deploy'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    scriptLocation: inlineScript
+    inlineScript: 'call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot" --lang Javascript'
+
+- task: NodeTool@0
+  displayName: 'Use Node 10x'
+  inputs:
+    versionSpec: 10.15.3
+
+- task: Npm@1
+  displayName: 'npm install'
+  inputs:
+    verbose: false
+
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run build'
+
+- script: |
+   set S=$(System.DefaultWorkingDirectory)\libraries
+   set D=$(System.DefaultWorkingDirectory)\libraries\functional-tests\functionaltestbot
+   
+   robocopy %S%\botbuilder %D%\botbuilder /S /XF .gitignore /XD src tests /NFL /NDL
+   
+   robocopy %S%\botbuilder-core %D%\botbuilder-core /S /XF .gitignore /XD src tests /NFL /NDL
+   
+   robocopy %S%\botframework-connector %D%\botframework-connector /S /XF .gitignore /XD src tests /NFL /NDL
+   
+   robocopy %S%\botframework-schema %D%\botframework-schema /S /XF .gitignore /XD src tests /NFL /NDL
+   
+   Move $(System.DefaultWorkingDirectory)\libraries\functional-tests\functionaltestbot\deployment-scripts\linux\* $(System.DefaultWorkingDirectory)\libraries\functional-tests\functionaltestbot
+   
+   git config --global user.name "BotBuilderDotNetPipeline"
+   
+   git config --global user.email BotBuilderDotNet@Pipeline.com
+   
+   git init
+   
+   git add .
+   
+   git commit -m "Add bot source code"
+   
+   git remote add azure https://$(AzureDeploymentUser):$(AzureDeploymentPassword)@$(TestBotName).scm.azurewebsites.net:443/$(TestBotName).git
+   
+   git push azure master
+  workingDirectory: 'libraries/functional-tests/functionaltestbot'
+  displayName: 'Git Bot Deployment'
+
+- task: AzureCLI@1
+  displayName: 'Create Direct Line'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    scriptLocation: inlineScript
+    inlineScript: 'call az bot directline create -n "$(TestBotName)" -g "$(TestBotName)" > "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot/DirectLineCreate.json"'
+
+- powershell: |
+   $json = Get-Content '$(System.DefaultWorkingDirectory)\libraries\functional-tests\functionaltestbot\DirectLineCreate.json' | Out-String | ConvertFrom-Json
+   
+   $key = $json.properties.properties.sites.key
+   
+   echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
+  displayName: 'Get Direct Line Keys'
+
+- task: Npm@1
+  displayName: 'npm functional-test'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run functional-test'
+
+- task: AzureCLI@1
+  displayName: 'Delete Resource Group'
+  inputs:
+    azureSubscription: '$(AzureSubscription)'
+    scriptLocation: inlineScript
+    inlineScript: 'call az group delete -n "$(TestBotName)" --yes'
+  condition: always()
