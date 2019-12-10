@@ -14,7 +14,6 @@ variables:
   TestBotName: 'FuncTestBotWin'
 
 steps:
-
 - task: AzureResourceGroupDeployment@2
   displayName: 'Create Bot Resource Group'
   inputs:
@@ -34,7 +33,7 @@ steps:
      
 - powershell: |
    move-item -path $(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot/deployment-scripts/windows/* -destination $(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot
-   
+
    $DirToCompress = "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot"
    $DirtoExclude =@("node_modules", "template", "deployment-scripts")
    $files = Get-ChildItem -Path $DirToCompress -Exclude $DirtoExclude
@@ -49,14 +48,11 @@ steps:
     scriptLocation: inlineScript
     inlineScript: |
      call az webapp deployment source config-zip --resource-group "$(TestBotName)" --name "$(TestBotName)" --src "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot/testbot.zip"
-     
      call az bot directline create -n "$(TestBotName)" -g "$(TestBotName)" > "$(System.DefaultWorkingDirectory)/libraries/functional-tests/functionaltestbot/DirectLineCreate.json"
 
 - powershell: |
    $json = Get-Content '$(System.DefaultWorkingDirectory)\libraries\functional-tests\functionaltestbot\DirectLineCreate.json' | Out-String | ConvertFrom-Json
-   
    $key = $json.properties.properties.sites.key
-   
    echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
 
   displayName: 'Get Direct Line Keys'
@@ -65,7 +61,6 @@ steps:
   displayName: 'Use Node 10x'
   inputs:
     versionSpec: 10.15.3
-
 
 - task: Npm@1
   displayName: 'npm install'
