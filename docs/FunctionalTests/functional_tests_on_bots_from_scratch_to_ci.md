@@ -176,7 +176,7 @@ To create your test bot and initialize its packages.
    ```
 
    Then, start the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme) and click on the **Open bot** button. 
-Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
+   Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
    
 Once connected, the bot will send you a welcome message.
    
