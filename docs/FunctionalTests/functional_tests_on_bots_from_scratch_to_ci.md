@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This article walks you through making and developing functional tests for bots testing from scratch to CI.
+This article walks you through making and developing functional tests for bots from scratch to CI.
 
 We will be covering the basics of making a simple echo bot to test, write functional tests using [Mocha](https://mochajs.org/) and create an [Azure CI](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) to Deploy the bot and running tests.
 
@@ -175,10 +175,11 @@ To create your test bot and initialize its packages.
    node index.js
    ```
 
-   Then, start the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme) and click on the **Open bot** button, Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
-
-   Once connected, the bot will send you a welcome message.
-
+   Then, start the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme) and click on the **Open bot** button. 
+Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
+   
+Once connected, the bot will send you a welcome message.
+   
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/bf-emulator-connected.png)
 
 
