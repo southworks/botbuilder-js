@@ -2,17 +2,15 @@
 
 ## Introduction
 
-This article walks you through making and development functional test for bots testing from the scratch to CI.
+This article walks you through making and developing functional tests for bots testing from scratch to CI.
 
-We will be covering the basics of making a simple echo bot to test, write functional tests using [Mocha](https://mochajs.org/) and create an Azure CI to Deploy the bot and running tests.
+We will be covering the basics of making a simple echo bot to test, write functional tests using [Mocha](https://mochajs.org/) and create an [Azure CI](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) to Deploy the bot and running tests.
 
 At the end, you will learn how to:
 
 - Create a basic Echo bot
-- Create a functional tests using Mocha as test suite
+- Create a functional test using Mocha as test suite
 - Set up an Azure CI for Deploying a bot and running functional the functional tests
-
-You can download the project files used in this article in the [project_files folder](https://github.com/microsoft/botbuilder-js/tree/master/libraries/functional-tests) included within this article's directory.
 
 ## Create a test bot
 
@@ -21,193 +19,186 @@ You can download the project files used in this article in the [project_files fo
 - [Visual Studio Code](https://www.visualstudio.com/downloads)
 - [Node.js](https://nodejs.org/)
 - [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme)
-- Knowledge of restify and asynchronous programming in JavaScript
 
-To write functional tests and make end-to-end testing first we need a Bot, (I know. I became Captain Obvious). If you already have a Bot built or you wish to skip this step you can get the test Bot used in this guide inside the [functionaltestbot](./functional-tests/functionaltestbot/) folder.
+To create your test bot and initialize its packages.
 
-Since we already have our dependencies installed, let's start right away by firstly creating a folder named `bots`, then create a JS file named `myBot.js` and open it in your desired code editor or IDE.
+1.  Create the next directory for your functional test project.
 
-Lets start by adding a `require` of the `botbuilder` package and import only the `ActivityHandler` with [destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Object_destructuring). 
+   ```
+   bot-functional-test
+   └───test-bot
+   ```
 
-Then we will define a new class extending `ActivityHandler` and export our Bot by using the [Node's exports module shorcut](https://nodejs.org/api/modules.html#modules_exports_shortcut). You should have something like this:
+2. Add the next files to the `test-bot` folder.
 
-```javascript
-// Require only the ActivityHandler class by using Destructuring Assignments.
-const { ActivityHandler } = require('botbuilder');
+   **package.json**
 
-// Define our Bot class extending the ActivityHandler class.
-class MyBot extends ActivityHandler {
-}
+   ```json
+   {
+     "name": "test-bot",
+     "version": "1.0.0",
+     "description": "a test bot for functional tests",
+     "main": "index.js",
+     "scripts": {
+       "test": "echo \"Error: no test specified\" && exit 1"
+     },
+     "author": "",
+     "license": "MIT",
+     "dependencies": {
+       "botbuilder": "^4.1.6",
+       "restify": "^8.3.0",
+       "dotenv": "^6.1.0"
+     }
+   }
+   ```
 
-// Export our class using Node's exports moodule shorcut.
-exports.MyBot = MyBot;
+   **bot.js**
 
-```
+   ```javascript
+   // Copyright (c) Microsoft Corporation. All rights reserved.
+   // Licensed under the MIT License.
+   
+   const { ActivityHandler, MessageFactory } = require('botbuilder');
+   
+   class EchoBot extends ActivityHandler {
+       constructor() {
+           super();
+           // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
+           this.onMessage(async (context, next) => {
+               const replyText = `Echo: ${ context.activity.text }`;
+               await context.sendActivity(MessageFactory.text(replyText, replyText));
+               // By calling next() you ensure that the next BotHandler is run.
+               await next();
+           });
+   
+           this.onMembersAdded(async (context, next) => {
+               const membersAdded = context.activity.membersAdded;
+               const welcomeText = 'Hello and welcome!';
+               for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
+                   if (membersAdded[cnt].id !== context.activity.recipient.id) {
+                       await context.sendActivity(MessageFactory.text(welcomeText, welcomeText));
+                   }
+               }
+               // By calling next() you ensure that the next BotHandler is run.
+               await next();
+           });
+       }
+   }
+   
+   module.exports.EchoBot = EchoBot;
+   
+   ```
 
-Now we need to define our Bot behavior logic using the constructor and registering the actions the Bot will make whenever an User interaction takes place.
+   **index.js**
 
-For ease of reading, the following code block contains comments explaining step by step the workflow that the Bot follows for each activity handler.
+   ```javascript
+   // Copyright (c) Microsoft Corporation. All rights reserved.
+   // Licensed under the MIT License.
+   
+   const dotenv = require('dotenv');
+   const path = require('path');
+   const restify = require('restify');
+   
+   // Import required bot services.
+   // See https://aka.ms/bot-services to learn more about the different parts of a bot.
+   const { BotFrameworkAdapter } = require('botbuilder');
+   
+   // This bot's main dialog.
+   const { EchoBot } = require('./bot');
+   
+   // Import required bot configuration.
+   const ENV_FILE = path.join(__dirname, '.env');
+   dotenv.config({ path: ENV_FILE });
+   
+   // Create HTTP server
+   const server = restify.createServer();
+   server.listen(process.env.port || process.env.PORT || 3978, () => {
+       console.log(`\n${ server.name } listening to ${ server.url }`);
+       console.log('\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator');
+       console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
+   });
+   
+   // Create adapter.
+   // See https://aka.ms/about-bot-adapter to learn more about how bots work.
+   const adapter = new BotFrameworkAdapter({
+       appId: process.env.MicrosoftAppId,
+       appPassword: process.env.MicrosoftAppPassword
+   });
+   
+   // Catch-all for errors.
+   const onTurnErrorHandler = async (context, error) => {
+       // This check writes out errors to console log .vs. app insights.
+       // NOTE: In production environment, you should consider logging this to Azure
+       //       application insights.
+       console.error(`\n [onTurnError] unhandled error: ${ error }`);
+   
+       // Send a trace activity, which will be displayed in Bot Framework Emulator
+       await context.sendTraceActivity(
+           'OnTurnError Trace',
+           `${ error }`,
+           'https://www.botframework.com/schemas/error',
+           'TurnError'
+       );
+   
+       // Send a message to the user
+       await context.sendActivity('The bot encountered an error or bug.');
+       await context.sendActivity('To continue to run this bot, please fix the bot source code.');
+   };
+   
+   // Set the onTurnError for the singleton BotFrameworkAdapter.
+   adapter.onTurnError = onTurnErrorHandler;
+   
+   // Create the main dialog.
+   const myBot = new EchoBot();
+   
+   // Listen for incoming requests.
+   server.post('/api/messages', (req, res) => {
+       adapter.processActivity(req, res, async (context) => {
+           // Route to main dialog.
+           await myBot.run(context);
+       });
+   });
+   
+   // Listen for Upgrade requests for Streaming.
+   server.on('upgrade', (req, socket, head) => {
+       // Create an adapter scoped to this WebSocket connection to allow storing session data.
+       const streamingAdapter = new BotFrameworkAdapter({
+           appId: process.env.MicrosoftAppId,
+           appPassword: process.env.MicrosoftAppPassword
+       });
+       // Set onTurnError for the BotFrameworkAdapter created for each connection.
+       streamingAdapter.onTurnError = onTurnErrorHandler;
+   
+       streamingAdapter.useWebSocket(req, socket, head, async (context) => {
+           // After connecting via WebSocket, run this logic for every request sent over
+           // the WebSocket connection.
+           await myBot.run(context);
+       });
+   });
+   
+   ```
 
-Let's add a constructor with the parameter `conversationState` that the SDK will inject with the data state associated with the current conversation.
+3. Install the node modules, open a terminal and run the next command in the test-bot folder.
 
-```javascript
-// TODO: Comment briefly the logic for each activity event handler registered
-constructor(conversationState) {
-    super();
+   ```bash
+   npm install
+   ```
 
-    this.conversationState = conversationState;
-    // Create a new property in the ConversationState databag to persist data between the conversation turns
-    this.conversationStateAccessor = this.conversationState.createProperty('test');
+4. Start and test the bot.
 
-    // Register handler that will be executed every time the User sends a message
-    this.onMessage(async (context, next) => {
-        // Get the current state of the conversation
-        var state = await this.conversationStateAccessor.get(context, { count: 0 });
+   Open a terminal in the directory where you created the index.js file, and start it with the next command.
 
-        // Answer the user with an echo message and the turn count
-        await context.sendActivity(`you said "${context.activity.text}" ${state.count}`);
+   ```bash
+   node index.js
+   ```
 
-        // Increment the turn counter
-        state.count++;
+   Then, start the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme) and click on the **Open bot** button, Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
 
-        // Persist the conversation data state
-        await this.conversationState.saveChanges(context, false);
+   Once connected, the bot will send you a welcome message.
 
-        // Release the conversation workflow
-        await next();
-    });
-
-    // Register handler that will be executed every time a new member is added to the conversation
-    this.onMembersAdded(async (context, next) => {
-        const membersAdded = context.activity.membersAdded;
-        for (let cnt = 0; cnt < membersAdded.length; cnt++) {
-            if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                // Iterate through the list of added members and greet them by it's name
-                await context.sendActivity(`welcome ${membersAdded[cnt].name}`);
-            }
-        }
-
-        // Release the conversation workflow
-        await next();
-    });
-}
-```
-
-With that in place we have a working Bot logic that is able to greet users that join the conversation and echoes back every message sent by an user.
-
-Even though the Bot has functional logic, we still don't have the Bot with an API with exposed endpoints for a client.
-
-To do this we will use Restify to make functional endpoints and expose our Bot.
-
-Let's get out of the Bot folder and create a file named index.js in the root of the functional-test-bot project and add the next code.
-
-```javascript
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-// Import required packages
-const restify = require('restify');
-const path = require('path');
-
-// Import required bot services.
-// See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
-const { MyBot } = require('./bots/myBot')
-
-const ENV_FILE = path.join(__dirname, '.env');
-require('dotenv').config({ path: ENV_FILE });
-
-const adapter = new BotFrameworkAdapter({
-    appId: process.env.MicrosoftAppId,
-    appPassword: process.env.MicrosoftAppPassword
-});
-
-var memoryStorage = new MemoryStorage();
-var inspectionState = new InspectionState(memoryStorage);
-
-var userState = new UserState(memoryStorage);
-var conversationState = new ConversationState(memoryStorage);
-
-adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, { appId: process.env.MicrosoftAppId, appPassword: process.env.MicrosoftAppPassword }));
-
-adapter.onTurnError = async (context, error) => {
-    console.error(`\n [onTurnError]: ${ error }`);
-    await context.sendActivity(`Oops. Something went wrong!`);
-};
-
-var bot = new MyBot(conversationState);
-
-console.log('welcome to test bot - a local test tool for working with the emulator');
-
-let server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function() {
-    console.log(`\n${ server.name } listening to ${ server.url }`);
-});
-
-server.post('/api/mybot', (req, res) => {
-    adapter.processActivity(req, res, async (turnContext) => {
-        await bot.run(turnContext);
-    });
-});
-
-server.post('/api/messages', (req, res) => {
-    adapter.processActivity(req, res, async (turnContext) => {
-        await bot.run(turnContext);
-    });
-});
-```
+   ![](C:\Projects\botbuilder-js\docs\media\bf-emulator-connected.png)
 
 
-### Start and test your bot
-
-Open a terminal or command prompt in the directory where you created the index.js file, and start it with `node index.js`. At this point, your bot is running locally.
-
-Then, start the Bot Framework Emulator and click on the Open bot button, Add the route of the bot endpoint running locally and connect. 
-
-Once connected, the bot will send you a welcome message.
-
-
-## Deploy your bot
-
-### Prerequisites
-- Azure subscription to [Microsoft Azure](https://azure.microsoft.com/free/)
-- Lastest version of the [Azure CLI](https://docs.microsoft.com/cli/azure/?view=azure-cli-latest)
-
-### Prepare for deployment
-
-To deploy your bot, you need to put the bot code into a zip file then deploy to azure using the CLI's commands.
-
-Before compress your bot code, you need to configure the project be able to run the bot when deployed to Azure.
-
-In the test bot folder run the next command:
-`az bot prepare-deploy --code-dir "." --lang Javascript``
-This command will fetch a web.config which is needed for Node.js apps to work with IIS on Azure App Services.
-
-Then, create a new file without name with the next extension `.deployment` and add the next logic to it.
-
-```
-[config]
-SCM_DO_BUILD_DURING_DEPLOYMENT=true
-```
-
-With this file when deploy your bot's code, Web App/Kudu's behavior is as follows:
-
-Kudu adds an additional build steps during deployment, such as npm install.
-
-Finally, Zip up the test bot code without the node_modules folder.
-
-#### Deploy code to Azure
-
-1. Login to Azure
-Once you have prepared the bot code to deploy. Open a command terminal to log in to the Azure Portal usinf the ClI's commands
-
-run `az login` A browser window will open, allowing you to sign in.
-
-2. Set the Subscription ID
-`az account set --subscription "<azure-subscription>"`
-
-3. Create Resource Group
-`az group create --name "<test-bot-name>" --location "Regions"`
 
 
 
