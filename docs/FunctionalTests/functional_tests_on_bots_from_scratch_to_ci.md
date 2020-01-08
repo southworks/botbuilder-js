@@ -8,9 +8,9 @@ We will be covering the basics of making a simple echo bot to test, write functi
 
 At the end, you will learn how to:
 
-- Create a basic Echo bot
-- Create a functional test using Mocha as test suite
-- Set up an Azure CI for Deploying a bot and running functional the functional tests
+- Create a test bot
+- Create a functional test using [Mocha](https://mochajs.org/) as a test suite
+- Set up an [Azure CI](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) for Deploying a bot and running the functional tests
 
 ## Create a test bot
 
@@ -60,7 +60,7 @@ To create your test bot and initialize its packages.
    
    const { ActivityHandler, MessageFactory } = require('botbuilder');
    
-   class EchoBot extends ActivityHandler {
+   class TestBot extends ActivityHandler {
        constructor() {
            super();
            // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
@@ -85,7 +85,7 @@ To create your test bot and initialize its packages.
        }
    }
    
-   module.exports.EchoBot = EchoBot;
+   module.exports.TestBot = TestBot;
    
    ```
 
@@ -104,7 +104,7 @@ To create your test bot and initialize its packages.
    const { BotFrameworkAdapter } = require('botbuilder');
    
    // This bot's main dialog.
-   const { EchoBot } = require('./bot');
+   const { TestBot } = require('./bot');
    
    // Import required bot configuration.
    const ENV_FILE = path.join(__dirname, '.env');
@@ -149,29 +149,12 @@ To create your test bot and initialize its packages.
    adapter.onTurnError = onTurnErrorHandler;
    
    // Create the main dialog.
-   const myBot = new EchoBot();
+   const myBot = new TestBot();
    
    // Listen for incoming requests.
    server.post('/api/messages', (req, res) => {
        adapter.processActivity(req, res, async (context) => {
            // Route to main dialog.
-           await myBot.run(context);
-       });
-   });
-   
-   // Listen for Upgrade requests for Streaming.
-   server.on('upgrade', (req, socket, head) => {
-       // Create an adapter scoped to this WebSocket connection to allow storing session data.
-       const streamingAdapter = new BotFrameworkAdapter({
-           appId: process.env.MicrosoftAppId,
-           appPassword: process.env.MicrosoftAppPassword
-       });
-       // Set onTurnError for the BotFrameworkAdapter created for each connection.
-       streamingAdapter.onTurnError = onTurnErrorHandler;
-   
-       streamingAdapter.useWebSocket(req, socket, head, async (context) => {
-           // After connecting via WebSocket, run this logic for every request sent over
-           // the WebSocket connection.
            await myBot.run(context);
        });
    });
