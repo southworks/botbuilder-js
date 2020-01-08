@@ -179,7 +179,7 @@ To create your test bot and initialize its packages.
 
    Once connected, the bot will send you a welcome message.
 
-   ![](C:\Projects\botbuilder-js\docs\media\bf-emulator-connected.png)
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/bf-emulator-connected.png)
 
 
 
