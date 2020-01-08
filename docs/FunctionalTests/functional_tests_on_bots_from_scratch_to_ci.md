@@ -1,28 +1,27 @@
-# Functional tests on Bots - From Scratch to CI
+# Bot Functional Test - From Scratch to CI
 
 ## Introduction
 
-In this article we will be making a walkthrough over the making and development of Functional tests using Mocha and make a simple bot to test using the [Bot Framework SDK v4 for Javascript](https://github.com/microsoft/botbuilder-js/).
+This article walks you through making and development functional test for bots testing from the scratch to CI.
 
-This guide aims to go through the basics of making functional tests from scratch using [Mocha](https://mochajs.org/) as the test suite and the [Bot Service DirectLine channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline?view=azure-bot-service-4.0) as our client interface. Additionally, you will have a better understanding of how is the workflow behind the functional tests library included in the Bot Framework SDK v4 for Javascript.
+We will be covering the basics of making a simple echo bot to test, write functional tests using [Mocha](https://mochajs.org/) and create an Azure CI to Deploy the bot and running tests.
+
+At the end, you will learn how to:
+
+- Create a basic Echo bot
+- Create a functional tests using Mocha as test suite
+- Set up an Azure CI for Deploying a bot and running functional the functional tests
 
 You can download the project files used in this article in the [project_files folder](https://github.com/microsoft/botbuilder-js/tree/master/libraries/functional-tests) included within this article's directory.
 
-## Setting up the development environment
+## Create a test bot
 
-To start, bring up a new terminal. We're going to start by initializing a new NPM project. Run `npm init --yes`, the `--yes` argument is *optional* if you want to automatically skips the metadata prompts.
+### Prerequisites
 
-The next step is to install the required dependencies by running `npm i mocha swagger-client --save-dev` at the root directory of your project.
-
-Now that we have the root test suite dependencies installed, let's create a new folder for our Bot named `functionaltestbot` (Feel free to use the name of your desire, just remember to replace `functionaltestbot` with the name that you've chosen).
-
-In the terminal, let's make our way to the new folder and run `cd functionaltestbot`. Then again we will run `npm init --yes` to initialize the new NPM project. 
-
-When NPM finishes creating the new project, let's run the command `npm botbuilder restify dotenv --save` since we are going to use the [Bot Builder for Node.js](https://www.npmjs.com/package/botbuilder) package to build our Bot, [Restify](https://www.npmjs.com/package/restify) to make a REST API and expose our Bot logic and [Dotenv](https://www.npmjs.com/package/dotenv) that will allow us to store values in a local `.env` file that will be loaded as environment variables in our Bot.
-
-Now we have all the dependencies will need to start making our Test-driven Bot and its functional tests suite.
-
-## Create test bot using the Bot Framework SDK v4 for JavaScript
+- [Visual Studio Code](https://www.visualstudio.com/downloads)
+- [Node.js](https://nodejs.org/)
+- [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme)
+- Knowledge of restify and asynchronous programming in JavaScript
 
 To write functional tests and make end-to-end testing first we need a Bot, (I know. I became Captain Obvious). If you already have a Bot built or you wish to skip this step you can get the test Bot used in this guide inside the [functionaltestbot](./functional-tests/functionaltestbot/) folder.
 
@@ -98,12 +97,20 @@ With that in place we have a working Bot logic that is able to greet users that 
 
 Even though the Bot has functional logic, we still don't have the Bot with an API with exposed endpoints for a client.
 
-To do this we will use Restify to make functional endpoints and expose our Bot [TO BE CONTINUED]
+To do this we will use Restify to make functional endpoints and expose our Bot.
+
+Let's get out of the Bot folder and create a file named index.js in the root of the functional-test-bot project and add the next code.
 
 ```javascript
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+// Import required packages
 const restify = require('restify');
 const path = require('path');
 
+// Import required bot services.
+// See https://aka.ms/bot-services to learn more about the different parts of a bot.
 const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
 const { MyBot } = require('./bots/myBot')
 
@@ -149,3 +156,59 @@ server.post('/api/messages', (req, res) => {
     });
 });
 ```
+
+
+### Start and test your bot
+
+Open a terminal or command prompt in the directory where you created the index.js file, and start it with `node index.js`. At this point, your bot is running locally.
+
+Then, start the Bot Framework Emulator and click on the Open bot button, Add the route of the bot endpoint running locally and connect. 
+
+Once connected, the bot will send you a welcome message.
+
+
+## Deploy your bot
+
+### Prerequisites
+- Azure subscription to [Microsoft Azure](https://azure.microsoft.com/free/)
+- Lastest version of the [Azure CLI](https://docs.microsoft.com/cli/azure/?view=azure-cli-latest)
+
+### Prepare for deployment
+
+To deploy your bot, you need to put the bot code into a zip file then deploy to azure using the CLI's commands.
+
+Before compress your bot code, you need to configure the project be able to run the bot when deployed to Azure.
+
+In the test bot folder run the next command:
+`az bot prepare-deploy --code-dir "." --lang Javascript``
+This command will fetch a web.config which is needed for Node.js apps to work with IIS on Azure App Services.
+
+Then, create a new file without name with the next extension `.deployment` and add the next logic to it.
+
+```
+[config]
+SCM_DO_BUILD_DURING_DEPLOYMENT=true
+```
+
+With this file when deploy your bot's code, Web App/Kudu's behavior is as follows:
+
+Kudu adds an additional build steps during deployment, such as npm install.
+
+Finally, Zip up the test bot code without the node_modules folder.
+
+#### Deploy code to Azure
+
+1. Login to Azure
+Once you have prepared the bot code to deploy. Open a command terminal to log in to the Azure Portal usinf the ClI's commands
+
+run `az login` A browser window will open, allowing you to sign in.
+
+2. Set the Subscription ID
+`az account set --subscription "<azure-subscription>"`
+
+3. Create Resource Group
+`az group create --name "<test-bot-name>" --location "Regions"`
+
+
+
+
