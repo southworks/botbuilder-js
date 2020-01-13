@@ -185,6 +185,128 @@ To create your test bot and initialize its packages.
 
 
 
+## Create Functional Test
+
+The functional test will consist in three parts. 
+
+One, creating a DirectLine client to connect the test with the bot using the [swagger-client](https://www.npmjs.com/package/swagger-client) package.
+
+Two, use the client to create a conversation then, send a message and retrieve the bot response. 
+
+Three, make the assertion of the bot message.
+
+To create the functional test
+
+1. Add the next files in the root of the project folder.
+
+   **package.json**
+
+   ```json
+   {
+     "name": "functional-tests",
+     "version": "1.0.0",
+     "description": "Test that hits services",
+     "main": "",
+     "dependencies": {
+       "mocha": "^7.0.0",
+       "swagger-client": "^2.1.18"
+     },
+     "directories": {
+       "test-bot": "test-bot"
+     },
+     "scripts": {},
+     "keywords": [],
+     "author": "",
+     "license": "MIT"
+   }
+   ```
+
+   **directline-swagger.json**
+
+   Find the Direct Line API definition in the functional test folder from the **BotBuilder-JS** repository. [Here](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/tests/directline-swagger.json) 
+
+   **functional.test.js**
+
+   ``````javascript
+   /**
+    * Copyright (c) Microsoft Corporation. All rights reserved.
+    * Licensed under the MIT License.
+    */
+   
+   const assert = require('assert');
+   const directLineSpec = require('./directline-swagger.json');
+   const Swagger = require('swagger-client');
+   
+   const directLineClientName = 'DirectLineClient';
+   const userMessage = 'Contoso';
+   const directLineSecret = process.env.DIRECT_LINE_KEY || null;
+   
+   const auths = {
+       AuthorizationBotConnector: new Swagger.ApiKeyAuthorization('Authorization', 'BotConnector ' + directLineSecret, 'header'),
+   };
+   
+   function getDirectLineClient() {    
+       return new Swagger({
+           spec: directLineSpec,
+           usePromise: true,
+           authorizations: auths
+       });
+   }
+   
+   async function sendMessage(client, conversationId) {       
+       let status;
+       do{
+           await client.Conversations.Conversations_PostMessage({
+               conversationId: conversationId,
+               message: {
+                   from: directLineClientName,
+                   text: userMessage
+               }
+           }).then((result) => {
+               status = result.status;
+           }).catch((err)=>{
+               status = err.status;
+           }); 
+       }while(status == 502);
+   }
+   
+   function getMessages(client, conversationId) {    
+       let watermark = null;
+       return client.Conversations.Conversations_GetMessages({ conversationId: conversationId, watermark: watermark })
+           .then((response) => {            
+               return response.obj.messages.filter((message) => message.from !== directLineClientName);       
+           });
+   }
+   
+   function getConversationId(client) {
+       return client.Conversations.Conversations_NewConversation()
+           .then((response) => response.obj.conversationId);
+   }
+   
+   describe('Test Azure Bot', function(){
+       this.timeout(60000);    
+       it('Check deployed bot answer', async function(){
+           const directLineClient = await getDirectLineClient();    
+           const conversationId = await getConversationId(directLineClient);
+           await sendMessage(directLineClient, conversationId);
+           const messages = await getMessages(directLineClient, conversationId);
+           const result = messages.filter((message) => message.text.includes('You said'));                
+           assert(result[0].text == `You said: "${ userMessage }"`, `test fail`);
+       });
+   });
+   
+   ``````
 
 
 
+As you can see in the test code.
+
+```javascript
+const directLineSecret = process.env.DIRECT_LINE_KEY || null;
+```
+
+To run the test you will need a `directLineSecret` value. which is a token used for the bot connector authorization schema to make requests to the bot.
+
+To get this value you will need that your bot is been deployed in Azure and have a [DirectLine Channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline?view=azure-bot-service-4.0) configured.
+
+The test gets the value from the process environment variables as it will be running in an [Azure DevOps pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops).
