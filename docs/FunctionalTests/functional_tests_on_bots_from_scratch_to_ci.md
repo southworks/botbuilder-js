@@ -187,9 +187,9 @@ To create your test bot and initialize its packages.
 
 ## Create Functional Test
 
-The functional test will consist in three parts. 
+The functional test will consist of three parts:
 
-One, creating a DirectLine client to connect the test with the bot using the [swagger-client](https://www.npmjs.com/package/swagger-client) package.
+One, create a DirectLine client to connect the test with the bot using the [swagger-client](https://www.npmjs.com/package/swagger-client) package.
 
 Two, use the client to create a conversation then, send a message and retrieve the bot response. 
 
@@ -305,7 +305,7 @@ As you can see in the test code.
 const directLineSecret = process.env.DIRECT_LINE_KEY || null;
 ```
 
-To run the test you will need a `directLineSecret` value. which is a token used for the bot connector authorization schema to make requests to the bot.
+To run the test, you will need a `directLineSecret` value, which is a token used for the bot connector authorization schema to make requests to the bot.
 
 To get this value you will need that your bot is been deployed in Azure and have a [DirectLine Channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline?view=azure-bot-service-4.0) configured.
 
