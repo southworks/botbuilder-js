@@ -198,7 +198,7 @@ To test the bot locally
 
 A functional test is a testing process that aims to validate if the behavior of an application matches the business requirements.
 
-In this case, we create a bot that aims to respond to user messages with an echo. The purpose of this functional test will be to verify that a bot deployed in Azure complies with this behavior. 
+In this case, we created a bot that aims to respond to user messages with an echo. The purpose of this functional test will be to verify that a bot deployed in Azure complies with this behavior. 
 
 ```
 user: Contoso
@@ -221,22 +221,24 @@ To create the functional test:
 
    ```json
    {
-     "name": "functional-tests",
-     "version": "1.0.0",
-     "description": "Test that hits services",
-     "main": "",
-     "dependencies": {
-       "mocha": "^7.0.0",
-       "swagger-client": "^2.1.18"
-     },
-     "directories": {
-       "test-bot": "test-bot"
-     },
-     "scripts": {},
-     "keywords": [],
-     "author": "",
-     "license": "MIT"
-   }
+       "name": "functional-tests",
+       "version": "1.0.0",
+       "description": "Test that hits services",
+       "main": "",
+       "dependencies": {
+         "mocha": "^7.0.0",
+         "swagger-client": "^2.1.18"
+       },
+       "directories": {
+         "test-bot": "test-bot"
+       },
+       "scripts": {
+         "functional-test":"mocha functional.test.js"
+       },
+       "keywords": [],
+       "author": "",
+       "license": "MIT"
+}
    ```
 
    **directline-swagger.json**
@@ -244,7 +246,7 @@ To create the functional test:
    Find the Direct Line API definition in the functional test folder from the **BotBuilder-JS** repository. [Here](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/tests/directline-swagger.json) 
 
    **functional.test.js**
-
+   
    ``````javascript
    /**
     * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -408,14 +410,14 @@ To set up an Azure Pipeline
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources-parameters.png)
 
-7. Add an **Azure CLI** task to generate the *web.config* file necessary to deploy a bot source code to Azure. Configure the task with an Azure subscription and the script inline options.
+7. Add an **Azure CLI** **task** to generate the *web.config* file necessary to deploy a bot source code to Azure. Configure the task with an *Azure subscription* and select the *script inline* options.
 
    The script looks likes:
    `call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/testbot" --lang Node`
 
-   [image]
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/prepare-to-deploy-task.png)
 
-8. Add the **PowerShell** task to compress the bot source code. Configure the task with the *'Inline'* script option. In this task, exclude the *node_modules* folder and the *template* folder.
+8. Add a **PowerShell** **task** to compress the bot source code. Configure the task with the *'Inline'* script option.
 
    The script looks likes:
 
@@ -423,25 +425,25 @@ To set up an Azure Pipeline
    $DirToCompress = "$(System.DefaultWorkingDirectory)/test-bot"
    $DirtoExclude =@("node_modules", "deploymentTemplates")
    $files = Get-ChildItem -Path $DirToCompress -Exclude $DirtoExclude
-   $ZipFileResult ="$(System.DefaultWorkingDirectory)/testbot.zip"
+   $ZipFileResult ="$(System.DefaultWorkingDirectory)/test-bot.zip"
    Compress-Archive -Path $files -DestinationPath $ZipFileResult
    ```
 
-   [image]
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/compress-bot-source-code-task.png)
 
-9. Add the **Azure CLI task** task to deploy the bot zip file and connect it to the *DirectLine* channel. The output with the secret key goes into a *.json* file. We will use this key to start a conversation with the bot in the test logic.
+9. Add an **Azure CLI task** task to deploy the bot zip file and connect it to the *DirectLine* channel. The output with the secret key goes into a *.json* file. We will use this key to start a conversation with the bot in the test logic. Configure the task with an *Azure subscription* and select the *script inline* options.
 
    The script looks likes:
 
    ```powershell
-   call az webapp deployment source config-zip --resource-group "$(TestBotName)" --name "$(TestBotName)" --src "$(System.DefaultWorkingDirectory)/testbot.zip"
+   call az webapp deployment source config-zip --resource-group "$(BotName)" --name "$(BotName)" --src "$(System.DefaultWorkingDirectory)/test-bot.zip"
    
-   call az bot directline create -n "$(TestBotName)" -g "$(TestBotName)" > "$(System.DefaultWorkingDirectory)/DirectLineCreate.json"
+   call az bot directline create -n "$(BotName)" -g "$(BotName)" > "$(System.DefaultWorkingDirectory)/DirectLineCreate.json"
    ```
 
-   [image]
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-and-set-direct-line-task.png)
 
-10. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot.
+10. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot. Configure the task with the *'Inline'* script option.
 
     The script looks likes:
 
@@ -453,25 +455,26 @@ To set up an Azure Pipeline
     echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
     ```
 
-    [image]
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/get-direct-line-key-task.png)
 
 11. Configure the Pipeline to run the *functional-tests*
 
     1. Add a Node Task
-       1. Node version 10x
+       1. Configure the *Version Spec* field to `10.x`
     2. Add NPM install task
        1. Use the default options
     3. Add NPM Custom command task
-       1. Run the functional-test command
+       1. Command: `custom`
+       2. Command and arguments: `run functional-test`
 
-    [image]
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/run-functional-test-tasks.png)
 
 12. After the Tests run, add a new **Azure CLI Task** to delete the resource group we've created.
 
     The script looks likes:
-    `call az group delete -n "$(TestBotName)" --yes`
+    `call az group delete -n "$(BotName)" --yes`
 
-    [image]
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/run-functional-test-tasks.png)
 
     is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
 
