@@ -26,7 +26,7 @@ To create your test bot and initialize its packages.
 
 1. Create the next directory for your functional test project.
 
-   ```
+   ```tex
    bot-functional-test
    └───test-bot
    	└───bots
@@ -157,11 +157,11 @@ To deploy the bot in Azure, we will need a deployment template. We use it to aut
 
 1. Add a new folder in the `test-bot` directory. 
 
-   ```
+   ```tex
    bot-functional-test
    └───test-bot
    	└───bots
-     └───deploymentTemplates
+       	└───deploymentTemplates
    ```
 
 2. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
@@ -478,27 +478,6 @@ To set up an Azure Pipeline
 
 
 
-
-1. 
-
-1. 
-
-2. 
-
-3. Add the **Azure Resource Group Deployment task** to create the Bot Resource Group, by filling the Resource group's name and adding the Template's URL: 'libraries/testbot/template/template.json'
-
-4. Prepare to deploy
-
-5. Compress the bot source code
-
-6. Deploy and set the direct line channel
-
-7. Add steps to run the functional test
-
-   1. npm install
-   2. npm run functional test
-
-   
 
 
 
