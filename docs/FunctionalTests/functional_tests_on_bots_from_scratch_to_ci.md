@@ -161,7 +161,7 @@ To deploy the bot in Azure, we will need a deployment template. We use it to aut
    bot-functional-test
    └───test-bot
    	└───bots
-       └───deploymentTemplates
+         └───deploymentTemplates
    ```
 
 2. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
@@ -383,7 +383,7 @@ To set up an Azure Pipeline
 
 5. In the **Variables tab**, add the next variables: **AppId**, **AppSecret**, **BotName**
 
-   - *Note: The `AppId` and `AppSecret` values refers to an App Registration. You can create one using the portal [here](https://go.microsoft.com/fwlink/?linkid=2083908)*
+   - Note: The `AppId` and `AppSecret` values refers to an App Registration. You can create one using the portal [here](https://go.microsoft.com/fwlink/?linkid=2083908)
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/add-pipeline-variables.png)
 
