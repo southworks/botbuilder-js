@@ -161,7 +161,7 @@ To deploy the bot in Azure, we will need a deployment template. We use it to aut
    bot-functional-test
    └───test-bot
    	└───bots
-         └───deploymentTemplates
+     └───deploymentTemplates
    ```
 
 2. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
