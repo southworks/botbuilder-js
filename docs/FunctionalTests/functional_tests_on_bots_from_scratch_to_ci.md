@@ -153,9 +153,24 @@ To create your test bot and initialize its packages.
 
 
 
-To deploy the bot in Azure, we will need a deployment template. We use it to automatize the process of creation the resources relate to the bot. #### TODO: add something relate to the steps below.
+To deploy the bot in Azure, we will need two files more. 
 
-1. Add a new folder in the `test-bot` directory. 
+The **deployment template**, that is a file used it to automatize the process of creation the resources relate to the bot.
+
+The **.deployment** script, that is a file used to automatize the installation of the dependencies needed in the project when the bot is deployed. 
+
+To add the deployment files:
+
+1. In the `test-bot` directory, add the next file
+
+   **.deployment**
+   
+   ```tex
+   [config]
+   SCM_DO_BUILD_DURING_DEPLOYMENT=true
+   ```
+
+2. Create a new folder `deploymentTemplates` in the `test-bot` directory. 
 
    ```tex
    bot-functional-test
@@ -164,9 +179,10 @@ To deploy the bot in Azure, we will need a deployment template. We use it to aut
        	└───deploymentTemplates
    ```
 
-2. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
+3. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
 
-   
+
+
 
 To test the bot locally
 
@@ -198,7 +214,7 @@ To test the bot locally
 
 A functional test is a testing process that aims to validate if the behavior of an application matches the business requirements.
 
-In this case, we created a bot that aims to respond to user messages with an echo. The purpose of this functional test will be to verify that a bot deployed in Azure complies with this behavior. 
+In this case, we created a bot that simply "echoes" back to the user whatever the user says to the bot, so the purpose of this functional test will be to verify when this bot is deployed in Azure, it complies with this behavior.
 
 ```
 user: Contoso
@@ -396,7 +412,7 @@ To set up an Azure Pipeline
 6. In the **Task tab**, Add an **Azure Resource Group Deployment task** to create the Bot Resources, fill the fields: 
 
    1. **Azure Subscription**
-      - You need to add an Azure Resource Manager service connection. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
+      - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
    2. **Resource Group**
       - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
    3. **Location**
