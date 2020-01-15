@@ -474,7 +474,7 @@ To set up an Azure Pipeline
     The script looks likes:
     `call az group delete -n "$(BotName)" --yes`
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/run-functional-test-tasks.png)
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resource-group-task.png)
 
     is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
 
