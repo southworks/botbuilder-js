@@ -12,6 +12,8 @@ At the end, you will learn how to:
 - Create a functional test using [Mocha](https://mochajs.org/) as a test suite
 - Set up an [Azure CI](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) for Deploying a bot and running the functional tests
 
+You can download the project files used in this article in the [functional-tests folder](https://github.com/microsoft/botbuilder-js/tree/master/libraries/functional-tests) included within the BotBuilder-JS repository.
+
 ## Create a test bot
 
 ### Prerequisites
@@ -22,11 +24,12 @@ At the end, you will learn how to:
 
 To create your test bot and initialize its packages.
 
-1.  Create the next directory for your functional test project.
+1. Create the next directory for your functional test project.
 
    ```
    bot-functional-test
    └───test-bot
+   	└───bots
    ```
 
 2. Add the next files to the `test-bot` folder.
@@ -35,9 +38,9 @@ To create your test bot and initialize its packages.
 
    ```json
    {
-     "name": "test-bot",
+     "name": "testbot",
      "version": "1.0.0",
-     "description": "a test bot for functional tests",
+     "description": "a test bot for working locally",
      "main": "index.js",
      "scripts": {
        "test": "echo \"Error: no test specified\" && exit 1"
@@ -52,41 +55,45 @@ To create your test bot and initialize its packages.
    }
    ```
 
-   **bot.js**
+   In the folder `bots`, add the **myBot.js** file.
 
    ```javascript
-   // Copyright (c) Microsoft Corporation. All rights reserved.
-   // Licensed under the MIT License.
+   /**
+    * Copyright (c) Microsoft Corporation. All rights reserved.
+    * Licensed under the MIT License.
+    */
    
-   const { ActivityHandler, MessageFactory } = require('botbuilder');
+   const { ActivityHandler } = require('botbuilder');
    
-   class TestBot extends ActivityHandler {
-       constructor() {
+   class MyBot extends ActivityHandler {
+       constructor(conversationState) {
            super();
-           // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
+           this.conversationState = conversationState;
+           this.conversationStateAccessor = this.conversationState.createProperty('test');
            this.onMessage(async (context, next) => {
-               const replyText = `Echo: ${ context.activity.text }`;
-               await context.sendActivity(MessageFactory.text(replyText, replyText));
-               // By calling next() you ensure that the next BotHandler is run.
+   
+               var state = await this.conversationStateAccessor.get(context, { count: 0 });
+   
+               await context.sendActivity(`you said "${ context.activity.text }" ${ state.count }`);
+   
+               state.count++;
+               await this.conversationState.saveChanges(context, false);
+   
                await next();
            });
-   
            this.onMembersAdded(async (context, next) => {
                const membersAdded = context.activity.membersAdded;
-               const welcomeText = 'Hello and welcome!';
-               for (let cnt = 0; cnt < membersAdded.length; ++cnt) {
+               for (let cnt = 0; cnt < membersAdded.length; cnt++) {
                    if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                       await context.sendActivity(MessageFactory.text(welcomeText, welcomeText));
+                       await context.sendActivity(`welcome ${ membersAdded[cnt].name }`);
                    }
                }
-               // By calling next() you ensure that the next BotHandler is run.
                await next();
-           });
+           });        
        }
    }
    
-   module.exports.TestBot = TestBot;
-   
+   exports.MyBot = MyBot;
    ```
 
    **index.js**
@@ -95,79 +102,81 @@ To create your test bot and initialize its packages.
    // Copyright (c) Microsoft Corporation. All rights reserved.
    // Licensed under the MIT License.
    
-   const dotenv = require('dotenv');
-   const path = require('path');
    const restify = require('restify');
+   const path = require('path');
    
-   // Import required bot services.
-   // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-   const { BotFrameworkAdapter } = require('botbuilder');
+   const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
+   const { MyBot } = require('./bots/myBot')
    
-   // This bot's main dialog.
-   const { TestBot } = require('./bot');
-   
-   // Import required bot configuration.
    const ENV_FILE = path.join(__dirname, '.env');
-   dotenv.config({ path: ENV_FILE });
+   require('dotenv').config({ path: ENV_FILE });
    
-   // Create HTTP server
-   const server = restify.createServer();
-   server.listen(process.env.port || process.env.PORT || 3978, () => {
-       console.log(`\n${ server.name } listening to ${ server.url }`);
-       console.log('\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator');
-       console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
-   });
-   
-   // Create adapter.
-   // See https://aka.ms/about-bot-adapter to learn more about how bots work.
    const adapter = new BotFrameworkAdapter({
        appId: process.env.MicrosoftAppId,
        appPassword: process.env.MicrosoftAppPassword
    });
    
-   // Catch-all for errors.
-   const onTurnErrorHandler = async (context, error) => {
-       // This check writes out errors to console log .vs. app insights.
-       // NOTE: In production environment, you should consider logging this to Azure
-       //       application insights.
-       console.error(`\n [onTurnError] unhandled error: ${ error }`);
+   var memoryStorage = new MemoryStorage();
+   var inspectionState = new InspectionState(memoryStorage);
    
-       // Send a trace activity, which will be displayed in Bot Framework Emulator
-       await context.sendTraceActivity(
-           'OnTurnError Trace',
-           `${ error }`,
-           'https://www.botframework.com/schemas/error',
-           'TurnError'
-       );
+   var userState = new UserState(memoryStorage);
+   var conversationState = new ConversationState(memoryStorage);
    
-       // Send a message to the user
-       await context.sendActivity('The bot encountered an error or bug.');
-       await context.sendActivity('To continue to run this bot, please fix the bot source code.');
+   adapter.use(new InspectionMiddleware(inspectionState, userState, conversationState, { appId: process.env.MicrosoftAppId, appPassword: process.env.MicrosoftAppPassword }));
+   
+   adapter.onTurnError = async (context, error) => {
+       console.error(`\n [onTurnError]: ${ error }`);
+       await context.sendActivity(`Oops. Something went wrong!`);
    };
    
-   // Set the onTurnError for the singleton BotFrameworkAdapter.
-   adapter.onTurnError = onTurnErrorHandler;
+   var bot = new MyBot(conversationState);
    
-   // Create the main dialog.
-   const myBot = new TestBot();
+   console.log('welcome to test bot - a local test tool for working with the emulator');
    
-   // Listen for incoming requests.
-   server.post('/api/messages', (req, res) => {
-       adapter.processActivity(req, res, async (context) => {
-           // Route to main dialog.
-           await myBot.run(context);
+   let server = restify.createServer();
+   server.listen(process.env.port || process.env.PORT || 3978, function() {
+       console.log(`\n${ server.name } listening to ${ server.url }`);
+   });
+   
+   server.post('/api/mybot', (req, res) => {
+       adapter.processActivity(req, res, async (turnContext) => {
+           await bot.run(turnContext);
        });
    });
    
+   server.post('/api/messages', (req, res) => {
+       adapter.processActivity(req, res, async (turnContext) => {
+           await bot.run(turnContext);
+       });
+   });
    ```
 
-3. Install the node modules, open a terminal and run the next command in the test-bot folder.
+
+
+To deploy the bot in Azure, we will need a deployment template. We use it to automatize the process of creation the resources relate to the bot. #### TODO: add something relate to the steps below.
+
+1. Add a new folder in the `test-bot` directory. 
+
+   ```
+   bot-functional-test
+   └───test-bot
+   	└───bots
+       └───deploymentTemplates
+   ```
+
+2. Create a **template.json** file. Then, copy the content of the [windows template](https://github.com/microsoft/botbuilder-js/blob/master/libraries/functional-tests/functionaltestbot/template/windows/template.json) file used in the `functional-test` project of the **BotBuilder-JS** repository.
+
+   
+
+To test the bot locally
+
+1. Install the node modules, open a terminal and run the next command in the test-bot folder.
 
    ```bash
    npm install
    ```
 
-4. Start and test the bot.
+2. Start and test the bot.
 
    Open a terminal in the directory where you created the index.js file, and start it with the next command.
 
@@ -176,9 +185,9 @@ To create your test bot and initialize its packages.
    ```
 
    Then, start the [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme) and click on the **Open bot** button. 
-   
+
    Add the route of the bot endpoint `http://localhost:3978/api/messages` and click on **Connect**.
-   
+
    Once connected, the bot will send you a welcome message.
 
     ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/bf-emulator-connected.png)
@@ -187,7 +196,16 @@ To create your test bot and initialize its packages.
 
 ## Create Functional Test
 
-The functional test will consist of three parts:
+A functional test is a testing process that aims to validate if the behavior of an application matches the business requirements.
+
+In this case, we create a bot that aims to respond to user messages with an echo. The purpose of this functional test will be to verify that a bot deployed in Azure complies with this behavior. 
+
+```
+user: Contoso
+bot: you said "Contoso" 0
+```
+
+The logic of the functional test will consist of three parts:
 
 One, create a DirectLine client to connect the test with the bot using the [swagger-client](https://www.npmjs.com/package/swagger-client) package.
 
@@ -195,7 +213,7 @@ Two, use the client to create a conversation then, send a message and retrieve t
 
 Three, make the assertion of the bot message.
 
-To create the functional test
+To create the functional test:
 
 1. Add the next files in the root of the project folder.
 
@@ -290,8 +308,8 @@ To create the functional test
            const conversationId = await getConversationId(directLineClient);
            await sendMessage(directLineClient, conversationId);
            const messages = await getMessages(directLineClient, conversationId);
-           const result = messages.filter((message) => message.text.includes('You said'));                
-           assert(result[0].text == `You said: "${ userMessage }"`, `test fail`);
+           const result = messages.filter((message) => message.text.includes('you said'));                
+           assert(result[0].text == `you said "${ userMessage }" 0`, `test fail`);
        });
    });
    
@@ -310,3 +328,179 @@ To run the test, you will need a `directLineSecret` value, which is a token used
 To get this value you will need that your bot is been deployed in Azure and have a [DirectLine Channel](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-directline?view=azure-bot-service-4.0) configured.
 
 The test gets the value from the process environment variables as it will be running in an [Azure DevOps pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops).
+
+
+
+## Set up an Azure pipeline to run the functional test
+
+This section will guide you through configuring a Azure pipeline that you can use to automatically build and test your code. 
+
+### Prerequisites
+
+- [Microsoft Azure](https://azure.microsoft.com/free/) subscription
+- [git](https://git-scm.com/)
+- Familiarity with [Azure CLI and ARM templates](https://docs.microsoft.com/azure/azure-resource-manager/resource-group-overview)
+
+Before use the [Azure DevOps services](https://docs.microsoft.com/es-es/azure/devops/user-guide/what-is-azure-devops?view=azure-devops) to setup an [Azure pipeline](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops) to run the functional test, you must to have the `bot-functional-test` project source code in a GitHub repository.  
+
+To create a GitHub repository
+
+1. Add the next file into the `bot-functional-test` root directory
+
+   **.gitignore**
+
+   ```tex
+   # Dependency directories
+   node_modules/
+   
+   # Related to Teams Scenarios work
+   *.zip
+   *.vscode
+   ```
+
+2. Follow the next guides
+
+   - [Creating a new repository](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-new-repository)
+   - [Adding an existing project to GitHub using the command line](https://help.github.com/en/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line)
+
+   
+
+To set up an Azure Pipeline
+
+1. Create an Azure DevOps organization following the next [guide](https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started/what-is-azure-pipelines?view=azure-devops), if you have one, you can skip this step.
+
+2. Create an Azure DevOps project following the next [guide](https://docs.microsoft.com/en-us/azure/devops/organizations/projects/create-project?view=azure-devops&tabs=preview-page#create-a-project), if you have one, you can skip this step.
+
+3. Create a new build pipeline. Then, select the ***use classic editor*** option. 
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/new-pipeline-use-classic.-editor.png)
+
+4. Add the GitHub repository of the `functional-test` project. Then, click on **Empty job**
+
+   - Note: You need to authorize the connection between Azure DevOps and GitHub repository. 
+   
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/choose-repository-select-empty-job.png)
+
+5. In the **Variables tab**, add the next variables: **AppId**, **AppSecret**, **BotName**
+
+   - *Note: The `AppId` and `AppSecret` values refers to an App Registration. You can create one using the portal [here](https://go.microsoft.com/fwlink/?linkid=2083908)*
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/add-pipeline-variables.png)
+
+   Set the variables **AppId**, **AppSecret** as locked variables. 
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/lock-sensitive-var-data.png)
+
+6. In the **Task tab**, Add an **Azure Resource Group Deployment task** to create the Bot Resources, fill the fields: 
+
+   1. **Azure Subscription**
+      - You need to add an Azure Resource Manager service connection. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
+   2. **Resource Group**
+      - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
+   3. **Location**
+      - Select the location in where place the resources.
+   4. **Template**  
+      - Add the path to the Deployment template file of the bot ` bot-functional-test/testbot/deploymentTemplates/template.json'` 
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources.png)
+
+   Click on `“…”` next to the **Override Parameters** textbox and complete the field we highlighted on the image bellow (**serverfarmName**, **siteName**, **appId**, **appSecret** and **botId**) using quotation marks.
+
+   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources-parameters.png)
+
+7. Add an **Azure CLI** task to generate the *web.config* file necessary to deploy a bot source code to Azure. Configure the task with an Azure subscription and the script inline options.
+
+   The script looks likes:
+   `call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/testbot" --lang Node`
+
+   [image]
+
+8. Add the **PowerShell** task to compress the bot source code. Configure the task with the *'Inline'* script option. In this task, exclude the *node_modules* folder and the *template* folder.
+
+   The script looks likes:
+
+   ```powershell
+   $DirToCompress = "$(System.DefaultWorkingDirectory)/test-bot"
+   $DirtoExclude =@("node_modules", "deploymentTemplates")
+   $files = Get-ChildItem -Path $DirToCompress -Exclude $DirtoExclude
+   $ZipFileResult ="$(System.DefaultWorkingDirectory)/testbot.zip"
+   Compress-Archive -Path $files -DestinationPath $ZipFileResult
+   ```
+
+   [image]
+
+9. Add the **Azure CLI task** task to deploy the bot zip file and connect it to the *DirectLine* channel. The output with the secret key goes into a *.json* file. We will use this key to start a conversation with the bot in the test logic.
+
+   The script looks likes:
+
+   ```powershell
+   call az webapp deployment source config-zip --resource-group "$(TestBotName)" --name "$(TestBotName)" --src "$(System.DefaultWorkingDirectory)/testbot.zip"
+   
+   call az bot directline create -n "$(TestBotName)" -g "$(TestBotName)" > "$(System.DefaultWorkingDirectory)/DirectLineCreate.json"
+   ```
+
+   [image]
+
+10. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot.
+
+    The script looks likes:
+
+    ```
+    $json = Get-Content '$(System.DefaultWorkingDirectory)\DirectLineCreate.json' | Out-String | ConvertFrom-Json
+    	
+    $key = $json.properties.properties.sites.key
+    
+    echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
+    ```
+
+    [image]
+
+11. Configure the Pipeline to run the *functional-tests*
+
+    1. Add a Node Task
+       1. Node version 10x
+    2. Add NPM install task
+       1. Use the default options
+    3. Add NPM Custom command task
+       1. Run the functional-test command
+
+    [image]
+
+12. After the Tests run, add a new **Azure CLI Task** to delete the resource group we've created.
+
+    The script looks likes:
+    `call az group delete -n "$(TestBotName)" --yes`
+
+    [image]
+
+    is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
+
+
+
+
+
+1. 
+
+1. 
+
+2. 
+
+3. Add the **Azure Resource Group Deployment task** to create the Bot Resource Group, by filling the Resource group's name and adding the Template's URL: 'libraries/testbot/template/template.json'
+
+4. Prepare to deploy
+
+5. Compress the bot source code
+
+6. Deploy and set the direct line channel
+
+7. Add steps to run the functional test
+
+   1. npm install
+   2. npm run functional test
+
+   
+
+
+
+
+
