@@ -214,7 +214,9 @@ To test the bot locally
 
 A functional test is a testing process that aims to validate if the behavior of an application matches the business requirements.
 
-In this case, we created a bot that simply "echoes" back to the user whatever the user says to the bot, so the purpose of this functional test will be to verify when this bot is deployed in Azure, it complies with this behavior.
+In this case, we created a bot that simply "echoes" back to the user whatever the user says to the bot. 
+
+The purpose of the functional test will be to verify if the bot created complies with the behavior described below.
 
 ```
 user: Contoso
@@ -254,7 +256,7 @@ To create the functional test:
        "keywords": [],
        "author": "",
        "license": "MIT"
-}
+   }
    ```
 
    **directline-swagger.json**
@@ -492,7 +494,7 @@ To set up an Azure Pipeline
 
     ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resource-group-task.png)
 
-    is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
+    Is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
 
 
 
