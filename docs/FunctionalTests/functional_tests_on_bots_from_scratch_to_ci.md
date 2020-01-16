@@ -470,7 +470,7 @@ To set up an Azure Pipeline
 
     ```powershell
     $json = Get-Content '$(System.DefaultWorkingDirectory)\DirectLineCreate.json' | Out-String | ConvertFrom-Json
-    	
+
     $key = $json.properties.properties.sites.key
     
     echo "##vso[task.setvariable variable=DIRECT_LINE_KEY;]$key"
