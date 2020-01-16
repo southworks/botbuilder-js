@@ -351,7 +351,7 @@ The test gets the value from the process environment variables as it will be run
 
 
 
-## Set up an Azure pipeline to run the functional test
+## Set up an Azure pipeline
 
 This section will guide you through configuring a Azure pipeline that you can use to automatically build and test your code. 
 
