@@ -22,7 +22,7 @@ You can download the project files used in this article in the [functional-tests
 - [Node.js](https://nodejs.org/)
 - [Bot Framework Emulator](https://aka.ms/bot-framework-emulator-readme)
 
-To create your test bot and initialize its packages.
+To create your test bot:
 
 1. Create the next directory for your functional test project.
 
@@ -55,7 +55,7 @@ To create your test bot and initialize its packages.
    }
    ```
 
-   In the folder `bots`, add the **myBot.js** file.
+   In the `bots` folder, add the **myBot.js** file.
 
    ```javascript
    /**
@@ -153,7 +153,7 @@ To create your test bot and initialize its packages.
 
 
 
-To deploy the bot in Azure, we will need two files more. 
+To deploy the bot in Azure, we will need the next files. 
 
 The **deployment template**, that is a file used it to automatize the process of creation the resources relate to the bot.
 
@@ -508,6 +508,6 @@ To set up an Azure Pipeline
 
     ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/save-and-queue.png)
 
-    The result of the pipeline process looks like:
+    After running all the tasks, click on the NPM custom task. The log of the task displays the outcome of the functional test. 
 
-    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/------.png)
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/pipeline-process-result.png)
