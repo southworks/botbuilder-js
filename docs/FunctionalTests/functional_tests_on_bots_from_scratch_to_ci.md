@@ -420,7 +420,7 @@ To set up an Azure Pipeline
    3. **Location**
       - Select the location in where place the resources.
    4. **Template**  
-      - Add the path to the Deployment template file of the bot ` bot-functional-test/testbot/deploymentTemplates/template.json'` 
+      - Add the path to the Deployment template file of the bot ` test-bot/deploymentTemplates/template.json` 
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/deploy-bot-resources.png)
 
@@ -431,7 +431,10 @@ To set up an Azure Pipeline
 7. Add an **Azure CLI** **task** to generate the *web.config* file necessary to deploy a bot source code to Azure. Configure the task with an *Azure subscription* and select the *script inline* options.
 
    The script looks likes:
-   `call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/testbot" --lang Node`
+
+   ```powershell
+   call az bot prepare-deploy --code-dir "$(System.DefaultWorkingDirectory)/testbot" --lang Node
+   ```
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/prepare-to-deploy-task.png)
 
@@ -490,17 +493,13 @@ To set up an Azure Pipeline
 12. After the Tests run, add a new **Azure CLI Task** to delete the resource group we've created.
 
     The script looks likes:
-    `call az group delete -n "$(BotName)" --yes`
-
+    
+```powershell
+    call az group delete -n "$(BotName)" --yes
+```
+    
     ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resource-group-task.png)
-
+    
     Is strongly recommend setting this task to run even if any of the previous tasks have failed or the build has been canceled. With this setting, we will ensure that the resources will be deleted from Azure even if the build fails at any step.
 
-
-
-
-
-
-
-
-
+    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/media/delete-resource-run-option-task.png)
