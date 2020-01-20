@@ -648,19 +648,18 @@ To set up an Azure Pipeline
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/bot-deployment-task.png)
 
    Click on `“…”` next to the **Override Parameters** textbox and complete the field with the next values.
-
-   ```
-   Name						Value
-   appId						$(AppId)
-   appSecret					$(AppSecret)
-   groupLocation				centralus
-   groupName					$(BotName)
-   botId						$(BotName)
-   botSku						F0
-   newAppServicePlanName		$(BotName)
-   newAppServicePlanLocation	centralus
-   newWebAppName				$(BotName)
-   ```
+   
+   | Name                      | Value        |
+   | ------------------------- | ------------ |
+   | appId                     | $(AppId)     |
+   | appSecret                 | $(AppSecret) |
+   | groupLocation             | centralus    |
+   | groupName                 | $(BotName)   |
+   | botId                     | $(BotName)   |
+   | botSku                    | F0           |
+   | newAppServicePlanName     | $(BotName)   |
+   | newAppServicePlanLocation | centralus    |
+   | newWebAppName             | $(BotName)   |
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/deploy-bot-resources-parameters.png)
 
