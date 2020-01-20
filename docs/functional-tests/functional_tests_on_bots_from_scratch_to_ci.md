@@ -621,11 +621,11 @@ To set up an Azure Pipeline
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/compress-bot-source-code-task.png)
 
-8. In the **Task tab**, Add an **Bot Deployment task** to deploy the bot zip file and connect it to the *DirectLine* channel. It will generate a *DirectLineCreate.json* file with a secret key. The key is used to start a conversation with the bot in the test logic.
+8. In the **Task tab**, Add an **Bot Deployment task** to deploy the bot zip file and connect it to the *DirectLine* channel. It will generate a *DirectLineCreate.json* file with a secret key. The key is used to start a conversation with the bot in the test logic. 
 
-   - Note: Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). 
+   Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). 
 
-     
+   
 
    - **Azure Subscription**
      - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
