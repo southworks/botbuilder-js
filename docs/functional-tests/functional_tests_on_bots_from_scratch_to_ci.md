@@ -660,6 +660,8 @@ To set up an Azure Pipeline
    | newAppServicePlanName     | $(BotName)   |
    | newAppServicePlanLocation | centralus    |
    | newWebAppName             | $(BotName)   |
+   
+   Click on **Add** button to get a new row. Then, click on **OK** to save the values. 
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/deploy-bot-resources-parameters.png)
 
