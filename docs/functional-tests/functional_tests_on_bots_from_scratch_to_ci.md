@@ -625,18 +625,25 @@ To set up an Azure Pipeline
 
    - Note: Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). 
 
-   1. **Azure Subscription**
-      - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
-   2. **Resource Group**
-      - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
-   3. **Location**
-      - Select the location in where place the resources.
-   4. **Template**  
-      - Add the path to the Deployment template file of the bot ` test-bot/deploymentTemplates/template.json` 
-   5. **Zipped Bot**
-      - Add the path to the bot source code compressed before, As the zip file is in the root directory, you can just add the name of the file. `test-bot.zip`
-   6. **Channels**
-      - Select the `Direct Line` channel. 
+     
+
+   - **Azure Subscription**
+     - Select an Azure Service Connection. This configuration allows to the Azure pipeline to create and manage Azure resources. You can follow this [guide](https://www.azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/) to create an Azure service connection
+
+   - **Resource Group**
+     - Use the *BotName* pipeline variable create before. you can access to its content with the next syntax $("BotName")
+
+   - **Location**
+     - Select the location in where place the resources.
+
+   - **Template**  
+     - Add the path to the Deployment template file of the bot ` test-bot/deploymentTemplates/template.json` 
+
+   - **Zipped Bot**
+     - Add the path to the bot source code compressed before, As the zip file is in the root directory, you can just add the name of the file. `test-bot.zip`
+
+   - **Channels**
+     - Select the `Direct Line` channel. 
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/bot-deployment-task.png)
 
