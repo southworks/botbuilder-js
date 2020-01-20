@@ -623,7 +623,7 @@ To set up an Azure Pipeline
 
 8. In the **Task tab**, Add an **Bot Deployment task** to deploy the bot zip file and connect it to the *DirectLine* channel. It will generate a *DirectLineCreate.json* file with a secret key. The key is used to start a conversation with the bot in the test logic. 
 
-   Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). 
+   Install the task extension following the next [guide](https://docs.microsoft.com/en-us/azure/devops/marketplace/install-extension?view=azure-devops&tabs=browser). Then, complete the next fields. 
 
    
 
