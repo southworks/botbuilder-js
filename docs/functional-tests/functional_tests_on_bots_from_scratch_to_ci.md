@@ -647,7 +647,10 @@ To set up an Azure Pipeline
 
    ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/bot-deployment-task.png)
 
-   Click on `“…”` next to the **Override Parameters** textbox and complete the field with the next values.
+   Click on `“…”` next to the **Override Parameters** textbox. 
+   
+   In the **Override Template Parameters** popup window, click on **Add** button to get a new row.
+   Then, complete grid with the next values. 
    
    | Name                      | Value        |
    | ------------------------- | ------------ |
@@ -661,9 +664,7 @@ To set up an Azure Pipeline
    | newAppServicePlanLocation | centralus    |
    | newWebAppName             | $(BotName)   |
    
-   Click on **Add** button to get a new row. Then, click on **OK** to save the values. 
-
-   ![alt text](https://github.com/southworks/botbuilder-js/blob/add/deploy-bot-deploy-section/docs/functional-tests/images/deploy-bot-resources-parameters.png)
+   Finally, click on **OK** to save the values.
 
 9. Add the **PowerShell task** to read the *.json* file generated in the previous step and get the secret key to connect to the bot. Configure the task with the *'Inline'* script option.
 
