@@ -181,6 +181,10 @@ To add the deployment files:
 
 3. Create a **template.json** file inside the `deploymentTemplates`. Then, copy the content
 
+   <details>
+   <summary>Click to expand template code</summary>
+   <p>
+   
    ```json
    {
        "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -366,6 +370,9 @@ To add the deployment files:
        ]
    }
    ```
+   
+   </p>
+   </details>
 
 
 
