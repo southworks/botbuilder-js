@@ -665,7 +665,18 @@ describe('TeamsInfo', () => {
             }
         });
     });
+    describe('getPagedTeamMembers()', () => {
+        it('should throw error when teamId is not present', async () => {
+            try {
+                const context = new TestContext({ type: ActionTypes.message });
+                await TeamsInfo.getPagedTeamMembers(context);
+            } catch(err) {
+                assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
+            }
+        });
+    });
 });
+    
 
 const oneOnOneActivity = {
     'text': 'Hello World!',
