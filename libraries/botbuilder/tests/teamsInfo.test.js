@@ -675,7 +675,37 @@ describe('TeamsInfo', () => {
             }
         });
     });
-});
+    
+    describe('getPagedMembers()', () => {
+        function assertMemberInfo(results, mockedData) {
+            assert(results && Array.isArray(results), `unexpected type for results arg: "${ typeof results }"`);
+            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${ typeof mockedData }"`);
+            assert.strictEqual(results.length, mockedData.length);
+
+            for(let i = 0; i < results.length; i++) {
+                assert.strictEqual(results[i].id, mockedData[i].id);
+                assert.strictEqual(results[i].name, mockedData[i].name);
+                assert.strictEqual(results[i].aadObjectId, mockedData[i].objectId);
+                assert.strictEqual(results[i].givenName, mockedData[i].givenName);
+                assert.strictEqual(results[i].surname, mockedData[i].surname);
+                assert.strictEqual(results[i].email, mockedData[i].email);
+                assert.strictEqual(results[i].userPrincipalName, mockedData[i].userPrincipalName);
+                assert.strictEqual(results[i].tenantId, mockedData[i].tenantId);
+            };
+        }
+        it('should not work if conversationId is falsey', async () => {
+            const context = new TestContext(oneOnOneActivity);
+            context.activity.conversation.id = undefined;
+            try {
+                await TeamsInfo.getPagedMembers(context);
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getPagedMembers operation needs a valid conversationId.');
+                oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
+            }
+        });
+    });
+}); 
     
 
 const oneOnOneActivity = {
