@@ -30,7 +30,7 @@ class TestContext extends TurnContext {
 
 describe('TeamsInfo', () => {
     describe('sendMessageToTeamsChannel()', () => {
-        it('should work with correct information', async() => {
+        it('should work with correct information', async () => {
             const newConversation = [
                 {
                     "activityid": "activityid123",
@@ -46,7 +46,7 @@ describe('TeamsInfo', () => {
             const msg = MessageFactory.text("test message");
             const teamChannelId = "19%3AgeneralChannelIdgeneralChannelId%40thread.skype";
 
-            const response = await TeamsInfo.sendMessageToTeamsChannel(context,msg, teamChannelId);
+            const response = await TeamsInfo.sendMessageToTeamsChannel(context, msg, teamChannelId);
             assert(fetchNewConversation.isDone());
             assert(Array.isArray(response));
             assert(newConversation[0]["activityid"] == "activityid123");
@@ -56,7 +56,7 @@ describe('TeamsInfo', () => {
         it('should error if context is null', async () => {
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, "teamID");
-            } catch (err){
+            } catch (err) {
                 assert(err.message === 'TurnContext cannot be null');
             }
         });
@@ -65,7 +65,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, null, "teamID");
-            } catch (err){
+            } catch (err) {
                 assert(err.message === 'Activity cannot be null');
             }
         });
@@ -74,7 +74,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, "");
-            } catch (err){
+            } catch (err) {
                 assert(err.message === 'The teamsChannelId cannot be null or empty');
             }
         });
@@ -83,7 +83,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);
-            } catch (err){
+            } catch (err) {
                 assert(err.message === 'The teamsChannelId cannot be null or empty');
             }
         });
@@ -132,11 +132,11 @@ describe('TeamsInfo', () => {
             const channels = await TeamsInfo.getTeamChannels(context);
             assert(fetchChannelListExpectation.isDone());
             assert(Array.isArray(channels));
-            assert(channels.length === 3, `unexpected number of channels detected: ${ channels.length }`);
-            
+            assert(channels.length === 3, `unexpected number of channels detected: ${channels.length}`);
+
             // There should be a channel in the conversations returned from the conversations
             let generalChannelExists;
-            for(const channel of channels) {
+            for (const channel of channels) {
                 if (channel.id === '19:generalChannelIdgeneralChannelId@thread.skype') {
                     generalChannelExists = true;
                 }
@@ -168,11 +168,11 @@ describe('TeamsInfo', () => {
             const channels = await TeamsInfo.getTeamChannels(context, '19:ChannelIdgeneralChannelId@thread.skype');
             assert(fetchChannelListExpectation.isDone());
             assert(Array.isArray(channels));
-            assert(channels.length === 3, `unexpected number of channels detected: ${ channels.length }`);
-            
+            assert(channels.length === 3, `unexpected number of channels detected: ${channels.length}`);
+
             // There should be a channel in the conversations returned from the conversations
             let generalChannelExists;
-            for(const channel of channels) {
+            for (const channel of channels) {
                 if (channel.id === '19:ChannelIdgeneralChannelId@thread.skype') {
                     generalChannelExists = true;
                 }
@@ -213,7 +213,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             const fetchedTeamDetails = await TeamsInfo.getTeamDetails(context);
             assert(fetchTeamDetailsExpectation.isDone());
-            assert(fetchedTeamDetails, `teamDetails should not be falsey: ${ teamDetails }`);
+            assert(fetchedTeamDetails, `teamDetails should not be falsey: ${teamDetails}`);
             assert(fetchedTeamDetails.id === '19:generalChannelIdgeneralChannelId@thread.skype');
             assert(fetchedTeamDetails.name === 'TeamName');
             assert(fetchedTeamDetails.aadGroupId === 'Team-aadGroupId');
@@ -232,7 +232,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             const fetchedTeamDetails = await TeamsInfo.getTeamDetails(context, '19:ChannelIdgeneralChannelId@thread.skype');
             assert(fetchTeamDetailsExpectation.isDone());
-            assert(fetchedTeamDetails, `teamDetails should not be falsey: ${ teamDetails }`);
+            assert(fetchedTeamDetails, `teamDetails should not be falsey: ${teamDetails}`);
             assert(fetchedTeamDetails.id === '19:ChannelIdgeneralChannelId@thread.skype');
             assert(fetchedTeamDetails.name === 'TeamName');
             assert(fetchedTeamDetails.aadGroupId === 'Team-aadGroupId');
@@ -241,11 +241,11 @@ describe('TeamsInfo', () => {
 
     describe('getMembers()', () => {
         function assertMemberInfo(results, mockedData) {
-            assert(results && Array.isArray(results), `unexpected type for results arg: "${ typeof results }"`);
-            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${ typeof mockedData }"`);
+            assert(results && Array.isArray(results), `unexpected type for results arg: "${typeof results}"`);
+            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${typeof mockedData}"`);
             assert.strictEqual(results.length, mockedData.length);
 
-            for(let i = 0; i < results.length; i++) {
+            for (let i = 0; i < results.length; i++) {
                 assert.strictEqual(results[i].id, mockedData[i].id);
                 assert.strictEqual(results[i].name, mockedData[i].name);
                 assert.strictEqual(results[i].aadObjectId, mockedData[i].objectId);
@@ -374,8 +374,8 @@ describe('TeamsInfo', () => {
 
     describe('getMember()', () => {
         function assertMemberInfo(result, mockedData) {
-            assert(result, `unexpected type for result arg: "${ typeof results }"`);
-            assert(mockedData, `unexpected type for mockedData arg: "${ typeof mockedData }"`);
+            assert(result, `unexpected type for result arg: "${typeof results}"`);
+            assert(mockedData, `unexpected type for mockedData arg: "${typeof mockedData}"`);
 
             assert.strictEqual(result.id, mockedData.id);
             assert.strictEqual(result.name, mockedData.name);
@@ -389,39 +389,39 @@ describe('TeamsInfo', () => {
 
         it('should work without a Team', async () => {
             const member =
-                {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "aadObjectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
-                };
+            {
+                "id": "29:User-One-Id",
+                "name": "User One",
+                "aadObjectId": "User-One-Object-Id",
+                "givenName": "User",
+                "surname": "One",
+                "email": "User.One@microsoft.com",
+                "userPrincipalName": "user1@microsoft.com",
+                "tenantId": "tenantId-Guid"
+            };
 
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-One-Id')
                 .reply(200, member);
 
             const context = new TestContext(oneOnOneActivity);
-            const fetchedMember = await TeamsInfo.getMember(context, oneOnOneActivity.from.id );
+            const fetchedMember = await TeamsInfo.getMember(context, oneOnOneActivity.from.id);
             assert(fetchExpectation.isDone());
             assertMemberInfo(fetchedMember, member);
         });
 
         it('should work with a Team', async () => {
             const member =
-                {
-                    "id": "29:User-One-Id",
-                    "name": "User One",
-                    "objectId": "User-One-Object-Id",
-                    "givenName": "User",
-                    "surname": "One",
-                    "email": "User.One@microsoft.com",
-                    "userPrincipalName": "user1@microsoft.com",
-                    "tenantId": "tenantId-Guid"
-                }
+            {
+                "id": "29:User-One-Id",
+                "name": "User One",
+                "objectId": "User-One-Object-Id",
+                "givenName": "User",
+                "surname": "One",
+                "email": "User.One@microsoft.com",
+                "userPrincipalName": "user1@microsoft.com",
+                "tenantId": "tenantId-Guid"
+            }
 
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members/29%3AUser-One-Id')
@@ -439,7 +439,7 @@ describe('TeamsInfo', () => {
             try {
                 const context = new TestContext({ type: ActionTypes.message });
                 await TeamsInfo.getTeamMember(context);
-            } catch(err) {
+            } catch (err) {
                 assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
             }
         });
@@ -447,11 +447,11 @@ describe('TeamsInfo', () => {
 
     describe('getTeamMembers()', () => {
         function assertMemberInfo(results, mockedData) {
-            assert(results && Array.isArray(results), `unexpected type for results arg: "${ typeof results }"`);
-            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${ typeof mockedData }"`);
+            assert(results && Array.isArray(results), `unexpected type for results arg: "${typeof results}"`);
+            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${typeof mockedData}"`);
             assert.strictEqual(results.length, mockedData.length);
 
-            for(let i = 0; i < results.length; i++) {
+            for (let i = 0; i < results.length; i++) {
                 assert.strictEqual(results[i].id, mockedData[i].id);
                 assert.strictEqual(results[i].name, mockedData[i].name);
                 assert.strictEqual(results[i].aadObjectId, mockedData[i].objectId);
@@ -636,7 +636,7 @@ describe('TeamsInfo', () => {
             ];
             const conversations = new Conversations({ id: 'convo1', id: 'convo2' });
             const getPagedMembers = stub(conversations, 'getConversationPagedMembers');
-            getPagedMembers.returns({ continuationToken: 'token', members: members});
+            getPagedMembers.returns({ continuationToken: 'token', members: members });
             const connector = new ConnectorClient(new MicrosoftAppCredentials('', ''));
             connector.conversations = conversations;
 
@@ -665,34 +665,19 @@ describe('TeamsInfo', () => {
             }
         });
     });
+    
     describe('getPagedTeamMembers()', () => {
         it('should throw error when teamId is not present', async () => {
             try {
                 const context = new TestContext({ type: ActionTypes.message });
                 await TeamsInfo.getPagedTeamMembers(context);
-            } catch(err) {
+            } catch (err) {
                 assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
             }
         });
     });
-    
-    describe('getPagedMembers()', () => {
-        function assertMemberInfo(results, mockedData) {
-            assert(results && Array.isArray(results), `unexpected type for results arg: "${ typeof results }"`);
-            assert(mockedData && Array.isArray(mockedData), `unexpected type for mockedData arg: "${ typeof mockedData }"`);
-            assert.strictEqual(results.length, mockedData.length);
 
-            for(let i = 0; i < results.length; i++) {
-                assert.strictEqual(results[i].id, mockedData[i].id);
-                assert.strictEqual(results[i].name, mockedData[i].name);
-                assert.strictEqual(results[i].aadObjectId, mockedData[i].objectId);
-                assert.strictEqual(results[i].givenName, mockedData[i].givenName);
-                assert.strictEqual(results[i].surname, mockedData[i].surname);
-                assert.strictEqual(results[i].email, mockedData[i].email);
-                assert.strictEqual(results[i].userPrincipalName, mockedData[i].userPrincipalName);
-                assert.strictEqual(results[i].tenantId, mockedData[i].tenantId);
-            };
-        }
+    describe('getPagedMembers()', () => {
         it('should not work if conversationId is falsey', async () => {
             const context = new TestContext(oneOnOneActivity);
             context.activity.conversation.id = undefined;
@@ -705,8 +690,7 @@ describe('TeamsInfo', () => {
             }
         });
     });
-}); 
-    
+});
 
 const oneOnOneActivity = {
     'text': 'Hello World!',
