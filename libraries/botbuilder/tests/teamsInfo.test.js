@@ -665,7 +665,7 @@ describe('TeamsInfo', () => {
             }
         });
     });
-    
+
     describe('getPagedTeamMembers()', () => {
         it('should throw error when teamId is not present', async () => {
             try {
