@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {ExpressionParser} = require('../');
+const { ExpressionParser } = require('../');
 const assert = require('assert');
 
 const invalidExpressions = [
@@ -298,10 +298,10 @@ const badExpressions =
         'empty(1,2)', //should have two params
         'first(items,2)', //should have 1 param
         'last(items,2)', //should have 1 param
-        'join(items, \'p1\', \'p2\',\'p3\')',//builtin function should have 2-3 params, 
+        'join(items, \'p1\', \'p2\',\'p3\')',//builtin function should have 2-3 params,
         'join(hello, \'hi\')',// first param must list
-        'join(items, 1)',// second param must string 
-        'join(items, \'1\', 2)',// second param must string 
+        'join(items, 1)',// second param must string
+        'join(items, \'1\', 2)',// second param must string
         'foreach(hello, item, item)',// first arg is not list or struture
         'foreach(items, item)',//should have three parameters
         'foreach(items, item, item2, item3)',//should have three parameters
@@ -354,7 +354,7 @@ const badExpressions =
         // Object manipulation and construction functions test
         'json(1,2)', //should have 1 parameter
         'json(1)',//should be string parameter
-        'json(\'{"key1":value1"}\')', // invalid json format string 
+        'json(\'{"key1":value1"}\')', // invalid json format string
         'addProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\',\'key3\')', //should have 3 parameter
         'addProperty(json(\'{"key1":"value1"}\'), 1,\'value2\')', // second param should be string
         'setProperty(json(\'{"key1":"value1"}\'), \'key2\',\'value2\',\'key3\')', //should have 3 parameter
@@ -459,36 +459,44 @@ const scope = {
 
 describe('expression functional test', () => {
     it('should get exception results for bad expressions', () => {
+        const errors = [];
+
         for (const expression of badExpressions) {
             let isFail = false;
             const input = expression;
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                var {value: actual, error} = new ExpressionParser().parse(input).tryEvaluate(scope);
+                var { value: actual, error } = new ExpressionParser().parse(input).tryEvaluate(scope);
                 if (error === undefined) {
                     isFail = true;
                 } else {
-                    console.log(error);
+                    errors.push(error);
                 }
             } catch (e) {
-                console.log(e.message);
+                errors.push(e.message);
             }
 
             if (isFail) {
                 assert.fail(`Test method ${input} did not throw expected exception`);
             }
         }
+
+        console.log(errors.join('\n'));
     });
 
     it('should get exception results for invalid expressions', () => {
+        const errors = [];
+
         for (const expression of invalidExpressions) {
             const input = expression;
             try {
                 new ExpressionParser().parse(input);
                 assert.fail(`Test expression ${input} did not throw expected exception`);
             } catch (e) {
-                console.log(e.message);
+                errors.push(e.message);
             }
         }
+
+        console.log(errors.join('\n'));
     });
 });
