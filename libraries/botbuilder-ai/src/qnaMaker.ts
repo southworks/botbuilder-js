@@ -31,7 +31,7 @@ export interface QnAMakerTelemetryClient
      */
     readonly logPersonalInformation: boolean;
 
-   /**
+    /**
      * Gets the currently configured botTelemetryClient that logs the events.
      */
     readonly telemetryClient: BotTelemetryClient;
@@ -50,7 +50,7 @@ export interface QnAMakerTelemetryClient
      * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      */
-    getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]>;
+    getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]: string}, telemetryMetrics?: {[key: string]: number} ): Promise<QnAMakerResult[]>;
 }
 
 /**
@@ -111,7 +111,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      */
     public get logPersonalInformation(): boolean { return this._logPersonalInformation; }
 
-   /**
+    /**
      * Gets the currently configured botTelemetryClient that logs the events.
      */
     public get telemetryClient(): BotTelemetryClient { return this._telemetryClient; }
@@ -130,7 +130,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      */
-    public async getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResult[]> {
+    public async getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]: string}, telemetryMetrics?: {[key: string]: number} ): Promise<QnAMakerResult[]> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
@@ -144,7 +144,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         return response.answers;
     }
 
-    public async getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number} ): Promise<QnAMakerResults> {
+    public async getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {[key: string]: string}, telemetryMetrics?: {[key: string]: number} ): Promise<QnAMakerResults> {
         if (!context) {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
@@ -176,7 +176,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         const qnaResponse: QnAMakerResults = {
             activeLearningEnabled: result.activeLearningEnabled,
             answers: queryResult
-        }
+        };
 
         return qnaResponse;
     }
@@ -275,13 +275,13 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      */
-    protected async onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<void> {
+    protected async onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]: string}, telemetryMetrics?: {[key: string]: number}): Promise<void> {
         this.fillQnAEvent(qnaResults, turnContext, telemetryProperties, telemetryMetrics).then(data => {
             this.telemetryClient.trackEvent(
                 { 
-                  name: QnATelemetryConstants.qnaMessageEvent,
-                  properties: data[0],
-                  metrics: data[1]
+                    name: QnATelemetryConstants.qnaMessageEvent,
+                    properties: data[0],
+                    metrics: data[1]
                 });
         });
         return;
@@ -295,14 +295,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the QnaMessage event.
      */
-    protected async fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]:string}, telemetryMetrics?: {[key: string]:number}): Promise<[{[key: string]:string}, {[key: string]:number} ]> {
+    protected async fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {[key: string]: string}, telemetryMetrics?: {[key: string]: number}): Promise<[{[key: string]: string}, {[key: string]: number} ]> {
         var properties: { [key: string]: string } = {};
         var metrics: { [key: string]: number } = {};
 
         properties[QnATelemetryConstants.knowledgeBaseIdProperty] = this.endpoint.knowledgeBaseId;
 
         var text = turnContext.activity.text;
-        var userName = ('from' in turnContext.activity) ? turnContext.activity.from.name : "";
+        var userName = ('from' in turnContext.activity) ? turnContext.activity.from.name : '';
         // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
         if (this.logPersonalInformation)
         {
@@ -324,14 +324,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             properties[QnATelemetryConstants.questionIdProperty] = String(queryResult.id);
             properties[QnATelemetryConstants.answerProperty] = queryResult.answer;
             metrics[QnATelemetryConstants.scoreMetric] = queryResult.score;
-            properties[QnATelemetryConstants.articleFoundProperty] = "true";
+            properties[QnATelemetryConstants.articleFoundProperty] = 'true';
         }
         else
         {
-            properties[QnATelemetryConstants.matchedQuestionProperty] = "No Qna Question matched";
-            properties[QnATelemetryConstants.questionIdProperty] = "No Qna Question Id matched";
-            properties[QnATelemetryConstants.answerProperty] =  "No Qna Answer matched";
-            properties[QnATelemetryConstants.articleFoundProperty] = "false";
+            properties[QnATelemetryConstants.matchedQuestionProperty] = 'No Qna Question matched';
+            properties[QnATelemetryConstants.questionIdProperty] = 'No Qna Question Id matched';
+            properties[QnATelemetryConstants.answerProperty] =  'No Qna Answer matched';
+            properties[QnATelemetryConstants.articleFoundProperty] = 'false';
         }
         
         // Additional Properties can override "stock" properties.

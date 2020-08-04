@@ -73,7 +73,7 @@ export class LuisAdaptiveRecognizer extends Configurable implements Recognizer {
             applicationId: this.applicationId.getValue(dcState),
             endpoint: this.endpoint.getValue(dcState),
             endpointKey: this.endpointKey.getValue(dcState)
-        }
+        };
 
         // Create and call wrapper
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));

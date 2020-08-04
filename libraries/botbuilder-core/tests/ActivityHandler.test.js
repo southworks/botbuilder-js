@@ -297,11 +297,11 @@ describe('ActivityHandler', function() {
         }
 
         function assertFalseFlag(flag, ...args) {
-            assert(!flag, `${args[0]}Called should not be true before the ${args.join(', ')} handlers are called.`);
+            assert(!flag, `${ args[0] }Called should not be true before the ${ args.join(', ') } handlers are called.`);
         }
 
         function assertTrueFlag(flag, ...args) {
-            assert(flag, `${args[0]}Called should be true after the ${args[0]} handlers are called.`);
+            assert(flag, `${ args[0] }Called should be true after the ${ args[0] } handlers are called.`);
         }
 
         it('call "onTurn" handlers then dispatch by Activity Type "Message"', (done) => {
@@ -520,9 +520,9 @@ describe('ActivityHandler', function() {
             testAdapter.healthCheck = async (context) => {
                 return { healthResults: {
                     success: true,
-                    "user-agent": 'user-agent-header-value',
+                    'user-agent': 'user-agent-header-value',
                     authorization: 'authorization-header-value',
-                    messages: [ 'Health results from adapter.' ] } } 
+                    messages: [ 'Health results from adapter.' ] } }; 
             };
 
             const context = new TurnContext(testAdapter, activity);
@@ -532,7 +532,7 @@ describe('ActivityHandler', function() {
                     const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
                     const healthCheckResponse = invokeResponseActivity.value.body;
                     assert(true, healthCheckResponse.healthResults.success);
-                    assert('user-agent-header-value', healthCheckResponse.healthResults["user-agent"]);
+                    assert('user-agent-header-value', healthCheckResponse.healthResults['user-agent']);
                     assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
                     assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
                     done();

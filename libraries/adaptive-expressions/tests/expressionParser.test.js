@@ -840,7 +840,7 @@ describe('expression parser functional test', () => {
             var parsed = Expression.parse(input);
             assert(parsed !== undefined);
             var {value: actual, error} = parsed.tryEvaluate(scope);
-            assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+            assert(error === undefined, `input: ${ input }, Has error: ${ error }, with expression ${ input }`);
 
             let expected = data[1];
 
@@ -889,7 +889,7 @@ describe('expression parser functional test', () => {
                 var parsed = Expression.parse(input);
                 assert(parsed !== undefined);
                 var {value: actual, error} = parsed.tryEvaluate(scope);
-                assert(error === undefined, `input: ${input}, Has error: ${error}, with expression ${ input }`);
+                assert(error === undefined, `input: ${ input }, Has error: ${ error }, with expression ${ input }`);
     
                 let expected = data[1];
     
@@ -950,7 +950,7 @@ describe('expression parser functional test', () => {
         var mockMemory = {};
 
         var options = new Options();
-        options.nullSubstitution = (path) => `${path} is undefined`;
+        options.nullSubstitution = (path) => `${ path } is undefined`;
         let value = undefined;
         let error = undefined;
 

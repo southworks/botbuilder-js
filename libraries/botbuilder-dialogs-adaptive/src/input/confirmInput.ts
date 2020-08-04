@@ -16,7 +16,7 @@ export class ConfirmInput extends InputDialog {
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    private static defaultChoiceOptions: { [locale: string]: { choices: (string | Choice)[], options: ChoiceFactoryOptions } } = {
+    private static defaultChoiceOptions: { [locale: string]: { choices: (string | Choice)[]; options: ChoiceFactoryOptions } } = {
         'es-es': { choices: ['Sí', 'No'], options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true } },
         'nl-nl': { choices: ['Ja', 'Nee'], options: { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true } },
         'en-us': { choices: ['Yes', 'No'], options: { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true } },
@@ -111,7 +111,7 @@ export class ConfirmInput extends InputDialog {
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
         const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
-        const style = this.style.getValue(dc.state)
+        const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 }

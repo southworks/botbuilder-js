@@ -24,7 +24,7 @@ class TestContext extends TurnContext {
     }
 }
 
-describe('QnAMaker', function () {
+describe('QnAMaker', function() {
     const testFiles = fs.readdirSync(`${ __dirname }/TestData/${ this.title }/`);
 
     if (!knowledgeBaseId) {
@@ -42,14 +42,14 @@ describe('QnAMaker', function () {
         knowledgeBaseId: knowledgeBaseId,
         endpointKey: endpointKey,
         host: `https://${ hostname }.azurewebsites.net/qnamaker`
-    }
+    };
 
     beforeEach(function(done){
         nock.cleanAll();
         if (mockQnA) {
             var fileName = replaceCharacters(this.currentTest.title);
             var filePath = `${ __dirname }/TestData/${ this.test.parent.title }/`;
-            var arr = testFiles.filter(function(file) { return file.startsWith(fileName + '.')} );
+            var arr = testFiles.filter(function(file) { return file.startsWith(fileName + '.');} );
 
             arr.forEach(file => {
                 nock(`https://${ hostname }.azurewebsites.net`)
@@ -59,17 +59,17 @@ describe('QnAMaker', function () {
             });
         }
         done();
-    })
+    });
 
     afterEach(function(done){
         nock.cleanAll();
         done();
     });
 
-    function replaceCharacters (testName, testDesc) {
+    function replaceCharacters(testName, testDesc) {
         return testName
-        .replace(/"/g, '')
-        .replace(/ /g, '_');
+            .replace(/"/g, '')
+            .replace(/ /g, '_');
     }
 
     describe('Instantiation', function() {
@@ -91,8 +91,8 @@ describe('QnAMaker', function () {
 
         it('should throw TypeError if QnAMakerOptions.scoreThreshold is not a number during QnAMaker instantiation', function() {
             const context = new TestContext({ text: 'what happens when you hug a porcupine?' });
-            const stringScoreThreshold_options = { scoreThreshold: "I should be a number, but I'm not." };
-            const nonNumberError = new TypeError(`"${stringScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`)
+            const stringScoreThreshold_options = { scoreThreshold: 'I should be a number, but I\'m not.' };
+            const nonNumberError = new TypeError(`"${ stringScoreThreshold_options.scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
             
             function createQnAWithInvalidThreshold() {
                 new QnAMaker(context, stringScoreThreshold_options);
@@ -101,10 +101,10 @@ describe('QnAMaker', function () {
             assert.throws(() => createQnAWithInvalidThreshold(), nonNumberError);
         });
 
-        it('should throw error if QnAMakerOptions.scoreThreshold is not a number between 0 and 1 during QnAMaker instantiation.', function () {
+        it('should throw error if QnAMakerOptions.scoreThreshold is not a number between 0 and 1 during QnAMaker instantiation.', function() {
             const context = new TestContext({ text: 'do woodpeckers get concussions?' });
             const outOfRangeScoreThreshold_options = { scoreThreshold: 9000 };
-            const error = new TypeError(`"${outOfRangeScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`)
+            const error = new TypeError(`"${ outOfRangeScoreThreshold_options.scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
 
             function createQnaWithOutOfRangeThreshold() {
                 new QnAMaker(context, outOfRangeScoreThreshold_options);
@@ -113,7 +113,7 @@ describe('QnAMaker', function () {
             assert.throws(() => createQnaWithOutOfRangeThreshold(), error);
         });
 
-        it('should not throw error if QnAMakerOptions.scoreThreshold is 1.', function () {
+        it('should not throw error if QnAMakerOptions.scoreThreshold is 1.', function() {
             const context = new TestContext({ text: 'do woodpeckers get concussions?' });
             const options = { scoreThreshold: 1 };
 
@@ -127,7 +127,7 @@ describe('QnAMaker', function () {
         it('should throw RangeError if QnAMakerOptions.top is not an integer during instantiation', function() {
             const context = new TestContext({ text: 'what if ostriches could fly?' });
             const decimalNumberTopOptions = { top: 2.5 };
-            const notAnIntegerError = new RangeError(`"${decimalNumberTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            const notAnIntegerError = new RangeError(`"${ decimalNumberTopOptions.top }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithDecimalTopOption() {
                 new QnAMaker(context, decimalNumberTopOptions);
@@ -139,7 +139,7 @@ describe('QnAMaker', function () {
         it('should throw error if QnAMaker.top is not a number during instantiation', function() {
             const context = new TestContext({ text: 'why were there sloths at the post office?' });
             const objectTopOptions = { top: { 'key': 'value' } };
-            const nonNumberError = new RangeError(`"${objectTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            const nonNumberError = new RangeError(`"${ objectTopOptions.top }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithObjectTopOption() {
                 new QnAMaker(context, objectTopOptions);
@@ -149,9 +149,9 @@ describe('QnAMaker', function () {
         });
 
         it('should throw RangeError if QnAMaker.top is not an integer greater than 1', function() {
-           const context = new TestContext({ text: 'why did my son think the wasabi was guacamole?' });
-           const smallerThanOneTopOptions = { top: -1 };
-           const notGreaterThanOneError = new RangeError(`"${smallerThanOneTopOptions.top}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            const context = new TestContext({ text: 'why did my son think the wasabi was guacamole?' });
+            const smallerThanOneTopOptions = { top: -1 };
+            const notGreaterThanOneError = new RangeError(`"${ smallerThanOneTopOptions.top }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
 
             function createQnaWithNegativeTopOption() {
                 new QnAMaker(context, smallerThanOneTopOptions);
@@ -166,15 +166,15 @@ describe('QnAMaker', function () {
 
             assert(qnaWithNullTelemetry.telemetryClient instanceof NullTelemetryClient);
             assert(qnaWithNullTelemetry.logPersonalInformation === false);
-         });
+        });
 
-         it('null telemetry logPersonalInformation should work', function() {
+        it('null telemetry logPersonalInformation should work', function() {
             const options = { top: 7 };
             const qnaWithNullTelemetry = new QnAMaker(endpoint, options, null, null);
 
             assert(qnaWithNullTelemetry.telemetryClient instanceof NullTelemetryClient);
             assert(qnaWithNullTelemetry.logPersonalInformation === false);
-         });
+        });
  
  
     });
@@ -183,7 +183,7 @@ describe('QnAMaker', function () {
 
         it('should return answer without any options specified', async function() {
             const noOptionsQnA = new QnAMaker(endpoint);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' });
             const defaultNumberOfAnswers = 1;
 
             const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext);
@@ -195,7 +195,7 @@ describe('QnAMaker', function () {
 
         it('should return answer and active learning flag', async function() {
             const noOptionsQnA = new QnAMaker(endpoint);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?' });
             const defaultNumberOfAnswers = 1;
 
             const results = await noOptionsQnA.getAnswersRaw(noOptionsContext);
@@ -207,7 +207,7 @@ describe('QnAMaker', function () {
 
         it('should sort the answers in the qna results from highest to lowest score', async function() {
             const qna = new QnAMaker(endpoint);
-            const context = new TestContext({ text: "what's your favorite animal?" });
+            const context = new TestContext({ text: 'what\'s your favorite animal?' });
             const numberOfAnswersToReturn = { top: 5 };
             
             const qnaResults = await qna.getAnswers(context, numberOfAnswersToReturn);
@@ -218,7 +218,7 @@ describe('QnAMaker', function () {
 
         it('should return answer with prompts', async function() {
             const qna = new QnAMaker(endpoint);
-            const context = new TestContext({ text: "how do I clean the stove?" });
+            const context = new TestContext({ text: 'how do I clean the stove?' });
             const options = { top: 2 };
             
             const qnaResults = await qna.getAnswers(context, options);
@@ -229,9 +229,9 @@ describe('QnAMaker', function () {
 
         it('should return answer with high score provided context', async function() {
             const qna = new QnAMaker(endpoint);
-            const turnContext = new TestContext({ text: "where can I buy?" });
+            const turnContext = new TestContext({ text: 'where can I buy?' });
             
-            const context = { previousQnAId: 5, previousUserQuery: "how do I clean the stove?"};
+            const context = { previousQnAId: 5, previousUserQuery: 'how do I clean the stove?'};
             const options = { top: 2, context: context };
             
             const qnaResults = await qna.getAnswers(turnContext, options);
@@ -242,7 +242,7 @@ describe('QnAMaker', function () {
 
         it('should return answer with high score provided id', async function() {
             const qna = new QnAMaker(endpoint);
-            const turnContext = new TestContext({ text: "where can I buy?" });
+            const turnContext = new TestContext({ text: 'where can I buy?' });
             
             const options = { top: 2, qnaId: 55 };
             
@@ -254,7 +254,7 @@ describe('QnAMaker', function () {
 
         it('should return answer with low score not provided context', async function() {
             const qna = new QnAMaker(endpoint);
-            const turnContext = new TestContext({ text: "where can I buy?" });
+            const turnContext = new TestContext({ text: 'where can I buy?' });
             
             const options = { top: 2, context: null };
             
@@ -266,7 +266,7 @@ describe('QnAMaker', function () {
 
         it('should call qnamaker with isTest true', async function() {
             const qna = new QnAMaker(endpoint);
-            const turnContext = new TestContext({ text: "Q11" });
+            const turnContext = new TestContext({ text: 'Q11' });
             const options = { top: 1, context: null, isTest: true };
             
             const qnaResults = await qna.getAnswers(turnContext, options);
@@ -276,8 +276,8 @@ describe('QnAMaker', function () {
 
         it('should call qnamaker with rankerType questionOnly', async function() {
             const qna = new QnAMaker(endpoint);
-            const turnContext = new TestContext({ text: "Q11" });
-            const options = { top: 1, context: null, rankerType: "QuestionOnly" };
+            const turnContext = new TestContext({ text: 'Q11' });
+            const options = { top: 1, context: null, rankerType: 'QuestionOnly' };
             
             const qnaResults = await qna.getAnswers(turnContext, options);
 
@@ -287,7 +287,7 @@ describe('QnAMaker', function () {
         it('should return answer with timeout option specified', async function() {
             const timeoutOption = { timeout: 500000 };
             const qna = new QnAMaker(endpoint, timeoutOption);
-            const context = new TestContext({ text: "where are the unicorns?" });
+            const context = new TestContext({ text: 'where are the unicorns?' });
             const expectedNumOfAns = 1;
 
             const qnaResults = await qna.getAnswers(context, timeoutOption);
@@ -307,39 +307,39 @@ describe('QnAMaker', function () {
             const context = new TestContext({ text: 'How do I be the best?'});
             
             const legacyQnaResponse = {
-                "answers": [
+                'answers': [
                     {
-                        "score": 30.500827898,
-                        "qnaId": 18,
-                        "answer": "To be the very best, you gotta catch 'em all",
-                        "source": "Custom Editorial",
-                        "questions": [
-                            "How do I be the best?"
+                        'score': 30.500827898,
+                        'qnaId': 18,
+                        'answer': 'To be the very best, you gotta catch \'em all',
+                        'source': 'Custom Editorial',
+                        'questions': [
+                            'How do I be the best?'
                         ]
                     }
                 ]
-            }
+            };
 
             nock('https://westus.api.cognitive.microsoft.com')
                 .post('/qnamaker/v3.0/knowledgebases/testKbId/generateanswer')
                 .reply(200, legacyQnaResponse);
 
             const expectedQnaResultFormat = [{
-                "answer": "To be the very best, you gotta catch 'em all",
-                "id": 18,
-                "metadata": [],
-                "questions": ["How do I be the best?"],
-                "score": .30500827898,
-                "source": "Editorial"
+                'answer': 'To be the very best, you gotta catch \'em all',
+                'id': 18,
+                'metadata': [],
+                'questions': ['How do I be the best?'],
+                'score': .30500827898,
+                'source': 'Editorial'
             }];
 
             const formattedQnaResult = await qna.getAnswers(context);
-            const hasIdInResponse = (response) => response["id"] && !response["qnaId"] ? true : false;
+            const hasIdInResponse = (response) => response['id'] && !response['qnaId'] ? true : false;
 
             assert.strictEqual(hasIdInResponse(formattedQnaResult), hasIdInResponse(expectedQnaResultFormat), 'Legacy QnA responses should have property "qnaId" converted to "id".');
         });
 
-        it('should return 0 answers for an empty or undefined utterance', async function () {
+        it('should return 0 answers for an empty or undefined utterance', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
             const emptyUtteranceContext = new TestContext({ text: '' });
             const undefinedUtteranceContext = new TestContext({ text: undefined });
@@ -352,27 +352,27 @@ describe('QnAMaker', function () {
             assert.strictEqual(undefinedQuestionResults.length, 0, 'Should have not received answers for an undefined utterance.');
         });
 
-        it('should return 0 answers for questions without an answer.', async function () {
+        it('should return 0 answers for questions without an answer.', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
             const questionWithoutAns_Context = new TestContext({ text: 'foo' });
     
             const resultsWithoutAns = await qna.getAnswers(questionWithoutAns_Context);
             assert.notStrictEqual(resultsWithoutAns, true, 'Result without an answer should return an empty array.');
-            assert.strictEqual(resultsWithoutAns.length, 0, `Should have not received answers for a question with no answer, it returned ${JSON.stringify(resultsWithoutAns)}.`);
+            assert.strictEqual(resultsWithoutAns.length, 0, `Should have not received answers for a question with no answer, it returned ${ JSON.stringify(resultsWithoutAns) }.`);
         });
 
         it('should throw TypeError if QnAMakerOptions.scoreThreshold is not a number in service call', function() {
-            const context = new TestContext({ text: "what's the number for 911?" });
+            const context = new TestContext({ text: 'what\'s the number for 911?' });
             const qna = new QnAMaker(context);
             const stringScoreThreshold_options = { scoreThreshold: 'I should be a number' };
-            const nonNumberError = new TypeError(`"${stringScoreThreshold_options.scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
+            const nonNumberError = new TypeError(`"${ stringScoreThreshold_options.scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`);
 
             assert.rejects(async () => await qna.getAnswers(context, stringScoreThreshold_options), nonNumberError );
         });
 
         it('should filter low score variation', async function() {
             const qna = new QnAMaker(endpoint, { top: 5});
-            const context = new TestContext({ text: "Q11" });
+            const context = new TestContext({ text: 'Q11' });
             const results = await qna.getAnswers(context);
             assert.strictEqual(results.length, 4, `Should have recieved 4 answers.`);
             
@@ -391,7 +391,7 @@ describe('QnAMaker', function () {
                         case 1:
                             // console.warn('Call number:' + callCount);
                             // console.warn(telemetry);
-                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.name === 'QnaMessage');
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
                             assert('question' in telemetry.properties);
@@ -410,10 +410,10 @@ describe('QnAMaker', function () {
                             break;
                     }
                 }
-            }
+            };
     
             const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: 'testname'}  });
             const defaultNumberOfAnswers = 1;
 
             // Act
@@ -433,7 +433,7 @@ describe('QnAMaker', function () {
                     assert(telemetry, 'telemetry is null');
                     switch(++callCount) {
                         case 1:
-                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.name === 'QnaMessage');
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
                             assert('question' in telemetry.properties);
@@ -441,7 +441,7 @@ describe('QnAMaker', function () {
                             assert('questionId' in telemetry.properties);
                             assert(telemetry.properties.questionId === 'No Qna Question Id matched');
                             assert('matchedQuestion' in telemetry.properties);
-                            assert(telemetry.properties.matchedQuestion === 'No Qna Question matched')
+                            assert(telemetry.properties.matchedQuestion === 'No Qna Question matched');
                             assert('username' in telemetry.properties);
                             assert('answer' in telemetry.properties);
                             assert('articleFound' in telemetry.properties);
@@ -453,10 +453,10 @@ describe('QnAMaker', function () {
                             break;
                     }
                 }
-            }
+            };
     
             const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: 'testname'}  });
             const defaultNumberOfAnswers = 0;
 
             // Act
@@ -478,7 +478,7 @@ describe('QnAMaker', function () {
                         case 1:
                             // console.warn('Call number:' + callCount);
                             // console.warn(telemetry);
-                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.name === 'QnaMessage');
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
                             assert(!('question' in telemetry.properties));
@@ -497,10 +497,10 @@ describe('QnAMaker', function () {
                             break;
                     }
                 }
-            }
+            };
     
             const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=false);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"} })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: 'testname'} });
             const defaultNumberOfAnswers = 1;
 
             // Act
@@ -531,13 +531,13 @@ describe('QnAMaker', function () {
                         case 2:
                             // console.warn('Call number:' + callCount);
                             // console.warn(telemetry);
-                            assert(telemetry.name === "MyQnA");
+                            assert(telemetry.name === 'MyQnA');
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
                             assert('question' in telemetry.properties);
                             assert('questionId' in telemetry.properties);
                             // Validate you can override "default" properties
-                            assert(telemetry.properties.questionId == "OVERRIDE");
+                            assert(telemetry.properties.questionId == 'OVERRIDE');
                             assert('username' in telemetry.properties);
                             assert('answer' in telemetry.properties);
                             assert('articleFound' in telemetry.properties);
@@ -552,10 +552,10 @@ describe('QnAMaker', function () {
                             break;
                     }
                 }
-            }
+            };
     
             const noOptionsQnA = new overrideTwoEventsWithOverrideLogger(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: 'testname'}  });
             const defaultNumberOfAnswers = 1;
 
             // Act
@@ -577,13 +577,13 @@ describe('QnAMaker', function () {
                         case 1:
                             // console.warn('Call number:' + callCount);
                             // console.warn(telemetry);
-                            assert(telemetry.name === "QnaMessage");
+                            assert(telemetry.name === 'QnaMessage');
                             assert(telemetry.properties);
                             assert('knowledgeBaseId' in telemetry.properties);
                             assert('question' in telemetry.properties);
-                            assert(telemetry.properties['question'] == "OVERRIDE");
+                            assert(telemetry.properties['question'] == 'OVERRIDE');
                             assert('MyImportantProperty' in telemetry.properties);
-                            assert(telemetry.properties['MyImportantProperty'] == "MyImportantValue");
+                            assert(telemetry.properties['MyImportantProperty'] == 'MyImportantValue');
                             assert('questionId' in telemetry.properties);
                             assert('username' in telemetry.properties);
                             assert('answer' in telemetry.properties);
@@ -600,17 +600,17 @@ describe('QnAMaker', function () {
                             break;
                     }
                 }
-            }
+            };
     
             const noOptionsQnA = new QnAMaker(endpoint, { top: 1 }, telemetryClient=telemetryClient, logPersonalInformation=true);
-            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: "testname"}  })
+            const noOptionsContext = new TestContext({ text: 'where are the unicorns?', from: { name: 'testname'}  });
             const defaultNumberOfAnswers = 1;
 
             // Act
             const resultsWithoutOptions = await noOptionsQnA.getAnswers(noOptionsContext, null, 
-                { "question": "OVERRIDE", "MyImportantProperty":"MyImportantValue" },
-                { "score":3.14159 }
-                );
+                { 'question': 'OVERRIDE', 'MyImportantProperty':'MyImportantValue' },
+                { 'score':3.14159 }
+            );
             const numberOfResults = resultsWithoutOptions.length;
             // Assert
             assert.strictEqual(noOptionsQnA.logPersonalInformation, true);
@@ -638,17 +638,17 @@ describe('QnAMaker', function () {
             var feedbackRecords = {
                 feedbackRecords:[
                     {
-                        userId: "test",
-                        userQuestion: "How are you?",
+                        userId: 'test',
+                        userQuestion: 'How are you?',
                         qnaId: 1
                     },
                     {
-                        userId: "test",
-                        userQuestion: "Whats up?",
+                        userId: 'test',
+                        userQuestion: 'Whats up?',
                         qnaId: 2
                     }
                 ]
-            }
+            };
 
             // Provide feedback
             await qna.callTrainAsync(feedbackRecords);
@@ -656,36 +656,36 @@ describe('QnAMaker', function () {
     });
 
     describe('Deprecated QnA Methods', function() {
-        it('should work free standing', async function () {
+        it('should work free standing', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
             const answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
     
             const firstCallQnaResults = await qna.generateAnswer(`how do I clean the stove?`);
             assert.notStrictEqual(firstCallQnaResults, true, `The response was returned as 'undefined'.`);
             assert.strictEqual(firstCallQnaResults.length, 1, 'Should have received just one answer on the first call.');
-            assert.strictEqual(firstCallQnaResults[0].answer.startsWith(answer), true, `The answer should have started with '${answer}' for the first call.`);
+            assert.strictEqual(firstCallQnaResults[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the first call.`);
     
-            const secondCallQnaResults = await qna.generateAnswer("is the stove hard to clean?");
+            const secondCallQnaResults = await qna.generateAnswer('is the stove hard to clean?');
             assert.notStrictEqual(secondCallQnaResults, true, `The response was returned as 'undefined'.`);
             assert.strictEqual(secondCallQnaResults.length, 1, 'Should have received just one answer on the second call.');
-            assert.strictEqual(secondCallQnaResults[0].answer.startsWith(answer), true, `The answer should have started with '${answer}' for the second call.`);
+            assert.strictEqual(secondCallQnaResults[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the second call.`);
         });
 
-        it('should return 0 answers for a question with no answer after a succesful call', async function () {
+        it('should return 0 answers for a question with no answer after a succesful call', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
             let answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
     
             const resultsWithAns = await qna.generateAnswer(`how do I clean the stove?`);
             assert.notStrictEqual(resultsWithAns, true, `The response was returned as 'undefined'.`);
             assert.strictEqual(resultsWithAns.length, 1, 'Should have received just one answer on the first call.');
-            assert.strictEqual(resultsWithAns[0].answer.startsWith(answer), true, `The answer should have started with '${answer}' for the first call.`);
+            assert.strictEqual(resultsWithAns[0].answer.startsWith(answer), true, `The answer should have started with '${ answer }' for the first call.`);
     
             const resultsWithoutAns = await qna.generateAnswer('how is the weather?');
             assert.notStrictEqual(resultsWithoutAns, true, `The response was returned as 'undefined'.`);
             assert.strictEqual(resultsWithoutAns.length, 0, 'Should have not received answers for a question with no answers.');
         });
 
-        it('should return 0 answers for an empty or undefined utterance', async function () {
+        it('should return 0 answers for an empty or undefined utterance', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
             
             const emptyQuestionResults = await qna.generateAnswer(``);
@@ -696,18 +696,18 @@ describe('QnAMaker', function () {
             assert.strictEqual(undefinedQuestionResults.length, 0, 'Should have not received answers for an undefined utterance.');
         });
 
-        it('should return 0 answers for questions without an answer.', async function () {
+        it('should return 0 answers for questions without an answer.', async function() {
             const qna = new QnAMaker(endpoint, { top: 1 });
     
             const resultsWithoutAns = await qna.generateAnswer(`foo`);
             assert.notStrictEqual(resultsWithoutAns, true, `The response was returned as 'undefined'.`);
-            assert.strictEqual(resultsWithoutAns.length, 0, `Should have not received answers for a question with no answer, it returned ${JSON.stringify(resultsWithoutAns)}.`);
+            assert.strictEqual(resultsWithoutAns.length, 0, `Should have not received answers for a question with no answer, it returned ${ JSON.stringify(resultsWithoutAns) }.`);
     
             const undefinedQuestionResults = await qna.generateAnswer(undefined);
             assert.strictEqual(undefinedQuestionResults.length, 0, 'Should have not received answers for an undefined question.');
         });
 
-        it('should emit trace info once per call to Answer', function (done) {
+        it('should emit trace info once per call to Answer', function(done) {
             const context = new TestContext({ text: `how do I clean the stove?`, type: 'message'});
             const qna = new QnAMaker(endpoint, { top: 1 });
     
@@ -730,7 +730,7 @@ describe('QnAMaker', function () {
                 });
         });
 
-        it('should return "false" from answer() if no good answers found', function (done) {
+        it('should return "false" from answer() if no good answers found', function(done) {
             const context = new TestContext({ text: `foo`, type: 'message' });
             const qna = new QnAMaker(endpoint, { top: 1 });
     
@@ -750,7 +750,7 @@ describe('QnAMaker', function () {
 
         it('should sort results from generateAnswers in descending order', async function() {
             const qna = new QnAMaker(endpoint);
-            const question = "what's your favorite animal?";
+            const question = 'what\'s your favorite animal?';
             const numberOfAnswersToReturn = 5;
 
             const qnaResults = await qna.generateAnswer(question, numberOfAnswersToReturn);
@@ -785,15 +785,15 @@ class overrideTwoEventsWithOverrideLogger extends QnAMaker
     async onQnaResults(qnaResults, turnContext, telemetryProperties, telmetryMetrics) {
         // Track regular property
         this.telemetryClient.trackEvent({
-                    name: QnATelemetryConstants.qnaMessageEvent,
-                    properties: {"foo":"bar",
-                                "ImportantProperty": "ImportantValue"  } });
+            name: QnATelemetryConstants.qnaMessageEvent,
+            properties: {'foo':'bar',
+                'ImportantProperty': 'ImportantValue'  } });
 
-        this.fillQnAEvent(qnaResults, turnContext, {"questionId": "OVERRIDE"})
+        this.fillQnAEvent(qnaResults, turnContext, {'questionId': 'OVERRIDE'})
             .then(data => {
                 // Add additional event
                 this.telemetryClient.trackEvent({
-                    name: "MyQnA",
+                    name: 'MyQnA',
                     properties: data[0],
                     metrics: data[1]
                 });

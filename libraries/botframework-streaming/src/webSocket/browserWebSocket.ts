@@ -94,7 +94,7 @@ export class BrowserWebSocket implements ISocket {
      * Set the handler for text and binary messages received on the socket.
      */
     public setOnMessageHandler(handler: (x: any) => void): void {
-        const bufferKey: string = 'buffer';
+        const bufferKey = 'buffer';
         let packets = [];
         this.webSocket.onmessage = (evt): void => {
             let fileReader = createFileReader();

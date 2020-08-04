@@ -28,11 +28,11 @@ export class AssertReply extends AssertReplyActivity {
         if (this.text) {
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {
-                    throw new Error(this.description || `Text ${activity.text} didn't match expected text: ${this.text}`);
+                    throw new Error(this.description || `Text ${ activity.text } didn't match expected text: ${ this.text }`);
                 }
             } else {
                 if (activity.type == ActivityTypes.Message && !activity.text.toLowerCase().trim().includes(this.text.toLowerCase().trim())) {
-                    throw new Error(this.description || `Text ${activity.text} didn't match expected text: ${this.text}`);
+                    throw new Error(this.description || `Text ${ activity.text } didn't match expected text: ${ this.text }`);
                 }
             }
         }

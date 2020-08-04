@@ -17,13 +17,13 @@ class FlightBookingRecognizer {
             this.recognizer = new LuisRecognizer({
                 applicationId: config.LuisAppId,
                 endpointKey: config.LuisAPIKey,
-                endpoint: `https://${config.LuisAPIHostName}`
+                endpoint: `https://${ config.LuisAPIHostName }`
             }, {}, true);
         }
     }
 
     isConfigured() {
-        return (this.recognizer !== undefined)
+        return (this.recognizer !== undefined);
     }
 
     async executeLuisQuery(context, logger) {
@@ -34,7 +34,7 @@ class FlightBookingRecognizer {
         let fromValue = undefined;
         if (result.entities.$instance.From)
         {
-            fromValue = result.entities.$instance.From[0].text
+            fromValue = result.entities.$instance.From[0].text;
         }
 
         let fromAirportValue = undefined;
@@ -49,7 +49,7 @@ class FlightBookingRecognizer {
         let toValue = undefined;
         if (result.entities.$instance.To)
         {
-            toValue = result.entities.$instance.To[0].text
+            toValue = result.entities.$instance.To[0].text;
         }
 
         let toAirportValue = undefined;

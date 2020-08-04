@@ -192,7 +192,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return this.runMiddleware(context, this.logic);
     }
 
-     /**
+    /**
      * Creates a turn context.
      *
      * @param request An incoming request body.
@@ -270,7 +270,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return activities.reduce(
             (flow: TestFlow, activity: Partial<Activity>) => {
                 // tslint:disable-next-line:prefer-template
-                const assertDescription: string = `reply ${ (description ? ' from ' + description : '') }`;
+                const assertDescription = `reply ${ (description ? ' from ' + description : '') }`;
 
                 return this.isReply(activity)
                     ? flow.assertReply(activityInspector(activity, description), assertDescription, timeout)
@@ -446,7 +446,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     }
 
     
-    private exchangeableTokens : {[key: string]: ExchangeableToken} = {};
+    private exchangeableTokens: {[key: string]: ExchangeableToken} = {};
 
     public addExchangeableToken(connectionName: string, channelId: string, userId: string, exchangeableItem: string, token: string) {
         const key: ExchangeableToken = new ExchangeableToken();
@@ -460,14 +460,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
-            signInLink: `https://botframeworktestadapter.com/oauthsignin/${connectionName}/${context.activity.channelId}/${userId}`,
+            signInLink: `https://botframeworktestadapter.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ userId }`,
             tokenExchangeResource: {
                 id: String(Math.random()),
                 providerId: null,
-                uri: `api://${connectionName}/resource`
+                uri: `api://${ connectionName }/resource`
 
             }
-        }
+        };
     }
 
 

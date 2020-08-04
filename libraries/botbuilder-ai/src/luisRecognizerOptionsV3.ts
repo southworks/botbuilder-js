@@ -7,25 +7,25 @@
  */
 
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import { LuisRecognizerInternal } from './luisRecognizerOptions'
-import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer'
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { LuisApplication , LuisRecognizerOptionsV3} from './luisRecognizer';
 import { NullTelemetryClient, TurnContext , RecognizerResult} from 'botbuilder-core';
 const fetch = require('node-fetch');
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
-const _dateSubtypes = [ "date", "daterange", "datetime", "datetimerange", "duration", "set", "time", "timerange" ];    
-const _geographySubtypes = [ "poi", "city", "countryRegion", "continent", "state" ];
-const MetadataKey = "$instance";
+const _dateSubtypes = [ 'date', 'daterange', 'datetime', 'datetimerange', 'duration', 'set', 'time', 'timerange' ];    
+const _geographySubtypes = [ 'poi', 'city', 'countryRegion', 'continent', 'state' ];
+const MetadataKey = '$instance';
 
 
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
-    return (options.apiVersion && options.apiVersion === "v3")
+    return (options.apiVersion && options.apiVersion === 'v3');
 }
 
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV3) { 
+    constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) { 
         super(application);
 
         this.predictionOptions = {
@@ -71,10 +71,10 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             entities : extractEntitiesAndMetadata(response.prediction),
             sentiment: getSentiment(response.prediction),
             luisResult: (this.predictionOptions.includeAPIResults ? response : null)
-        }
+        };
 
         if (this.predictionOptions.includeInstanceData) {
-            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {}
+            result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
         this.emitTraceInfo(context, response.prediction, result);
@@ -85,15 +85,15 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        let uri =  `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
+        let uri =  `${ baseUri }/luis/prediction/v3.0/apps/${ this.application.applicationId }`;
 
         if (this.predictionOptions.version) {
-            uri += `/versions/${this.predictionOptions.version}/predict`
+            uri += `/versions/${ this.predictionOptions.version }/predict`;
         } else {
-            uri += `/slots/${this.predictionOptions.slot}/predict`
+            uri += `/slots/${ this.predictionOptions.slot }/predict`;
         }
         
-        const params = `?verbose=${this.predictionOptions.includeInstanceData}&log=${this.predictionOptions.log}&show-all-intents=${this.predictionOptions.includeAllIntents}`;
+        const params = `?verbose=${ this.predictionOptions.includeInstanceData }&log=${ this.predictionOptions.log }&show-all-intents=${ this.predictionOptions.includeAllIntents }`;
 
         uri += params;
         return uri;
@@ -108,15 +108,15 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
 
         if (this.predictionOptions.datetimeReference){
-            content.options['datetimeReference'] = this.predictionOptions.datetimeReference
+            content.options['datetimeReference'] = this.predictionOptions.datetimeReference;
         }
 
         if (this.predictionOptions.dynamicLists){
-            content['dynamicLists'] = this.predictionOptions.dynamicLists
+            content['dynamicLists'] = this.predictionOptions.dynamicLists;
         }
 
         if (this.predictionOptions.externalEntities){
-            content['externalEntities'] = this.predictionOptions.externalEntities
+            content['externalEntities'] = this.predictionOptions.externalEntities;
         }
 
         return {
@@ -239,23 +239,23 @@ function mapProperties(source, inInstance){
                 let isString = typeof source[property] === 'string';
                 let isInt = Number.isInteger(source[property]);
                 let val = mapProperties(source[property], inInstance || property == MetadataKey);
-                if (name == "datetime" && isArray)
+                if (name == 'datetime' && isArray)
                 {
                     nobj.datetimeV1 = val;
                 }
-                else if (name == "datetimeV2" && isArray)
+                else if (name == 'datetimeV2' && isArray)
                 {
                     nobj.datetime = val;
                 }
                 else if (inInstance)
                 {
                     // Correct $instance issues
-                    if (name == "length" && isInt)
+                    if (name == 'length' && isInt)
                     {
                         nobj['endIndex'] = source[name] + source.startIndex;
                     }
-                    else if (!((isInt && name === "modelTypeId") ||
-                               (isString && name === "role")))
+                    else if (!((isInt && name === 'modelTypeId') ||
+                               (isString && name === 'role')))
                     {
                         nobj[name] = val;
                     }
@@ -263,7 +263,7 @@ function mapProperties(source, inInstance){
                 else
                 {
                     // Correct non-$instance values
-                    if (name == "unit" && isString)
+                    if (name == 'unit' && isString)
                     {
                         nobj.units = val;
                     }

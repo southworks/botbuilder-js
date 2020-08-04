@@ -78,7 +78,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -95,7 +95,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -112,7 +112,7 @@ export class ChannelServiceRoutes {
                         }
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -152,7 +152,7 @@ export class ChannelServiceRoutes {
                         res.status(201);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             });
     }
 
@@ -225,7 +225,7 @@ export class ChannelServiceRoutes {
                         res.status(200);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }
@@ -242,7 +242,7 @@ export class ChannelServiceRoutes {
                         res.status(200);
                         res.end();
                     })
-                    .catch(err => { ChannelServiceRoutes.handleError(err, res); })
+                    .catch(err => { ChannelServiceRoutes.handleError(err, res); });
             })
             .catch(err => { ChannelServiceRoutes.handleError(err, res); });
     }

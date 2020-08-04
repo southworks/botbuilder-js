@@ -136,7 +136,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                             valueList.push(id);
                             templateRefValues.set(id, item);
                         } else {
-                            valueList.push([])
+                            valueList.push([]);
                         }
                     }
 

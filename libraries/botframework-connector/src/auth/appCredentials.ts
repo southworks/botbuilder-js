@@ -7,7 +7,7 @@
  */
 import * as msrest from '@azure/ms-rest-js';
 import * as url from 'url';
-import * as adal from 'adal-node'
+import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
 /**

@@ -246,7 +246,7 @@ export class Templates implements Iterable<Template> {
 
         this.checkErrors();
 
-        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getramdonTemplateId()}`;
+        const inlineTemplateId = `${ Templates.inlineTemplateIdPrefix }${ this.getramdonTemplateId() }`;
 
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';

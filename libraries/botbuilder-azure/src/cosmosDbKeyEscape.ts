@@ -44,7 +44,7 @@ export namespace CosmosDbKeyEscape {
 
         // If there are no illegal characters return immediately and avoid any further processing/allocations
         if (firstIllegalCharIndex === -1) {
-            return truncateKey(`${key}${keySuffix || ''}`, compatibilityMode);
+            return truncateKey(`${ key }${ keySuffix || '' }`, compatibilityMode);
         }
 
         let sanitizedKey = keySplitted.reduce(
@@ -53,7 +53,7 @@ export namespace CosmosDbKeyEscape {
             ''
         );
 
-        return truncateKey(`${sanitizedKey}${keySuffix || ''}`, compatibilityMode);
+        return truncateKey(`${ sanitizedKey }${ keySuffix || '' }`, compatibilityMode);
     }
 
     function truncateKey(key: string, truncateKeysForCompatibility?: boolean): string {

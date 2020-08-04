@@ -378,7 +378,7 @@ export class TurnContext {
             valueType: valueType,
             label: label
         };
-        return this.sendActivity(traceActivity)
+        return this.sendActivity(traceActivity);
     }
 
     /**

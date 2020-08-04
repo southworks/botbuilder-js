@@ -12,7 +12,7 @@ const {
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus } = require('botbuilder-dialogs');
-const { BeginSkill, SkillExtensions } = require('../lib')
+const { BeginSkill, SkillExtensions } = require('../lib');
 
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
@@ -50,9 +50,9 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         return key;
     }
 
-    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
+    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId); }
 
-    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
+    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId); }
 
     async deleteConversationReference() { /* not used in BeginSkill */ }
 }
@@ -72,7 +72,7 @@ describe('BeginSkill', function() {
         toBotIdSent = toBotId;
         toUriSent = toUri;
         activitySent = activity;
-    }
+    };
 
     // Create BotFrameworkHttpClient and postActivityStub
     const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
@@ -128,7 +128,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     const { BotFrameworkHttpClient } = require('../../botbuilder/lib');
 
     if (captureAction && typeof captureAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);
+        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${ typeof captureAction } instead of undefined or a function.`);
     }
 
     // Create ExpectedReplies object for response body

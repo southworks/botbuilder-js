@@ -77,8 +77,8 @@ export class HttpRequestUtils {
     }
 
     private getUserAgent(): string {
-        const packageUserAgent: string = `${ pjson.name }/${ pjson.version }`;
-        const platformUserAgent: string = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
+        const packageUserAgent = `${ pjson.name }/${ pjson.version }`;
+        const platformUserAgent = `(${ os.arch() }-${ os.type() }-${ os.release() }; Node.js,Version=${ process.version })`;
 
         return `${ packageUserAgent } ${ platformUserAgent }`;
     }

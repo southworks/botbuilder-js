@@ -5,7 +5,7 @@ import { ChannelServiceHandler, ChannelServiceRoutes } from 'botbuilder';
 import { AuthenticationConfiguration, SimpleCredentialProvider } from 'botframework-connector';
 import express from 'express';
 
-describe('ChannelServiceRoutes - Integration Tests', function () {
+describe('ChannelServiceRoutes - Integration Tests', function() {
     it('should successfully configure all routes on an Express Application', () => {
         const app = express();
         const handler = new ChannelServiceHandler(new SimpleCredentialProvider('', ''), new AuthenticationConfiguration());
@@ -13,7 +13,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
 
         routes.register(app);
 
-        const bfRoutes = (app._router.stack as Array<any>).filter(layer => {
+        const bfRoutes = (app._router.stack as any[]).filter(layer => {
             const route: express.IRoute = layer.route;
             if (route) {
                 return route.path.startsWith('/v3/conversations');
@@ -30,7 +30,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
 
         routes.register(app, '/test');
 
-        const bfRoutes = (app._router.stack as Array<any>).filter(layer => {
+        const bfRoutes = (app._router.stack as any[]).filter(layer => {
             const route: express.IRoute = layer.route;
             if (route) {
                 return route.path.startsWith('/test/v3/conversations');

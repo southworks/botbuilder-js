@@ -73,10 +73,10 @@ export class NamedPipeServer implements IStreamingTransportServer {
         }
 
         const incoming = new Promise(resolve => {
-                this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
-                    this._receiver.connect(new NamedPipeTransport(socket));
-                    resolve();
-                });
+            this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
+                this._receiver.connect(new NamedPipeTransport(socket));
+                resolve();
+            });
 
         });
 

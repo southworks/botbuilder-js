@@ -12,7 +12,7 @@ import { IHttpContentHeaders } from './interfaces/IHttpContentHeaders';
 export class HttpContentStream {
     public readonly id: string;
     public readonly content: HttpContent;
-    public description: { id: string; type: string; length: number; };
+    public description: { id: string; type: string; length: number };
 
     public constructor(content: HttpContent) {
         this.id = generateGuid();

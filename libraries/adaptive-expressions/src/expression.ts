@@ -62,7 +62,7 @@ export class Expression {
             this.children = children;
         } else if (type !== undefined) {
             if (!Expression.functions.get(type)) {
-                throw Error(`${type} does not have an evaluator, it's not a built-in function or a custom function.`);
+                throw Error(`${ type } does not have an evaluator, it's not a built-in function or a custom function.`);
             }
 
             this.evaluator = Expression.functions.get(type);
@@ -154,9 +154,9 @@ export class Expression {
                     if (children[1] instanceof Constant) {
                         const cnst: Constant = children[1] as Constant;
                         if (cnst.returnType === ReturnType.String) {
-                            path += `.${cnst.value}`;
+                            path += `.${ cnst.value }`;
                         } else {
-                            path += `[${cnst.value}]`;
+                            path += `[${ cnst.value }]`;
                         }
                     } else {
                         refs.add(path);

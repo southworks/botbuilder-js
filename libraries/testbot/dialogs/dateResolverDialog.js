@@ -27,7 +27,7 @@ class DateResolverDialog extends CancelAndHelpDialog {
         const promptMessageText = 'On what date would you like to travel?';
         const promptMessage = MessageFactory.text(promptMessageText, promptMessageText, InputHints.ExpectingInput);
 
-        const repromptMessageText = "I'm sorry, for best results, please enter your travel date including the month, day and year.";
+        const repromptMessageText = 'I\'m sorry, for best results, please enter your travel date including the month, day and year.';
         const repromptMessage = MessageFactory.text(repromptMessageText, repromptMessageText, InputHints.ExpectingInput);
 
         if (!timex) {

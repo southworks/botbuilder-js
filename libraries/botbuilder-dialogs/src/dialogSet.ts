@@ -97,7 +97,7 @@ export class DialogSet {
             for (const id in this.dialogs) {
                 const v = this.dialogs[id].getVersion();
                 if (v) {
-                    versions += `|${v}`;
+                    versions += `|${ v }`;
                 }
             }
             this._version = StringUtils.hash(versions);

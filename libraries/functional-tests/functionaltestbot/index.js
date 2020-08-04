@@ -5,7 +5,7 @@ const restify = require('restify');
 const path = require('path');
 
 const { BotFrameworkAdapter, MemoryStorage, UserState, ConversationState, InspectionState, InspectionMiddleware } = require('botbuilder');
-const { MyBot } = require('./bots/myBot')
+const { MyBot } = require('./bots/myBot');
 
 const ENV_FILE = path.join(__dirname, '.env');
 require('dotenv').config({ path: ENV_FILE });

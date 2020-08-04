@@ -44,7 +44,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
 
                 result = tempList;
             } else {
-                error = `${expression.children[0]} is not array or object.`;
+                error = `${ expression.children[0] } is not array or object.`;
             }
         }
 

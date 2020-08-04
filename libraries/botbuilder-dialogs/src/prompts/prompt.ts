@@ -69,7 +69,7 @@ export interface PromptOptions {
      * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
      * when the prompt is executed using DialogContext.prompt.
      */
-    style?: ListStyle
+    style?: ListStyle;
 
     /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
@@ -354,9 +354,9 @@ export abstract class Prompt<T> extends Dialog {
 
             if (msg.attachments) {
                 if (prompt.attachments) {
-                  prompt.attachments = prompt.attachments.concat(msg.attachments);
+                    prompt.attachments = prompt.attachments.concat(msg.attachments);
                 } else {
-                  prompt.attachments = msg.attachments;
+                    prompt.attachments = msg.attachments;
                 }
             }
 

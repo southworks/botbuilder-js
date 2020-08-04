@@ -27,5 +27,5 @@ export interface IEventEmitter {
     // Added in Node 6...
     prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
     prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-    eventNames(): Array<string | symbol>;
+    eventNames(): (string | symbol)[];
 }

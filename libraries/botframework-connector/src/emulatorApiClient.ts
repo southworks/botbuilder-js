@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { AppCredentials } from "./auth/appCredentials";
+import { AppCredentials } from './auth/appCredentials';
 
 export class EmulatorApiClient {
     public static async emulateOAuthCards(credentials: AppCredentials, emulatorUrl: string, emulate: boolean): Promise<boolean> {

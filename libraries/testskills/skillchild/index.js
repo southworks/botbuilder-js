@@ -12,7 +12,7 @@ require('dotenv').config({ path: ENV_FILE});
 const adapter = new BotFrameworkAdapter({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword
-})
+});
 
 // Create HTTP server
 const server = restify.createServer();

@@ -82,7 +82,7 @@ export class TokenResolver {
                         if (pollingSettings.interval > 0) {
                             // reset the polling interval
                             if (log)
-                                log.push(`Changing polling interval to ${pollingSettings.interval}`);
+                                log.push(`Changing polling interval to ${ pollingSettings.interval }`);
                             pollingIntervalMs = pollingSettings.interval;
                         }
                     }

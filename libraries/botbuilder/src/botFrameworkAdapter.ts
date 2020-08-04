@@ -129,8 +129,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly ConnectorClientKey: Symbol = Symbol('ConnectorClient');
-    public readonly TokenApiClientCredentialsKey: Symbol = Symbol('TokenApiClientCredentials');
+    public readonly ConnectorClientKey: symbol = Symbol('ConnectorClient');
+    public readonly TokenApiClientCredentialsKey: symbol = Symbol('TokenApiClientCredentials');
 
     protected readonly credentials: AppCredentials;
     protected readonly credentialsProvider: SimpleCredentialProvider;
@@ -1375,10 +1375,10 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
         return response;
     }
 
-    public async healthCheck(context: TurnContext) : Promise<HealthCheckResponse> {
+    public async healthCheck(context: TurnContext): Promise<HealthCheckResponse> {
         const healthResults = <HealthResults>{
             success: true,
-            "user-agent": USER_AGENT,
+            'user-agent': USER_AGENT,
             messages: [ 'Health check succeeded.' ]
         };
         if (!(await this.credentialsProvider.isAuthenticationDisabled())) {

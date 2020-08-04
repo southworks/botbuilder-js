@@ -61,7 +61,7 @@ class MainDialog extends ComponentDialog {
      */
     async introStep(stepContext) {
         if (!this.luisRecognizer.isConfigured()) {
-            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.'
+            const messageText = 'NOTE: LUIS is not configured. To enable all capabilities, add `LuisAppId`, `LuisAPIKey` and `LuisAPIHostName` to the .env file.';
             await stepContext.context.sendActivity(messageText, null, InputHints.IgnoringInput);
             return await stepContext.next();
         }
@@ -112,11 +112,11 @@ class MainDialog extends ComponentDialog {
 
             default:
                 // Catch all for unhandled intents
-                const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${LuisRecognizer.topIntent(luisResult)})`;
+                const didntUnderstandMessageText = `Sorry, I didn't get that. Please try asking in a different way (intent was ${ LuisRecognizer.topIntent(luisResult) })`;
                 await stepContext.context.sendActivity(didntUnderstandMessageText, didntUnderstandMessageText, InputHints.IgnoringInput);
         }
 
-         return await stepContext.next();
+        return await stepContext.next();
     }
 
     /**
@@ -135,7 +135,7 @@ class MainDialog extends ComponentDialog {
         }
 
         if(unsupportedCities.length) {
-            const messageText = `Sorry but the following airports are not supported: ${unsupportedCities.join(', ')}`;
+            const messageText = `Sorry but the following airports are not supported: ${ unsupportedCities.join(', ') }`;
             await context.sendActivity(messageText, messageText, InputHints.IgnoringInput);
         }
     }

@@ -30,7 +30,7 @@ class FauxSock {
             case 'error':
                 return;
             default:
-                console.error(`FauxSock.removeListener(): Reached default case: ${event}`);
+                console.error(`FauxSock.removeListener(): Reached default case: ${ event }`);
         }
     }
 

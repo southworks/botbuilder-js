@@ -54,10 +54,10 @@ export class FunctionUtils {
      */
     public static validateArityAndAnyType(expression: Expression, minArity: number, maxArity: number, returnType: ReturnType = ReturnType.Object): void {
         if (expression.children.length < minArity) {
-            throw new Error(`${expression} should have at least ${minArity} children.`);
+            throw new Error(`${ expression } should have at least ${ minArity } children.`);
         }
         if (expression.children.length > maxArity) {
-            throw new Error(`${expression} can't have more than ${maxArity} children.`);
+            throw new Error(`${ expression } can't have more than ${ maxArity } children.`);
         }
 
         if ((returnType & ReturnType.Object) === 0) {
@@ -81,8 +81,8 @@ export class FunctionUtils {
         }
         if (expression.children.length < types.length || expression.children.length > types.length + optional.length) {
             throw new Error(optional.length === 0 ?
-                `${expression} should have ${types.length} children.`
-                : `${expression} should have between ${types.length} and ${types.length + optional.length} children.`);
+                `${ expression } should have ${ types.length } children.`
+                : `${ expression } should have between ${ types.length } and ${ types.length + optional.length } children.`);
         }
 
         for (let i = 0; i < types.length; i++) {
@@ -217,7 +217,7 @@ export class FunctionUtils {
     public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!FunctionUtils.isNumber(value)) {
-            error = `${expression} is not a number.`;
+            error = `${ expression } is not a number.`;
         }
 
         return error;
@@ -236,11 +236,11 @@ export class FunctionUtils {
         }
 
         if (!Array.isArray(value)) {
-            error = `${expression} is neither a list nor a number.`;
+            error = `${ expression } is neither a list nor a number.`;
         } else {
             for (const elt of value) {
                 if (!FunctionUtils.isNumber(elt)) {
-                    error = `${elt} is not a number in ${expression}.`;
+                    error = `${ elt } is not a number in ${ expression }.`;
                     break;
                 }
             }
@@ -258,11 +258,11 @@ export class FunctionUtils {
     public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
-            error = `${expression} is not a list.`;
+            error = `${ expression } is not a list.`;
         } else {
             for (const elt of value) {
                 if (!FunctionUtils.isNumber(elt)) {
-                    error = `${elt} is not a number in ${expression}.`;
+                    error = `${ elt } is not a number in ${ expression }.`;
                     break;
                 }
             }
@@ -280,7 +280,7 @@ export class FunctionUtils {
     public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
-            error = `${expression} must be a string, list, map or object.`;
+            error = `${ expression } must be a string, list, map or object.`;
         }
 
         return error;
@@ -295,7 +295,7 @@ export class FunctionUtils {
     public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value === undefined || value === null) {
-            error = `${expression} is null.`;
+            error = `${ expression } is null.`;
         }
 
         return error;
@@ -310,7 +310,7 @@ export class FunctionUtils {
     public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!Number.isInteger(value)) {
-            error = `${expression} is not a integer.`;
+            error = `${ expression } is not a integer.`;
         }
 
         return error;
@@ -325,7 +325,7 @@ export class FunctionUtils {
     public static verifyList(value: any, expression: Expression): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
-            error = `${expression} is not a list or array.`;
+            error = `${ expression } is not a list or array.`;
         }
 
         return error;
@@ -340,7 +340,7 @@ export class FunctionUtils {
     public static verifyString(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string') {
-            error = `${expression} is not a string.`;
+            error = `${ expression } is not a string.`;
         }
 
         return error;
@@ -355,7 +355,7 @@ export class FunctionUtils {
     public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string' && value !== undefined) {
-            error = `${expression} is neither a string nor a null object.`;
+            error = `${ expression } is neither a string nor a null object.`;
         }
 
         return error;
@@ -370,7 +370,7 @@ export class FunctionUtils {
     public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string' && value !== undefined && !FunctionUtils.isNumber(value)) {
-            error = `${expression} is neither a number nor string`;
+            error = `${ expression } is neither a number nor string`;
         }
 
         return error;
@@ -385,7 +385,7 @@ export class FunctionUtils {
     public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value === undefined || (!FunctionUtils.isNumber(value) && typeof value !== 'string')) {
-            error = `${expression} is not string or number.`;
+            error = `${ expression } is not string or number.`;
         }
 
         return error;
@@ -400,7 +400,7 @@ export class FunctionUtils {
     public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'boolean') {
-            error = `${expression} is not a boolean.`;
+            error = `${ expression } is not a boolean.`;
         }
 
         return error;
@@ -416,10 +416,10 @@ export class FunctionUtils {
         try {
             const parsedData: Date = new Date(value);
             if (Number.isNaN(parsedData.getTime())) {
-                error = `${value} is not a valid datetime string.`;
+                error = `${ value } is not a valid datetime string.`;
             }
         } catch (e) {
-            error = `${value} is not a valid datetime string.`;
+            error = `${ value } is not a valid datetime string.`;
         }
 
         return error;
@@ -435,12 +435,12 @@ export class FunctionUtils {
         try {
             const parsedData: Date = new Date(value);
             if (Number.isNaN(parsedData.getTime())) {
-                error = `${value} is not a valid datetime string.`;
+                error = `${ value } is not a valid datetime string.`;
             } else if (parsedData.toISOString() !== value) {
-                error = `${value} is not a ISO format datetime string.`;
+                error = `${ value } is not a ISO format datetime string.`;
             }
         } catch (e) {
-            error = `${value} is not a valid datetime string.`;
+            error = `${ value } is not a valid datetime string.`;
         }
 
         return error;
@@ -630,10 +630,10 @@ export class FunctionUtils {
             if (index >= 0 && index < instance.length) {
                 value = instance[index];
             } else {
-                error = `${index} is out of range for ${instance}`;
+                error = `${ index } is out of range for ${ instance }`;
             }
         } else {
-            error = `${instance} is not a collection.`;
+            error = `${ instance } is not a collection.`;
         }
 
         return { value, error };
@@ -702,7 +702,7 @@ export class FunctionUtils {
         } else {
             parsed = new TimexProperty(timexExpr);
             if (parsed === undefined || Object.keys(parsed).length === 0) {
-                return { timexProperty: parsed, error: `${timexExpr} requires a TimexProperty or a string as a argument` };
+                return { timexProperty: parsed, error: `${ timexExpr } requires a TimexProperty or a string as a argument` };
             }
         }
 
@@ -743,11 +743,11 @@ export class FunctionUtils {
                 }
 
                 if (FunctionUtils.isNumber(parseInt(value))) {
-                    path = `[${value}].${path}`;
+                    path = `[${ value }].${ path }`;
                 } else if (typeof value === 'string') {
-                    path = `['${value}'].${path}`;
+                    path = `['${ value }'].${ path }`;
                 } else {
-                    return { path: undefined, left: undefined, error: `${left.children[1].toString()} doesn't return an int or string` };
+                    return { path: undefined, left: undefined, error: `${ left.children[1].toString() } doesn't return an int or string` };
                 }
 
                 left = left.children[0];
@@ -797,7 +797,7 @@ export class FunctionUtils {
 
         ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
         if (!instance) {
-            error = `'${expression.children[0]}' evaluated to null.`;
+            error = `'${ expression.children[0] }' evaluated to null.`;
         }
 
         if (!error) {
@@ -808,7 +808,7 @@ export class FunctionUtils {
             } else if (typeof instance === 'object') {
                 Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
             } else {
-                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
+                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
             }
 
             if (!error) {
@@ -839,12 +839,12 @@ export class FunctionUtils {
      */
     public static validateForeach(expression: Expression): void {
         if (expression.children.length !== 3) {
-            throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
+            throw new Error(`foreach expect 3 parameters, found ${ expression.children.length }`);
         }
 
         const second: any = expression.children[1];
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
-            throw new Error(`Second parameter of foreach is not an identifier : ${second}`);
+            throw new Error(`Second parameter of foreach is not an identifier : ${ second }`);
         }
     }
 
@@ -907,7 +907,7 @@ export class FunctionUtils {
                         }
                     }
                 } else {
-                    error = `${expression.children[0]} is not an array`;
+                    error = `${ expression.children[0] } is not an array`;
                 }
 
             }
@@ -941,7 +941,7 @@ export class FunctionUtils {
         try {
             result = timedata.format(format);
         } catch (e) {
-            error = `${format} is not a valid timestamp format`;
+            error = `${ format } is not a valid timestamp format`;
         }
 
         return { value: result, error };
@@ -974,7 +974,7 @@ export class FunctionUtils {
         try {
             result = new URL(uri);
         } catch (e) {
-            error = `Invalid URI: ${uri}`;
+            error = `Invalid URI: ${ uri }`;
         }
 
         return { value: result, error };
@@ -1034,10 +1034,10 @@ export class FunctionUtils {
         }
 
         if (types.length === 1) {
-            return `${childExpr} is not a ${types[0]} expression in ${expr}.`;
+            return `${ childExpr } is not a ${ types[0] } expression in ${ expr }.`;
         } else {
             const typesStr = types.join(', ');
-            return `${childExpr} in ${expr} is not any of [${typesStr}].`;
+            return `${ childExpr } in ${ expr } is not any of [${ typesStr }].`;
         }
     }
 }

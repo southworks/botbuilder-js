@@ -36,7 +36,7 @@ class MainDialog extends ComponentDialog {
     async showTokenResponse(step) {
         const tokenResponse = step.result;
         if(tokenResponse) {
-            console.log(`Skill: your token is ${ tokenResponse.token }`)
+            console.log(`Skill: your token is ${ tokenResponse.token }`);
         }
         else {
             console.log('Skill: No token response from OAuthPrompt');

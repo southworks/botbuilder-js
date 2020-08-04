@@ -69,7 +69,7 @@ describe('SkillDialog', function() {
                     toBotIdSent = toBotId;
                     toUriSent = toUri;
                     activitySent = activity;
-                }
+                };
 
                 // Create BotFrameworkHttpClient and postActivityStub
                 const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
@@ -322,7 +322,7 @@ describe('SkillDialog', function() {
             BOTBUILDER = require('../../botbuilder');
             BOTBUILDER_TESTING = require('../../botbuilder-testing');
         } catch (err) {
-            console.warn('=====\nUnable to load botbuilder module. "intercepting OAuthCards" tests will not be run.\n')
+            console.warn('=====\nUnable to load botbuilder module. "intercepting OAuthCards" tests will not be run.\n');
         }
 
         if (BOTBUILDER !== null && BOTBUILDER_TESTING !== null) {
@@ -467,7 +467,7 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     const { BotFrameworkHttpClient } = require('../../botbuilder');
 
     if (captureAction && typeof captureAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);
+        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${ typeof captureAction } instead of undefined or a function.`);
     }
 
     // Create ExpectedReplies object for response body
@@ -582,9 +582,9 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         return key;
     }
 
-    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
+    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId); }
 
-    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
+    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId); }
 
     async deleteConversationReference() { /* not used in SkillDialog */ }
 }
@@ -596,7 +596,7 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
  * @returns UUID string 
  */
 function uuid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });

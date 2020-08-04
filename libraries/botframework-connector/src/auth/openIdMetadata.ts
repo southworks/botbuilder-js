@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { AuthenticationError } from "./authenticationError";
-import { StatusCodes } from "botframework-schema";
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const getPem: any = require('rsa-pem-from-mod-exp');

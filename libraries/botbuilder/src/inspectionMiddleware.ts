@@ -131,7 +131,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             return await this.inbound(turnContext, traceActivity);
         } catch (err) {
-            console.warn(`Exception in inbound interception ${err}`);
+            console.warn(`Exception in inbound interception ${ err }`);
             return { shouldForwardToApplication: true, shouldIntercept: false };
         }
     }
@@ -140,7 +140,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             await this.outbound(turnContext, traceActivities);
         } catch (err) {
-            console.warn(`Exception in outbound interception ${err}`);
+            console.warn(`Exception in outbound interception ${ err }`);
         }
     }
 
@@ -148,7 +148,7 @@ abstract class InterceptionMiddleware implements Middleware {
         try {
             await this.traceState(turnContext);
         } catch (err) {
-            console.warn(`Exception in state interception ${err}`);
+            console.warn(`Exception in state interception ${ err }`);
         }
     }
 }
@@ -162,7 +162,7 @@ abstract class InterceptionMiddleware implements Middleware {
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
 
-    private static readonly command = "/INSPECT";
+    private static readonly command = '/INSPECT';
 
     private readonly inspectionState: InspectionState;
     private readonly inspectionStateAccessor: StatePropertyAccessor<InspectionSessionsByStatus>;
@@ -274,7 +274,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     private async processOpenCommand(turnContext: TurnContext): Promise<any> {
         var sessions = await this.inspectionStateAccessor.get(turnContext, InspectionSessionsByStatus.DefaultValue);
         var sessionId = this.openCommand(sessions, TurnContext.getConversationReference(turnContext.activity));
-        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${InspectionMiddleware.command} attach ${sessionId}`));
+        await turnContext.sendActivity(TraceActivity.makeCommandActivity(`${ InspectionMiddleware.command } attach ${ sessionId }`));
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
@@ -284,7 +284,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
             await turnContext.sendActivity('Attached to session, all traffic is being replicated for inspection.');
         }
         else {
-            await turnContext.sendActivity(`Open session with id ${sessionId} does not exist.`);
+            await turnContext.sendActivity(`Open session with id ${ sessionId } does not exist.`);
         }
 
         await this.inspectionState.saveChanges(turnContext, false);
@@ -344,7 +344,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         await this.inspectionState.saveChanges(turnContext, false);
     }
 
-    private getAttachId(activity: Activity) : string {
+    private getAttachId(activity: Activity): string {
         // If we are running in a Microsoft Teams Team the conversation Id will reflect a particular thread the bot is in.
         // So if we are in a Team then we will associate the "attach" with the Team Id rather than the more restrictive conversation Id.
         const teamId = teamsGetTeamId(activity);
@@ -382,9 +382,9 @@ class InspectionSessionsByStatus {
 
     public static DefaultValue: InspectionSessionsByStatus = new InspectionSessionsByStatus();
 
-    public openedSessions: { [id: string]: Partial<ConversationReference>; } = {};
+    public openedSessions: { [id: string]: Partial<ConversationReference> } = {};
 
-    public attachedSessions: { [id: string]: Partial<ConversationReference>; } = {};
+    public attachedSessions: { [id: string]: Partial<ConversationReference> } = {};
 }
 
 /**

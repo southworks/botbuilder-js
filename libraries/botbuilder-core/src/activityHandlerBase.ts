@@ -11,7 +11,7 @@ import { InvokeResponse } from './invokeResponse';
 import { StatusCodes } from './statusCodes';
 
 // This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not overwrite any already set InvokeResponses.
-export const INVOKE_RESPONSE_KEY: symbol = Symbol('invokeResponse');
+export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 /**
  * Defines the core behavior for event-emitting activity handlers for bots.

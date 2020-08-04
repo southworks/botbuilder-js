@@ -15,8 +15,8 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
     /**
      * A value indicating whether to send trace activities.
      */
-    public get enableTrace(): boolean { return this._sendTraceActivity };
-    public set enableTrace(value: boolean) { this._sendTraceActivity = value };
+    public get enableTrace(): boolean { return this._sendTraceActivity; };
+    public set enableTrace(value: boolean) { this._sendTraceActivity = value; };
 
     /**
      * The locale for the conversation.
@@ -202,7 +202,7 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
      * called.
      */
     public continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 
     /**
@@ -336,7 +336,7 @@ export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvide
      * @param connectionName Name of the auth connection to use.
      */
     public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
-        return `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${context.activity.from.id}`;
+        return `https://fake.com/oauthsignin/${ connectionName }/${ context.activity.channelId }/${ context.activity.from.id }`;
     }
 
     /**

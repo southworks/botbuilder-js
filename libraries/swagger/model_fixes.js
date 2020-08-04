@@ -20,26 +20,26 @@ var optionalModelProperties = {
 
 var replaceOptions = [
     {
-        "files": "connectorApi/**/*.ts",
-        "from": "as Models from \"./models\"",
-        "to": "as Models from \"botframework-schema\""
+        'files': 'connectorApi/**/*.ts',
+        'from': 'as Models from "./models"',
+        'to': 'as Models from "botframework-schema"'
     }, {
-        "files": "connectorApi/**/*.ts",
-        "from": "as Models from \"../models\"",
-        "to": "as Models from \"botframework-schema\""
+        'files': 'connectorApi/**/*.ts',
+        'from': 'as Models from "../models"',
+        'to': 'as Models from "botframework-schema"'
     }, {
-        "files": "connectorApi/lib/models/index.ts",
-        "from": "\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/",
-        "to": "\/**\n * @module botbuilder\n *\/\n\/**\n * Copyright (c) Microsoft Corporation. All rights reserved.  \n * Licensed under the MIT License.\n *\/"
+        'files': 'connectorApi/lib/models/index.ts',
+        'from': '\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/',
+        'to': '\/**\n * @module botbuilder\n *\/\n\/**\n * Copyright (c) Microsoft Corporation. All rights reserved.  \n * Licensed under the MIT License.\n *\/'
     }, 
-    { "files": "connectorApi/lib/models/index.ts", "from": "{Buffer} [originalBase64]", "to": "{any} [originalBase64]" }, 
-    { "files": "connectorApi/lib/models/index.ts", "from": ": Buffer", "to": ": any" }, 
-    { "files": "connectorApi/lib/models/index.ts", "from": "{Buffer} [thumbnailBase64]", "to": "{any} [thumbnailBase64]" }, 
-    { "files": "connectorApi/lib/models/index.ts", "from": ": Buffer", "to": ": any" }, 
+    { 'files': 'connectorApi/lib/models/index.ts', 'from': '{Buffer} [originalBase64]', 'to': '{any} [originalBase64]' }, 
+    { 'files': 'connectorApi/lib/models/index.ts', 'from': ': Buffer', 'to': ': any' }, 
+    { 'files': 'connectorApi/lib/models/index.ts', 'from': '{Buffer} [thumbnailBase64]', 'to': '{any} [thumbnailBase64]' }, 
+    { 'files': 'connectorApi/lib/models/index.ts', 'from': ': Buffer', 'to': ': any' }, 
     {
-        "files": "connectorApi/**/*.ts",
-        "from": "\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/",
-        "to": "\/**\n * @module botbuilder\n *\/\n\/**\n * Copyright (c) Microsoft Corporation. All rights reserved.  \n * Licensed under the MIT License.\n *\/"
+        'files': 'connectorApi/**/*.ts',
+        'from': '\/*\n * Code connectorApi by Microsoft (R) AutoRest Code Generator.\n * Changes may cause incorrect behavior and will be lost if the code is\n * regenerated.\n *\/',
+        'to': '\/**\n * @module botbuilder\n *\/\n\/**\n * Copyright (c) Microsoft Corporation. All rights reserved.  \n * Licensed under the MIT License.\n *\/'
     }
 ];
 
@@ -68,12 +68,12 @@ function fixModelsProps(models, optionalModelProperties) {
     Object.keys(optionalModelProperties).forEach(modelName => {
         var requiredProperties = optionalModelProperties[modelName];
 
-        var startIx = models.indexOf(`export interface ${modelName} {`);
+        var startIx = models.indexOf(`export interface ${ modelName } {`);
         var endIx = models.indexOf('\n}', startIx) + 2;
         var model = models.substring(startIx, endIx);
 
         var updated = requiredProperties.reduce(
-            (updated, propName) => updated.replace(`${propName}: `, `${propName}?: `),
+            (updated, propName) => updated.replace(`${ propName }: `, `${ propName }?: `),
             model);
 
         // console.log(interfaceName, 'OLD:\n', model, 'UPDATED:\n', updated);
