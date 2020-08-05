@@ -6,7 +6,7 @@ describe(`activityValidator`, function () {
 
     const timestamp = '2020-03-17T14:42:39.3692591-07:00';
 
-    // Test 3
+    // Test 4
 
     it(`should preserve original localTimestamp in rawLocalTimestamp.`, () => {
         const activity = validateAndFixActivity({ type: 'message', localTimestamp: timestamp });
