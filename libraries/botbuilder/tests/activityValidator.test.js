@@ -4,7 +4,7 @@ const { validateAndFixActivity } = require('../lib/activityValidator');
 describe(`activityValidator`, function () {
     this.timeout(5000);
 
-//  one more change
+//  one more
 
     const timestamp = '2020-03-17T14:42:39.3692591-07:00';
 
