@@ -32,7 +32,7 @@ class BotStateMock {
 
 describe(`BotStateSet`, function () {
     this.timeout(5000);
-
+//test
     const adapter = new TestAdapter();
     const turnContext = new TurnContext(adapter, receivedMessage);
 
