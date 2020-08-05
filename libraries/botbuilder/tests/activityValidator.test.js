@@ -1,10 +1,12 @@
 const assert = require('assert');
 const { validateAndFixActivity } = require('../lib/activityValidator');
 
-describe(`activityValidator`, function() {
+describe(`activityValidator`, function () {
     this.timeout(5000);
 
     const timestamp = '2020-03-17T14:42:39.3692591-07:00';
+
+    // Test 1
 
     it(`should preserve original localTimestamp in rawLocalTimestamp.`, () => {
         const activity = validateAndFixActivity({ type: 'message', localTimestamp: timestamp });
@@ -23,17 +25,17 @@ describe(`activityValidator`, function() {
 
     it(`should not fail when missing localTimestamp.`, () => {
         const activity = validateAndFixActivity({ type: 'message' });
-        assert.strictEqual(typeof(activity.rawLocalTimestamp), 'undefined');
+        assert.strictEqual(typeof (activity.rawLocalTimestamp), 'undefined');
     });
 
     it(`should not fail when missing expiration.`, () => {
         const activity = validateAndFixActivity({ type: 'message' });
-        assert.strictEqual(typeof(activity.rawExpiration), 'undefined');
+        assert.strictEqual(typeof (activity.rawExpiration), 'undefined');
     });
 
     it(`should not fail when missing timestamp.`, () => {
         const activity = validateAndFixActivity({ type: 'message' });
-        assert.strictEqual(typeof(activity.rawTimestamp), 'undefined');
+        assert.strictEqual(typeof (activity.rawTimestamp), 'undefined');
     });
 
     it(`should convert timestamp string to Date.`, () => {
