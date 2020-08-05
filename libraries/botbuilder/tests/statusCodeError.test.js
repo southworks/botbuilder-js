@@ -13,7 +13,7 @@ describe(`StatusCodeError`, function() {
             try {
                 const message = 'This is an error message';
                 const error = new StatusCodeError(StatusCodes.NOT_FOUND, message);
-
+//testing
                 assert.strictEqual(error.message, message, `message should be equal to "${message}".`)
                 assert.strictEqual(error.statusCode, StatusCodes.NOT_FOUND, `statusCode should be the code ${StatusCodes.NOT_FOUND}`)
                 done();
