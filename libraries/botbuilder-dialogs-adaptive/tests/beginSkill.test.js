@@ -1,6 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const { createHash } = require('crypto');
 const { stub } = require('sinon');
+const { createTelemetryClientAndStub } = require('./lgTelemetryUtil');
 const {
     ActivityTypes,
     ConversationState,
@@ -8,12 +9,12 @@ const {
     TestAdapter,
     SkillConversationIdFactoryBase,
     StatusCodes,
-    TurnContext
+    TurnContext,
+    MessageFactory
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus } = require('botbuilder-dialogs');
-const { BeginSkill, SkillExtensions } = require('../lib');
-
+const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib')
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
@@ -57,13 +58,16 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     async deleteConversationReference() { /* not used in BeginSkill */ }
 }
 
-describe('BeginSkill', function() {
+describe('BeginSkill', function () {
     this.timeout(3000);
 
     let activitySent; // Activity
     let fromBotIdSent; // string
     let toBotIdSent; // string
     let toUriSent; // string (URI)
+
+    let telemetryName;
+    let telemetryProperties;
 
     // Callback to capture the parameters sent to the skill
     const captureAction = (fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) => {
@@ -73,6 +77,14 @@ describe('BeginSkill', function() {
         toUriSent = toUri;
         activitySent = activity;
     };
+
+    const captureTelemetryAction = (eventData) => {
+        telemetryName = eventData.name;
+        telemetryProperties = eventData.properties;
+    };
+
+    // Create telemetryClient and trackEventStub
+    const [telemetryClient, trackEventStub] = createTelemetryClientAndStub(captureTelemetryAction);
 
     // Create BotFrameworkHttpClient and postActivityStub
     const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
@@ -86,6 +98,7 @@ describe('BeginSkill', function() {
 
     // Setup skill dialog
     const dialog = new BeginSkill();
+    dialog._telemetryClient = telemetryClient;
     setSkillDialogOptions(dialog);
     dm.rootDialog = dialog;
 
@@ -100,6 +113,13 @@ describe('BeginSkill', function() {
             strictEqual(toUriSent, 'http://testskill.contoso.com/api/messages');
             strictEqual(activitySent.text, 'test');
             strictEqual(turnResult.status, DialogTurnStatus.waiting);
+
+            // assert telemetry result
+            strictEqual(telemetryName, 'GeneratorResult');
+            strictEqual(telemetryProperties.result.text, 'test');
+            strictEqual(telemetryProperties.template.activity.text, 'test');
+
+            ok(trackEventStub.calledOnce);
             ok(postActivityStub.calledOnce);
         });
 
@@ -108,6 +128,7 @@ describe('BeginSkill', function() {
 });
 
 function setSkillDialogOptions(dialog) {
+    dialog.activity = new StaticActivityTemplate(MessageFactory.text('test'));
     dialog.disabled = new BoolExpression(false);
     dialog.botId = new StringExpression('SkillCallerId');
     dialog.skillHostEndpoint = new StringExpression('http://test.contoso.com/skill/messages');
@@ -151,5 +172,5 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
         postActivityStub.returns({ status: returnStatusCode, body: activityList });
     }
 
-    return [ skillClient, postActivityStub ];
+    return [skillClient, postActivityStub];
 }
