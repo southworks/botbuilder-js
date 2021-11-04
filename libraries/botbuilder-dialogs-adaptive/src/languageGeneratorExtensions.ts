@@ -85,11 +85,6 @@ export class LanguageGeneratorExtensions {
         } else {
             dialogManager.initialTurnState.set('turn', { languagePolicy: policy });
         }
-<<<<<<< HEAD
-        // test
-=======
-
->>>>>>> parent of 619ac139 (Revert "port: Register missingProperties custom function to get all variables the template contains (#3885)" (#3970))
         return dialogManager;
     }
 }
