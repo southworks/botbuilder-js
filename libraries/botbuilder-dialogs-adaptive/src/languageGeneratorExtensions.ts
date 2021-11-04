@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
+import { DialogManager, TurnPath } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import {
     LanguageGeneratorManager,
@@ -85,7 +85,11 @@ export class LanguageGeneratorExtensions {
         } else {
             dialogManager.initialTurnState.set('turn', { languagePolicy: policy });
         }
+<<<<<<< HEAD
         // test
+=======
+
+>>>>>>> parent of 619ac139 (Revert "port: Register missingProperties custom function to get all variables the template contains (#3885)" (#3970))
         return dialogManager;
     }
 }
