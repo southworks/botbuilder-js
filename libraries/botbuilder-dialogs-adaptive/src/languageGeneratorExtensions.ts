@@ -85,7 +85,7 @@ export class LanguageGeneratorExtensions {
         } else {
             dialogManager.initialTurnState.set('turn', { languagePolicy: policy });
         }
-
+        // test
         return dialogManager;
     }
 }
