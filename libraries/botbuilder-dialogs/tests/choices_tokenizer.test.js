@@ -59,11 +59,12 @@ describe('defaultTokenizer()', function () {
     });
 
     it('should break on emojis.', function () {
-        const tokens = defaultTokenizer(`food 💥👍😀`);
-        assert(tokens.length === 4);
+        const tokens = defaultTokenizer(`food 💥👍😀⭐`);
+        assert(tokens.length === 5);
         assertToken(tokens[0], 0, 3, 'food');
         assertToken(tokens[1], 5, 6, '💥');
         assertToken(tokens[2], 7, 8, '👍');
         assertToken(tokens[3], 9, 10, '😀');
+        assertToken(tokens[4], 11, 11, '⭐');
     });
 });

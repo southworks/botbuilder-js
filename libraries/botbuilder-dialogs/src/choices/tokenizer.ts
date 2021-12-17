@@ -121,17 +121,19 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
 
 /**
  * @private
+ * Exclude unicode ranges containing punctuation characters and symbols.
  * @param codePoint number of character
  */
 function isBreakingChar(codePoint: number): boolean {
     return (
-        isBetween(codePoint, 0x0000, 0x002f) ||
-        isBetween(codePoint, 0x003a, 0x0040) ||
-        isBetween(codePoint, 0x005b, 0x0060) ||
-        isBetween(codePoint, 0x007b, 0x00bf) ||
-        isBetween(codePoint, 0x02b9, 0x036f) ||
-        isBetween(codePoint, 0x2000, 0x2bff) ||
-        isBetween(codePoint, 0x2e00, 0x2e7f)
+        (isBetween(codePoint, 0x0000, 0x002f) ||
+            isBetween(codePoint, 0x003a, 0x0040) ||
+            isBetween(codePoint, 0x005b, 0x0060) ||
+            isBetween(codePoint, 0x007b, 0x00bf) ||
+            isBetween(codePoint, 0x02b9, 0x036f) ||
+            isBetween(codePoint, 0x2000, 0x2bff) ||
+            isBetween(codePoint, 0x2e00, 0x2e7f)) &&
+        codePoint != 0x2b50
     );
 }
 
