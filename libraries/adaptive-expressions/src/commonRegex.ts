@@ -23,6 +23,7 @@ export class CommonRegex {
 
     /**
      * Create RegExp object from PCRE pattern string.
+     *
      * @param pattern PCRE pattern string.
      * @returns RegExp object.
      */

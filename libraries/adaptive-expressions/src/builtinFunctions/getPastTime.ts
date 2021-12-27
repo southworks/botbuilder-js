@@ -59,6 +59,11 @@ export class GetPastTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(
+            expression,
+            [ReturnType.String, ReturnType.String],
+            ReturnType.Number,
+            ReturnType.String
+        );
     }
 }

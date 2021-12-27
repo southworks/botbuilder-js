@@ -18,6 +18,9 @@ import { TriggerTree } from './triggerTree';
 
 /**
  * Rewrite the expression by pushing not down to the leaves.
+ *
+ * @param expression
+ * @param inNot
  */
 const pushDownNot = (expression: Expression, inNot = false): Expression => {
     let newExpr = expression;
@@ -80,6 +83,7 @@ export class Trigger {
 
     /**
      * Intializes a new instance of the `Trigger` class.
+     *
      * @param tree Trigger tree that contains this trigger.
      * @param expression Expression for when the trigger action is possible.
      * @param action Action to take when a trigger matches.
@@ -124,6 +128,7 @@ export class Trigger {
 
     /**
      * Determines the relationship between current instance and another `Trigger` instance.
+     *
      * @param other The other Trigger instance.
      * @param comparers The comparer dictionary.
      * @returns A `RelationshipType` value.
@@ -155,6 +160,7 @@ export class Trigger {
 
     /**
      * Determines whether there is a member in the current `Clause` that matches the nodeClause parameter.
+     *
      * @param nodeClause The other Clause instance to match.
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
@@ -165,6 +171,7 @@ export class Trigger {
 
     /**
      * Gets a string that represents the current trigger.
+     *
      * @param builder An array of string to build the string of trigger.
      * @param indent An integer represents the number of spaces at the start of a line.
      */

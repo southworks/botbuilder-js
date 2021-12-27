@@ -36,6 +36,7 @@ export class InternalFunctionUtils {
 
     /**
      * Parse timex funcition.
+     *
      * @param timexExpr String or TimexProperty input.
      * @returns TimexProperty and error.
      */
@@ -60,6 +61,7 @@ export class InternalFunctionUtils {
 
     /**
      * Sort helper function.
+     *
      * @param isDescending Descending flag.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
@@ -102,8 +104,10 @@ export class InternalFunctionUtils {
 
     /**
      * Lookup a string or number index of an Object.
+     *
      * @param instance Instance with property.
      * @param property Property to lookup.
+     * @param index
      * @returns Value and error information if any.
      */
     public static accessIndex(instance: any, index: number): ValueWithError {
@@ -130,6 +134,7 @@ export class InternalFunctionUtils {
 
     /**
      * Verify a timestamp string is valid timestamp format.
+     *
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
@@ -149,6 +154,7 @@ export class InternalFunctionUtils {
 
     /**
      * Verify a timestamp string is valid ISO timestamp format.
+     *
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
@@ -170,6 +176,7 @@ export class InternalFunctionUtils {
 
     /**
      * Convert a string input to ticks number.
+     *
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
@@ -187,6 +194,7 @@ export class InternalFunctionUtils {
 
     /**
      * Lookup a property in Map or Object.
+     *
      * @param instance Instance with property.
      * @param property Property to lookup.
      * @returns Value and error information if any.
@@ -224,6 +232,7 @@ export class InternalFunctionUtils {
 
     /**
      * Get the value of a path from a memory
+     *
      * @param state Memory.
      * @param path Path string.
      * @param options Options.
@@ -243,6 +252,7 @@ export class InternalFunctionUtils {
 
     /**
      * Wrap string or undefined into string. Default to empty string.
+     *
      * @param input Input string
      */
     public static parseStringOrUndefined(input: string | undefined): string {
@@ -255,6 +265,7 @@ export class InternalFunctionUtils {
 
     /**
      * Test result to see if True in logical comparison functions.
+     *
      * @param instance Computed value.
      * @returns True if boolean true or non-null.
      */
@@ -272,6 +283,7 @@ export class InternalFunctionUtils {
 
     /**
      * Evaluator for foreach and select functions.
+     *
      * @param expression Expression.
      * @param state Memory scope.
      * @param options Options.
@@ -307,13 +319,20 @@ export class InternalFunctionUtils {
 
     /**
      * Lambda evaluator.
+     *
      * @param expression expression.
      * @param state memory state.
      * @param options options.
      * @param list item list.
      * @param callback call back. return the should break flag.
      */
-    public static lambdaEvaluator<T = unknown, U = unknown>(expression: Expression, state: MemoryInterface, options: Options, list: T[], callback: (currentItem: T, result: U, error: string) => boolean): void{
+    public static lambdaEvaluator<T = unknown, U = unknown>(
+        expression: Expression,
+        state: MemoryInterface,
+        options: Options,
+        list: T[],
+        callback: (currentItem: T, result: U, error: string) => boolean
+    ): void {
         const firstChild = expression.children[1].children[0];
         if (!(firstChild instanceof Constant) || typeof firstChild.value !== 'string') {
             return;
@@ -342,9 +361,10 @@ export class InternalFunctionUtils {
      * If the instance is array, return itself.
      * If the instance is object, return {key, value} pair list.
      * Else return undefined.
+     *
      * @param instance input instance.
      */
-    public static convertToList(instance: unknown) : unknown[] | undefined {
+    public static convertToList(instance: unknown): unknown[] | undefined {
         let arr: unknown[] | undefined;
         if (Array.isArray(instance)) {
             arr = instance;
@@ -358,6 +378,7 @@ export class InternalFunctionUtils {
 
     /**
      * Validator for foreach, select, and where functions.
+     *
      * @param expression
      */
     public static ValidateLambdaExpression(expression: Expression): void {
@@ -373,6 +394,7 @@ export class InternalFunctionUtils {
 
     /**
      * Parse string into URL object.
+     *
      * @param uri Input string uri.
      */
     public static parseUri(uri: string): ValueWithError {
@@ -389,6 +411,7 @@ export class InternalFunctionUtils {
 
     /**
      * Transform C# period and unit into js period and unit
+     *
      * @param duration C# duration
      * @param cSharpStr C# unit.
      */
@@ -427,6 +450,8 @@ export class InternalFunctionUtils {
 
     /**
      * TextDecoder helper function.
+     *
+     * @param code
      */
     public static getTextDecoder(code = 'utf-8'): TextDecoder {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
@@ -439,6 +464,7 @@ export class InternalFunctionUtils {
 
     /**
      * Common Stringfy an object.
+     *
      * @param input input object.
      */
     public static commonStringify(input: unknown): string {

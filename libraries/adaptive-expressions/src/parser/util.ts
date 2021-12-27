@@ -12,6 +12,7 @@
 export class Util {
     /**
      * trim char
+     *
      * @param str input string
      * @param char trim character
      */

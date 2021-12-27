@@ -54,7 +54,6 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
                         value = dayjs(args[0]).locale(locale).utc().subtract(dur, tsStr).format(format);
-
                     }
                 }
             } else {

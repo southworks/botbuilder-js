@@ -10,6 +10,9 @@
  * Options used to define evaluation behaviors.
  */
 
+/**
+ *
+ */
 export class Options {
     public nullSubstitution: (path: string) => unknown;
 
@@ -20,6 +23,7 @@ export class Options {
 
     /**
      * Initializes a new instance of the [Options](xref:adaptive-expressions.Options) class.
+     *
      * @param opt Optional. An [Options](xref:adaptive-expressions.Options) instance.
      */
     public constructor(opt?: Options) {

@@ -16,6 +16,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
 
     /**
      * Throws a syntax error based on the current context.
+     *
      * @param _recognizer An Antlr4 runtime recognizer.
      * @param _offendingSymbol The token violating the lexer rules.
      * @param line The line number where the error occurred.
@@ -32,7 +33,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _e: RecognitionException | undefined
     ): void {
-        const syntaxErrorMessage = "Invalid expression format.";
+        const syntaxErrorMessage = 'Invalid expression format.';
         throw Error(`syntax error at line ${line}:${charPositionInLine} ${syntaxErrorMessage}`);
     }
 }

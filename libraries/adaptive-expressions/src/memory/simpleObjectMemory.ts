@@ -20,6 +20,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     /**
      * Initializes a new instance of the [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) class.
      * This wraps a simple object as [MemoryInterface](xref:adaptive-expressions.MemoryInterface).
+     *
      * @param memory The object to wrap.
      */
     public constructor(memory: any) {
@@ -28,6 +29,7 @@ export class SimpleObjectMemory implements MemoryInterface {
 
     /**
      * Transfer an common object to simple memory.
+     *
      * @param obj  Common object.
      * @returns Simple memory instance.
      */
@@ -41,6 +43,7 @@ export class SimpleObjectMemory implements MemoryInterface {
 
     /**
      * Gets the value from a given path.
+     *
      * @param path Given path.
      * @returns The value in the given path or undefined.
      */
@@ -87,6 +90,9 @@ export class SimpleObjectMemory implements MemoryInterface {
      * if you set dialog.a.b = x, but dialog.a don't exist, this will result in an error
      * because we can't and shouldn't smart create structure in the middle
      * you can implement a customzied Scope that support such behavior
+     *
+     * @param path
+     * @param input
      */
     public setValue(path: string, input: any): void {
         if (this.memory === undefined) {
@@ -140,7 +146,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                     curScope[idx] = input;
                 }
             } else {
-                error = `set value for an index to a non-list object`;
+                error = 'set value for an index to a non-list object';
             }
 
             if (error) {
@@ -158,6 +164,7 @@ export class SimpleObjectMemory implements MemoryInterface {
 
     /**
      * Returns the version info of [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory).
+     *
      * @returns A string value representing the version info.
      */
     public version(): string {
@@ -166,6 +173,7 @@ export class SimpleObjectMemory implements MemoryInterface {
 
     /**
      * Returns a string that represents the current [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) object.
+     *
      * @returns A string value representing the current [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) object.
      */
     public toString(): string {

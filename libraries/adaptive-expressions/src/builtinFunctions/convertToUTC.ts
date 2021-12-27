@@ -65,7 +65,12 @@ export class ConvertToUTC extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string, locale?: string): ValueWithError {
+    private static evalConvertToUTC(
+        timeStamp: string,
+        sourceTimezone: string,
+        format?: string,
+        locale?: string
+    ): ValueWithError {
         let result: string;
         let error: string;
         let formattedSourceTime: string;

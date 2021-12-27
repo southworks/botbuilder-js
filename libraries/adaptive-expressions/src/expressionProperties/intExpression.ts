@@ -11,12 +11,14 @@ import { FunctionUtils } from '../functionUtils';
 
 /**
  * Represents a property which is either a int or a string expression which resolves to a int.
+ *
  * @remarks
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class IntExpression extends ExpressionProperty<number> {
     /**
      * Initializes a new instance of the [IntExpression](xref:adaptive-expressions.IntExpression) class.
+     *
      * @param value An int `number` or `string` expression which resolves to an int `number`.
      */
     public constructor(value?: number | string | Expression) {
@@ -25,6 +27,7 @@ export class IntExpression extends ExpressionProperty<number> {
 
     /**
      * Try to get the value.
+     *
      * @param data Data to use for expression binding.
      * @returns Value of int number
      */
@@ -40,6 +43,7 @@ export class IntExpression extends ExpressionProperty<number> {
 
     /**
      * Set an integer value.
+     *
      * @param value Value to set.
      */
     public setValue(value: number | string | Expression): void {

@@ -27,6 +27,7 @@ export enum QuantifierType {
 export class Quantifier {
     /**
      * Initializes a new instance of the `Quantifier` class.
+     *
      * @param variable Name of variable to replace.
      * @param type Type of quantifier.
      * @param bindings Possible bindings for variable.

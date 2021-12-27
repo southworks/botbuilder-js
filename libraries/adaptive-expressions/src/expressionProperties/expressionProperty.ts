@@ -9,6 +9,7 @@ import { Expression } from '../expression';
 
 /**
  * Base class which defines an Expression or value for a property.
+ *
  * @typeparam T Type of value of the expression property.
  */
 export class ExpressionProperty<T> {
@@ -17,6 +18,7 @@ export class ExpressionProperty<T> {
 
     /**
      * Initializes a new instance of the [ExpressionProperty<T>](xref:adaptive-expressions.ExpressionProperty) class.
+     *
      * @param value Optional. Raw value of the expression property.
      * @param defaultValue Optional. Default value for the property.
      */
@@ -80,6 +82,7 @@ export class ExpressionProperty<T> {
 
     /**
      * Get the value.
+     *
      * @remarks
      * An error will be thrown if value is an invalid expression.
      * @param data Data to use for expression binding.
@@ -96,6 +99,7 @@ export class ExpressionProperty<T> {
 
     /**
      * Try to Get the value.
+     *
      * @param data Data to use for expression binding.
      * @returns the value or an error.
      */
@@ -117,6 +121,7 @@ export class ExpressionProperty<T> {
 
     /**
      * Set the value.
+     *
      * @param value Value to set.
      */
     public setValue(value: T | string | Expression): void {

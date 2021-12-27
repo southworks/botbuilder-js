@@ -30,6 +30,7 @@ export class Node {
 
     /**
      * Intializes a new instance of the `Node` class.
+     *
      * @param clause The logical conjunction this node represents.
      * @param tree The trigger tree this node is found in.
      * @param trigger The trigger to initialize this node.
@@ -76,6 +77,7 @@ export class Node {
 
     /**
      * Gets a string that represents the current node.
+     *
      * @param builder An array of string to build the string of node.
      * @param indent An integer representing the number of spaces at the start of a line.
      */
@@ -85,6 +87,7 @@ export class Node {
 
     /**
      * Identify the relationship between two nodes.
+     *
      * @param other Node to compare against.
      * @returns Relationship between this node an the other.
      */
@@ -94,6 +97,7 @@ export class Node {
 
     /**
      * Gets the most specific matches below this node.
+     *
      * @param state Frame to evaluate against.
      * @returns List of the most specific matches found.
      */
@@ -105,6 +109,7 @@ export class Node {
 
     /**
      * Adds a child node.
+     *
      * @param triggerNode The node to be added.
      * @returns Whether adding node operation is successful.
      */
@@ -114,6 +119,7 @@ export class Node {
 
     /**
      * Removes a trigger from node.
+     *
      * @param trigger The trigger to be removed.
      * @returns Whether removing trigger operation is successful.
      */

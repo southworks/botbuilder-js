@@ -56,7 +56,12 @@ export class ConvertFromUTC extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string, locale?: string): ValueWithError {
+    private static evalConvertFromUTC(
+        timeStamp: string,
+        destinationTimeZone: string,
+        format?: string,
+        locale?: string
+    ): ValueWithError {
         let result: string;
         let error: string;
         error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);

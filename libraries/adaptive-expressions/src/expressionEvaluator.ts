@@ -57,6 +57,7 @@ export class ExpressionEvaluator {
 
     /**
      * Initializes a new instance of the <see cref="ExpressionEvaluator"/> class.
+     *
      * @param type Expression type.
      * @param evaluator Delegate to evaluate an expression.
      * @param returnType Type expected from evaluation.
@@ -96,13 +97,16 @@ export class ExpressionEvaluator {
 
     /**
      * Evaluate an expression.
+     *
      * @param expression Expression to evaluate.
      * @param state Global state information.
+     * @param options
      */
     public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
         this._evaluator(expression, state, options);
     /**
      * Validate an expression.
+     *
      * @param expression Expression to validate.
      */
     public validateExpression = (expression: Expression): void => this._validator(expression);
