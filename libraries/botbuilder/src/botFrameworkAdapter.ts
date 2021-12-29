@@ -1697,6 +1697,13 @@ export class BotFrameworkAdapter
         );
     }
 
+    /**
+     * Generates the CallerId property for the activity based on
+     * https://github.com/microsoft/botframework-obi/blob/main/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
+     *
+     * @param identity The inbound claims.
+     * @returns {Promise<string>} a promise representing the generated callerId.
+     */
     private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
         if (!identity) {
             throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
@@ -1735,7 +1742,7 @@ export class BotFrameworkAdapter
      * a [TurnContext](xref:botbuilder-core.TurnContext). For a turn context, the context's
      * [activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl)
      * is used for the URL.
-     * @returns The endpoint that is used for API requests.
+     * @returns The endpoint used for the API requests.
      * @remarks
      * Override this in a derived class to create a mock OAuth API endpoint for unit testing.
      */
@@ -1769,7 +1776,7 @@ export class BotFrameworkAdapter
      * Creates a turn context.
      *
      * @param request An incoming request body.
-     * @returns A new context for the turn
+     * @returns A new [TurnContext](xref:botbuilder-core.TurnContext) instance.
      * @remarks
      * Override this in a derived class to modify how the adapter creates a turn context.
      */
@@ -2087,11 +2094,14 @@ export class BotFrameworkAdapter
         return response;
     }
 
-    /*
+    /**
      * Determine if the serviceUrl was sent via an Http/Https connection or Streaming
      * This can be determined by looking at the ServiceUrl property:
      *   (1) All channels that send messages via http/https are not streaming
      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+     *
+     * @param serviceUrl the serviceUrl provided in the resquest.
+     * @returns True if the serviceUrl is a streaming url, otherwise false.
      */
     private static isStreamingServiceUrl(serviceUrl: string): boolean {
         return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');

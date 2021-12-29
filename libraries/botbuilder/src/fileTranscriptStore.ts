@@ -8,9 +8,7 @@
 import { join, parse } from 'path';
 import { mkdirp, pathExists, readdir, readFile, remove, writeFile } from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const filenamify = require('filenamify');
+import * as filenamify from 'filenamify';
 
 /**
  * @private
