@@ -1,5 +1,6 @@
 /**
  * @module botbuilder
+ * @returns Returns if channel data is 'object' or null if no activity
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -80,9 +81,10 @@ export function teamsGetTeamId(activity: Activity): string | null {
 }
 
 /**
- * Activity helper methods for Teams.	 * Activity helper methods for Teams.
+ * Activity helper methods for Teams.
  *
- * @param activity
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns Returns channel id, or null if it is not teams channel data
  */
 export function teamsGetChannelId(activity: Activity): string | null {
     validateActivity(activity);
@@ -100,8 +102,8 @@ export function teamsGetChannelId(activity: Activity): string | null {
  * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
  *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
- * @param alertInMeeting
- * @param externalResourceUrl
+ * @param alertInMeeting Alert if in meeting
+ * @param externalResourceUrl External resource url
  */
 export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
     validateActivity(activity);

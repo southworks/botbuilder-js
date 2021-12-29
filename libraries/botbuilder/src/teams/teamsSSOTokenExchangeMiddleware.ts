@@ -108,7 +108,8 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     }
 
     /**
-     * @param context
+     * @param context Turn Context
+     * @returns Returns true when finished if no errors
      */
     private async deduplicatedTokenExchangeId(context: TurnContext): Promise<boolean> {
         // Create a StoreItem with Etag of the unique 'signin/tokenExchange' request
@@ -138,7 +139,8 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     }
 
     /**
-     * @param context
+     * @param context Turn context
+     * @returns Returns true when finished if no errors
      */
     private async exchangedToken(context: TurnContext): Promise<boolean> {
         let tokenExchangeResponse: TokenResponse;

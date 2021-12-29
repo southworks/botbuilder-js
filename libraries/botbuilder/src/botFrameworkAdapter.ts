@@ -305,7 +305,7 @@ export class BotFrameworkAdapter
     }
 
     /**
-     * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     * @returns Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
      */
     public get isStreamingConnectionOpen(): boolean {
         return this.streamingServer?.isConnected ?? false;
@@ -1011,7 +1011,7 @@ export class BotFrameworkAdapter
      * @param connectionName The name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
-     * @param appCredentials
+     * @param appCredentials Optional. The CoreAppCredentials for OAuth.
      * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
      */
     public async getSignInResource(
@@ -1397,7 +1397,7 @@ export class BotFrameworkAdapter
      *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
-     *
+     * @returns
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -1420,7 +1420,7 @@ export class BotFrameworkAdapter
      * Creates a connector client.
      *
      * @param serviceUrl The client's service URL.
-     *
+     * @returns
      * @remarks
      * Override this in a derived class to create a mock connector client for unit testing.
      */
@@ -1489,8 +1489,9 @@ export class BotFrameworkAdapter
     }
 
     /**
-     * @param serviceUrl
-     * @param credentials
+     * @returns
+     * @param serviceUrl Service Url
+     * @param credentials App credentials
      */
     private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
         if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {

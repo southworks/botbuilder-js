@@ -55,7 +55,7 @@ describe('The FileTranscriptStore', function () {
         let activities;
         before(async function () {
             activities = createActivities(conversationId, startDate);
-            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
 
         it('and report the proper length for the logged activities', async function () {
@@ -159,7 +159,7 @@ describe('The FileTranscriptStore', function () {
         before(async function () {
             activities = createActivities(conversationId, startDate, 60);
             storage = new FileTranscriptStore(workingFolder);
-            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
         after(function () {
             return fs.remove(workingFolder);
@@ -182,7 +182,6 @@ describe('The FileTranscriptStore', function () {
 
         it('as expected when a startDate is provided', async function () {
             let pagedResult = {};
-            const i = activities.length / FileTranscriptStore.PageSize;
             let continuationToken;
             const seen = new Proxy(
                 {},
@@ -253,7 +252,7 @@ describe('The FileTranscriptStore', function () {
                 activities.push(...createActivities(uuidv4(), startDate, 1));
             }
             storage = new FileTranscriptStore(workingFolder);
-            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
         after(function () {
             return fs.remove(workingFolder);
