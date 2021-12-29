@@ -793,7 +793,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      *
-     * @param handler A callback that handles teams memebers added event
+     * @param handler A callback to handle the teams members added event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersAddedEvent(
@@ -814,7 +814,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Registers a handler for TeamsMembersRemoved events, such as for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
      *
-     * @param handler A callback that handles teams members removed
+     * @param handler A callback to handle the teams members removed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersRemovedEvent(
@@ -834,7 +834,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelCreated events, such as for when a channel is created.
      *
-     * @param handler A callback that handles teams channel created event
+     * @param handler A callback to handle the teams channel created event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelCreatedEvent(
@@ -854,7 +854,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelDeleted events, such as for when a channel is deleted.
      *
-     * @param handler A callback that handles  teams channel deleted event
+     * @param handler A callback to handle the teams channel deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelDeletedEvent(
@@ -874,7 +874,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelRenamed events, such as for when a channel is renamed.
      *
-     * @param handler A callback that handles teams channel renamed event
+     * @param handler A callback to handle the teams channel renamed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRenamedEvent(
@@ -894,7 +894,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamArchived events, such as for when a team is archived.
      *
-     * @param handler A callback that handles teams team archived event
+     * @param handler A callback to handle the teams team archived event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamArchivedEvent(
@@ -909,7 +909,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamDeleted events, such as for when a team is deleted.
      *
-     * @param handler A callback that handles teams team deleted event
+     * @param handler A callback to handle the teams team deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamDeletedEvent(
@@ -924,7 +924,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamHardDeleted events, such as for when a team is hard-deleted.
      *
-     * @param handler A callback that handles teams team hard deleted event
+     * @param handler A callback to handle the teams team hard deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamHardDeletedEvent(
@@ -939,7 +939,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelRestored events, such as for when a channel is restored.
      *
-     * @param handler A callback that handles teams channel restored event
+     * @param handler A callback to handle the teams channel restored event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRestoredEvent(
@@ -959,7 +959,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamRenamed events, such as for when a team is renamed.
      *
-     * @param handler A callback that handles teams team renamed event
+     * @param handler A callback to handle the teams team renamed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRenamedEvent(
@@ -974,7 +974,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamRestored events, such as for when a team is restored.
      *
-     * @param handler A callback that handles teams team restored event
+     * @param handler A callback to handle the teams team restored event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRestoredEvent(
@@ -989,7 +989,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamUnarchived events, such as for when a team is unarchived.
      *
-     * @param handler A callback that handles teams team unarchived event
+     * @param handler A callback to handle the teams team unarchived event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamUnarchivedEvent(

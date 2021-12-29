@@ -41,10 +41,6 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
         }
     }
 
-    /**
-     * @param authHeader Authentication Header
-     * @returns A ClaimsIdentity instance with authentication type set to AuthenticationConstants.AnonymousAuthType and a reserved AuthenticationConstants.AnonymousSkillAppId claim.
-     */
     protected async authenticate(authHeader: string): Promise<ClaimsIdentity> {
         if (!authHeader) {
             const isAuthDisabled = await this.credentialProvider.isAuthenticationDisabled();

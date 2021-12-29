@@ -5,7 +5,7 @@ import { BotFrameworkAuthentication, ClaimsIdentity } from 'botframework-connect
 import { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
 
 /**
- *
+ * A class to help with the implementation of the Bot Framework protocol using [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication).
  */
 export class CloudChannelServiceHandler extends ChannelServiceHandlerBase {
     /**
@@ -15,10 +15,6 @@ export class CloudChannelServiceHandler extends ChannelServiceHandlerBase {
         super();
     }
 
-    /**
-     * @param authHeader Header authentication
-     * @returns A claim indentity
-     */
     protected async authenticate(authHeader: string): Promise<ClaimsIdentity> {
         return this.auth.authenticateChannelRequest(authHeader);
     }

@@ -53,9 +53,9 @@ describe('The FileTranscriptStore', function () {
     describe('should log activities', function () {
         const conversationId = 'logActivitySpec';
         let activities;
-        before(async function () {
+        before(function () {
             activities = createActivities(conversationId, startDate);
-            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
 
         it('and report the proper length for the logged activities', async function () {
@@ -156,10 +156,10 @@ describe('The FileTranscriptStore', function () {
     describe('should retrieve activities', function () {
         const conversationId = 'retrieveActivitiesSpec';
         let activities;
-        before(async function () {
+        before(function () {
             activities = createActivities(conversationId, startDate, 60);
             storage = new FileTranscriptStore(workingFolder);
-            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
         after(function () {
             return fs.remove(workingFolder);
@@ -245,14 +245,14 @@ describe('The FileTranscriptStore', function () {
 
     describe('should list transcripts', function () {
         let activities;
-        before(async function () {
+        before(function () {
             activities = [];
             let ct = 100;
             while (ct--) {
                 activities.push(...createActivities(uuidv4(), startDate, 1));
             }
             storage = new FileTranscriptStore(workingFolder);
-            await Promise.all(activities.map((activity) => storage.logActivity(activity)));
+            return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
         after(function () {
             return fs.remove(workingFolder);

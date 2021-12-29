@@ -305,7 +305,9 @@ export class BotFrameworkAdapter
     }
 
     /**
-     * @returns Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     *
+     * @returns True if the streaming connection is open, otherwise false.
      */
     public get isStreamingConnectionOpen(): boolean {
         return this.streamingServer?.isConnected ?? false;
@@ -1397,7 +1399,7 @@ export class BotFrameworkAdapter
      *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
-     * @returns
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -1420,7 +1422,7 @@ export class BotFrameworkAdapter
      * Creates a connector client.
      *
      * @param serviceUrl The client's service URL.
-     * @returns
+     * @returns The [ConnectorClient](xref:botbuilder-connector.ConnectorClient) instance.
      * @remarks
      * Override this in a derived class to create a mock connector client for unit testing.
      */
@@ -1488,11 +1490,6 @@ export class BotFrameworkAdapter
         return client;
     }
 
-    /**
-     * @returns
-     * @param serviceUrl Service Url
-     * @param credentials App credentials
-     */
     private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
         if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
             // Check if we have a streaming server. Otherwise, requesting a connector client
@@ -1511,10 +1508,6 @@ export class BotFrameworkAdapter
         return new ConnectorClient(credentials, clientOptions);
     }
 
-    /**
-     * @param serviceUrl
-     * @param httpClient
-     */
     private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
         const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
 
@@ -1570,11 +1563,6 @@ export class BotFrameworkAdapter
     }
 
     // Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
-    /**
-     * @param context
-     * @param serviceUrl
-     * @param credentials
-     */
     private getOrCreateConnectorClient(
         context: TurnContext,
         serviceUrl: string,
@@ -2019,10 +2007,6 @@ export class BotFrameworkAdapter
         }
     }
 
-    /**
-     * @param req
-     * @param channelService
-     */
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
         if (!this.credentials.appId) {
             // auth is disabled
@@ -2054,9 +2038,6 @@ export class BotFrameworkAdapter
         await this.streamingServer.start();
     }
 
-    /**
-     * @param request
-     */
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         const [activityStream, ...attachmentStreams] = request.streams;
 
@@ -2078,10 +2059,6 @@ export class BotFrameworkAdapter
         return activity;
     }
 
-    /**
-     * @param request
-     * @param response
-     */
     private async handleVersionRequest(
         request: IReceiveRequest,
         response: StreamingResponse

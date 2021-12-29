@@ -132,12 +132,6 @@ export class TokenResolver {
         }
     }
 
-    /**
-     * @param relatesTo Conversation reference
-     * @param token Token
-     * @param connectionName Connection name
-     * @returns A token responce of type Partial<Activity>
-     */
     private static createTokenResponseActivity(
         relatesTo: Partial<ConversationReference>,
         token: string,

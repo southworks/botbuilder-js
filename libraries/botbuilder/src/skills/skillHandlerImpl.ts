@@ -20,11 +20,7 @@ import {
  */
 export class SkillHandlerImpl {
     /**
-     * @param skillConversationReferenceKey The skill reference key
-     * @param adapter The adapter
-     * @param logic Logic to call on the continue conversation
-     * @param conversationIdFactory The conversation id factory
-     * @param getOauthScope Function to get the oauth scope
+     * @internal
      */
     constructor(
         private readonly skillConversationReferenceKey: symbol,
@@ -35,10 +31,7 @@ export class SkillHandlerImpl {
     ) {}
 
     /**
-     * @param claimsIdentity The claims identity
-     * @param conversationId The conversation id
-     * @param activity The activity
-     * @returns A response to the activity sent
+     * @internal
      */
     onSendToConversation(
         claimsIdentity: ClaimsIdentity,
@@ -49,11 +42,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity The claims identity
-     * @param conversationId The conversation id
-     * @param activityId The activity id
-     * @param activity The activity
-     * @returns A response to the activity sent
+     * @internal
      */
     onReplyToActivity(
         claimsIdentity: ClaimsIdentity,
@@ -65,11 +54,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity The claims identity
-     * @param conversationId The conversation id
-     * @param activityId The activity id
-     * @param activity The activity
-     * @returns The resouce response
+     * @internal
      */
     async onUpdateActivity(
         claimsIdentity: ClaimsIdentity,
@@ -94,10 +79,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity The claims identity
-     * @param conversationId The conversation id
-     * @param activityId The activity id
-     * @returns The skill conversation reference
+     * @internal
      */
     async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
@@ -105,10 +87,6 @@ export class SkillHandlerImpl {
         );
     }
 
-    /**
-     * @param conversationId The conversation id
-     * @returns The skill conversation references
-     */
     private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
         let skillConversationReference: SkillConversationReference;
 
@@ -137,13 +115,6 @@ export class SkillHandlerImpl {
         return skillConversationReference;
     }
 
-    /**
-     * @param claimsIdentity The claims Identity
-     * @param conversationId The conversation id
-     * @param replyToActivityId Activity id to reply to
-     * @param activity Current activity
-     * @returns A response to the activity sent
-     */
     private async processActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -195,11 +166,6 @@ export class SkillHandlerImpl {
         return resourceResponse;
     }
 
-    /**
-     * @param claimsIdentity Claims identity
-     * @param conversationId Current conversation id
-     * @param callback Callback function to run in the continue conversation
-     */
     private async continueConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -236,10 +202,6 @@ export class SkillHandlerImpl {
     // adapter.continueConversation() sends an event activity with continueConversation in the name.
     // this warms up the incoming middlewares but once that's done and we hit the custom callback,
     // we need to swap the values back to the ones received from the skill so the bot gets the actual activity.
-    /**
-     * @param context Context for the turn
-     * @param activity Current Activity
-     */
     private applySkillActivityToTurnContext(context: TurnContext, activity: Partial<Activity>): void {
         context.activity.channelData = activity.channelData;
         context.activity.code = activity.code;

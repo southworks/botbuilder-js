@@ -118,7 +118,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      *
      * @param activity Activity being logged.
-     * @returns The writefile output
+     * @returns {Promise<void>} a promise representing the asynchronous operation.
      */
     public async logActivity(activity: Activity): Promise<void> {
         if (!activity) {
@@ -138,7 +138,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param conversationId Conversation Id.
      * @param continuationToken (Optional) Continuation token to page through results.
      * @param startDate (Optional) Earliest time to include.
-     * @returns The page result
+     * @returns {Promise<PagedResult<Activity>>} PagedResult of activities.
      */
     public async getTranscriptActivities(
         channelId: string,
@@ -189,7 +189,7 @@ export class FileTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id.
      * @param continuationToken (Optional) Continuation token to page through results.
-     * @returns The page result promise
+     * @returns {Promise<PagedResult<TranscriptInfo>>} PagedResult of transcripts.
      */
     public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
@@ -221,7 +221,7 @@ export class FileTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
-     * @returns The remove output
+     * @returns {Promise<void>} A promise representing the asynchronous operation.
      */
     public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
@@ -243,7 +243,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param activity The [Activity](xref:botframework-schema.Activity) to transcript.
      * @param transcriptPath The path where the transcript will be saved.
      * @param activityFilename The name for the file.
-     * @returns The writefile output
+     * @returns {Promise<void>} A promise representing the asynchronous operation.
      */
     private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');

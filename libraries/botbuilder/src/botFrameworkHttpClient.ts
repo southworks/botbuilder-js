@@ -1,6 +1,5 @@
 /**
  * @module botbuilder
- * @returns
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -61,7 +60,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param serviceUrl The callback Url for the skill host.
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
-     * @returns Axios Response
+     * @returns {Promise<InvokeResponse<T>>} A promise representing the asynchronous operation.
      */
     public async postActivity<T = any>(
         fromBotId: string,
