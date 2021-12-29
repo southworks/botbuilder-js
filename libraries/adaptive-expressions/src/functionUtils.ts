@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -6,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Constant } from './constant';
 import { convertCSharpDateTimeToDayjs } from './datetimeFormatConverter';
@@ -241,7 +238,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
@@ -258,7 +255,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
@@ -286,7 +283,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
@@ -310,7 +307,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
@@ -332,7 +329,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyContainerOrNull(value: unknown, expression: Expression, _: number): string | undefined {
@@ -355,7 +352,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if valid.
      */
     public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
@@ -372,7 +369,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
@@ -405,7 +402,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyString(value: any, expression: Expression, _: number): string | undefined {
@@ -422,7 +419,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
@@ -439,7 +436,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
@@ -456,7 +453,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
@@ -473,7 +470,7 @@ export class FunctionUtils {
      *
      * @param value Value to check.
      * @param expression Expression that led to value.
-     * @param _
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
@@ -490,7 +487,7 @@ export class FunctionUtils {
      *
      * @param expression Expression with children.
      * @param state Global state.
-     * @param options
+     * @param options Options used in evaluation.
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
@@ -682,8 +679,9 @@ export class FunctionUtils {
     /**
      *
      * @param args An array of arguments.
-     * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
+     * @param locale A locale string
+     * @returns The last item from the args param, otherwise the locale string.
      */
     public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
@@ -699,9 +697,10 @@ export class FunctionUtils {
     /**
      *
      * @param args An array of arguments.
+     * @param maxArgsLength The max length of a given function.
      * @param format A format string.
      * @param locale A locale string.
-     * @param maxArgsLength The max length of a given function.
+     * @returns The format and the locale from the args param, otherwise the locale and format strings.
      */
     public static determineFormatAndLocale(
         args: unknown[],
@@ -735,6 +734,7 @@ export class FunctionUtils {
      * Timestamp formatter, convert C# datetime to day.js format.
      *
      * @param formatter C# datetime format
+     * @returns The formated datetime.
      */
     public static timestampFormatter(formatter: string): string {
         if (!formatter) {
@@ -743,7 +743,7 @@ export class FunctionUtils {
         let result = formatter;
         try {
             result = convertCSharpDateTimeToDayjs(formatter);
-        } catch (e) {
+        } catch {
             // do nothing
         }
 
@@ -815,10 +815,11 @@ export class FunctionUtils {
 
     /**
      * Equal helper function.
+     * Compare the first param and second param.
      *
-     * @param args Input args. Compare the first param and second param.
-     * @param obj1
-     * @param obj2
+     * @param obj1 The first value to compare.
+     * @param obj2 The second value to compare.
+     * @returns A boolean based on the comparison.
      */
     public static commonEquals(obj1: unknown, obj2: unknown): boolean {
         if (obj1 == null || obj2 == null) {
@@ -886,6 +887,7 @@ export class FunctionUtils {
      * Helper function of get the number of properties of an object.
      *
      * @param obj An object.
+     * @returns The number of properties.
      */
     private static getPropertyCount(obj: unknown): number {
         let count = -1;

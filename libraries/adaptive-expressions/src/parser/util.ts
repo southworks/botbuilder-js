@@ -11,10 +11,11 @@
  */
 export class Util {
     /**
-     * trim char
+     * trim char.
      *
-     * @param str input string
-     * @param char trim character
+     * @param str input string.
+     * @param char trim character.
+     * @returns The trimmed char.
      */
     public static trim(str: string, char: string): string {
         if (char !== undefined) {

@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '..';
-import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -21,7 +21,7 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
      *
      * @param type Name of the built-in function.
      * @param func The string transformation function, it takes a list of objects and returns an string.
-     * @param validator
+     * @param validator The validation function.
      */
     public constructor(
         type: string,

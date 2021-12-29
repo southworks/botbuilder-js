@@ -17,7 +17,8 @@ export class Extensions {
      * TODO: is there any better solution?
      * To judge if an object is implements MemoryInterface. Same with 'is MemoryInterface' in C#
      *
-     * @param obj
+     * @param obj The object to evaluate.
+     * @returns True if the object implements MemoryInterface; False if it isn't.
      */
     public static isMemoryInterface(obj: any): boolean {
         if (obj === undefined) {

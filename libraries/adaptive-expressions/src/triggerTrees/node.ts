@@ -46,6 +46,8 @@ export class Node {
 
     /**
      * Gets all of the most specific triggers that contains the `Clause` in this node.
+     *
+     * @returns All of the most specific triggers that contains the `Clause` in this node.
      */
     public get triggers(): Trigger[] {
         return this._triggers;
@@ -53,6 +55,8 @@ export class Node {
 
     /**
      * Gets all triggers that contain the `Clause` in this node.
+     *
+     * @returns All triggers that contain the `Clause` in this node.
      */
     public get allTriggers(): Trigger[] {
         return this._allTriggers;
@@ -60,6 +64,8 @@ export class Node {
 
     /**
      * Gets specialized children of this node.
+     *
+     * @returns Specialized children of this node.
      */
     public get specializations(): Node[] {
         return this._specializations;
@@ -80,6 +86,7 @@ export class Node {
      *
      * @param builder An array of string to build the string of node.
      * @param indent An integer representing the number of spaces at the start of a line.
+     * @returns A string that represents the current node.
      */
     public toString(builder: string[] = [], indent = 0): string {
         return this.clause.toString(builder, indent);
@@ -136,7 +143,7 @@ export class Node {
         const trigger = triggerNode.triggers[0];
         const relationship = this.relationship(triggerNode);
         switch (relationship) {
-            case RelationshipType.equal:
+            case RelationshipType.equal: {
                 // Ensure action is not already there
                 const found =
                     this._allTriggers.find(
@@ -166,6 +173,7 @@ export class Node {
                     op = Operation.added;
                 }
                 break;
+            }
             case RelationshipType.incomparable:
                 for (const child of this._specializations) {
                     child._addNode(triggerNode, ops);
@@ -175,7 +183,7 @@ export class Node {
                 triggerNode._addSpecialization(this);
                 op = Operation.inserted;
                 break;
-            case RelationshipType.generalizes:
+            case RelationshipType.generalizes: {
                 let foundOne = false;
                 let removals: Node[];
                 for (let i = 0; i < this._specializations.length; i++) {
@@ -210,6 +218,7 @@ export class Node {
                     op = Operation.added;
                 }
                 break;
+            }
         }
 
         // Prevent visiting this node again

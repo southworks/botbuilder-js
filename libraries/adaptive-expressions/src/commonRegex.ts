@@ -72,7 +72,7 @@ export class CommonRegex {
     private static isCommonRegex(pattern: string): boolean {
         try {
             this.antlrParse(pattern);
-        } catch (Exception) {
+        } catch {
             return false;
         }
 

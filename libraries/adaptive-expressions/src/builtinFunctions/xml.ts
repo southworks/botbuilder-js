@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -44,7 +43,7 @@ export class XML extends ExpressionEvaluator {
                 format: true,
             });
             result = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n${parser.parse(obj)}`.trim();
-        } catch (err) {
+        } catch {
             error = `${args[0]} is not a valid json`;
         }
 

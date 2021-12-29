@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 import { Extensions } from '../extensions';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from './memoryInterface';
@@ -28,9 +27,9 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     /**
-     * Transfer an common object to simple memory.
+     * Transfer a common object to simple memory.
      *
-     * @param obj  Common object.
+     * @param obj Common object.
      * @returns Simple memory instance.
      */
     public static wrap(obj: any): MemoryInterface {
@@ -53,7 +52,7 @@ export class SimpleObjectMemory implements MemoryInterface {
         }
 
         const parts: string[] = path
-            .split(/[.\[\]]+/)
+            .split(/[.[\]]+/)
             .filter((u: string): boolean => u !== undefined && u !== '')
             .map((u: string): string => {
                 if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith("'") && u.endsWith("'"))) {
@@ -91,8 +90,8 @@ export class SimpleObjectMemory implements MemoryInterface {
      * because we can't and shouldn't smart create structure in the middle
      * you can implement a customzied Scope that support such behavior
      *
-     * @param path
-     * @param input
+     * @param path Memory path.
+     * @param input Value to set.
      */
     public setValue(path: string, input: any): void {
         if (this.memory === undefined) {
@@ -185,6 +184,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      */
     private getCircularReplacer(): any {
         const seen = new WeakSet();
+        // eslint-disable-next-line @typescript-eslint/ban-types
         return (_key: any, value: object): any => {
             if (typeof value === 'object' && value) {
                 if (seen.has(value)) {

@@ -19,15 +19,16 @@ import { TriggerTree } from './triggerTree';
 /**
  * Rewrite the expression by pushing not down to the leaves.
  *
- * @param expression
- * @param inNot
+ * @param expression Expression to rewrite.
+ * @param inNot .
+ * @returns The rewritten expression.
  */
 const pushDownNot = (expression: Expression, inNot = false): Expression => {
     let newExpr = expression;
     const negation = expression.evaluator.negation;
     switch (expression.type) {
         case ExpressionType.And:
-        case ExpressionType.Or:
+        case ExpressionType.Or: {
             const children = expression.children.map((child) => pushDownNot(child, inNot));
             if (children.length === 1) {
                 newExpr = children[0];
@@ -45,6 +46,7 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
                 );
             }
             break;
+        }
         case ExpressionType.Not:
             newExpr = pushDownNot(expression.children[0], !inNot);
             break;
@@ -121,6 +123,8 @@ export class Trigger {
     /**
      * Gets list of expressions converted into Disjunctive Normal Form where ! is pushed to the leaves and
      * there is an implicit || between clauses and && within a clause.
+     *
+     * @returns The list of clauses.
      */
     public get clauses(): Clause[] {
         return this._clauses;
@@ -174,6 +178,7 @@ export class Trigger {
      *
      * @param builder An array of string to build the string of trigger.
      * @param indent An integer represents the number of spaces at the start of a line.
+     * @returns A string that represents the current trigger.
      */
     public toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
@@ -236,7 +241,7 @@ export class Trigger {
 
     private _generateClauses(expression: Expression): Clause[] {
         switch (expression.type) {
-            case ExpressionType.And:
+            case ExpressionType.And: {
                 // Need to combine every combination of clauses
                 let soFar: Clause[] = [];
                 let first = true;
@@ -266,13 +271,15 @@ export class Trigger {
                     }
                 }
                 return soFar;
-            case ExpressionType.Or:
+            }
+            case ExpressionType.Or: {
                 const clauses: Clause[] = [];
                 for (let i = 0; i < expression.children.length; i++) {
                     const child = expression.children[i];
                     clauses.push(...this._generateClauses(child));
                 }
                 return clauses;
+            }
             case ExpressionType.Optional:
                 return [new Clause(), ...this._generateClauses(expression.children[0])];
             default:

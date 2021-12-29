@@ -31,6 +31,7 @@ export class IntExpression extends ExpressionProperty<number> {
      * @param data Data to use for expression binding.
      * @returns Value of int number
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);
         if (FunctionUtils.isNumber(result.value)) {

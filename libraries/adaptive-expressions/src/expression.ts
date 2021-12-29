@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -29,6 +28,8 @@ import { ReturnType } from './returnType';
 export class Expression {
     /**
      * Expected result of evaluating expression.
+     *
+     * @returns The expected result of evaluating expression.
      */
     public get returnType(): ReturnType {
         return this.evaluator.returnType;
@@ -36,6 +37,8 @@ export class Expression {
 
     /**
      * Type of expression.
+     *
+     * @returns The type of the expression.
      */
     public get type(): string {
         return this.evaluator.type;
@@ -120,7 +123,6 @@ export class Expression {
      * Return all static paths to memory.  If there is a computed element index, then the path is terminated there,
      * but you might get other paths from the computed part as well.
      *
-     * @param expression Expression to get references from.
      * @returns List of the static reference paths.
      */
     public references(): string[] {
@@ -135,7 +137,6 @@ export class Expression {
      * Walking function for identifying static memory references in an expression.
      *
      * @param expression Expression to analyze.
-     * @param references Tracking for references found.
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
@@ -256,6 +257,7 @@ export class Expression {
      * @param type Type of expression from ExpressionType.
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
+     * @returns The new expression.
      */
     public static makeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
         const expr: Expression = new Expression(type, evaluator, ...children);
@@ -268,6 +270,7 @@ export class Expression {
      * Construct an expression from a EvaluateExpressionDelegate
      *
      * @param func Function to create an expression from.
+     * @returns The new expression.
      */
     public static lambaExpression(func: EvaluateExpressionDelegate): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
@@ -285,7 +288,6 @@ export class Expression {
             ExpressionType.Lambda,
             new ExpressionEvaluator(
                 ExpressionType.Lambda,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 (_expression: Expression, state: any, _: Options): ValueWithError => {
                     let value: any;
                     let error: string;
@@ -357,8 +359,7 @@ export class Expression {
     /**
      * Construct and validate an Not expression.
      *
-     * @param children Child clauses.
-     * @param child
+     * @param child Child clauses.
      * @returns New expression.
      */
     public static notExpression(child: Expression): Expression {
@@ -367,8 +368,9 @@ export class Expression {
 
     /**
      * Validate immediate expression.
+     *
+     * @returns The validated expression.
      */
-    // tslint:disable-next-line: no-void-expression
     public validate = (): void => this.evaluator.validateExpression(this);
 
     /**
@@ -383,10 +385,10 @@ export class Expression {
 
     /**
      * Evaluate the expression.
-     * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
      *
-     * @param state
-     * @param options
+     * @param state Global state to evaluate accessor expressions against.  Can be Dictionary, otherwise reflection is used to access property and then indexer.
+     * @param options Options used in the evaluation.
+     * @returns Computed value and an error string.  If the string is non-null, then there was an evaluation error.
      */
     public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
         if (!Extensions.isMemoryInterface(state)) {

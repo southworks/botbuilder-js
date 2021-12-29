@@ -83,6 +83,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      *
      * @param key A string value of function name.
      * @param value The value to set for the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
+     * @returns The value of the [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator).
      */
     public set(key: string, value: ExpressionEvaluator): this {
         if (ExpressionFunctions.standardFunctions.get(key)) {
@@ -156,11 +157,8 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
      * @param _callbackfn Callback function.
      * @param _thisArg Optional. This args.
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public forEach(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _thisArg?: any
     ): void {
         throw Error('forEach function not implemented');

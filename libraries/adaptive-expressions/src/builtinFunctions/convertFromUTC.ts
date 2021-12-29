@@ -73,7 +73,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = dayjs(timeStamp).locale(locale).tz(timeZone).format(format);
-            } catch (e) {
+            } catch {
                 error = `${format} is not a valid timestamp format`;
             }
         }

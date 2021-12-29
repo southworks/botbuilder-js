@@ -19,6 +19,8 @@ export class Constant extends Expression {
     private readonly singleQuotRegex: RegExp = new RegExp(/'(?!\\)/g);
     /**
      * Constant value.
+     *
+     * @returns The value.
      */
     public get value(): any {
         return this._value;

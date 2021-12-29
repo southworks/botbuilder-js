@@ -10,7 +10,7 @@ import { Expression } from '../expression';
 /**
  * Base class which defines an Expression or value for a property.
  *
- * @typeparam T Type of value of the expression property.
+ * @param T Type of value of the expression property.
  */
 export class ExpressionProperty<T> {
     private defaultValue: T;
@@ -39,6 +39,8 @@ export class ExpressionProperty<T> {
 
     /**
      * Convert an expression property to string.
+     *
+     * @returns The converted string.
      */
     public toString(): string {
         if (this.expressionText) {
@@ -49,6 +51,8 @@ export class ExpressionProperty<T> {
 
     /**
      * This will return the existing expression if the value is non-complex type.
+     *
+     * @returns The existing expression if the value is non-complex type.
      */
     public toExpression(): Expression {
         if (this.expression) {
@@ -88,6 +92,7 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns The value.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
         if (error) {
@@ -103,6 +108,7 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns the value or an error.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public tryGetValue(data: object): { value: T; error: Error } {
         if (!this.expression && this.expressionText) {
             try {

@@ -57,6 +57,7 @@ export class Clause extends Expression {
      *
      * @param builder An array of string to build the string of clause.
      * @param indent An integer represents the number of spaces at the start of a line.
+     * @returns A string that represents the current clause.
      */
     public toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
