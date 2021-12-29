@@ -193,12 +193,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         await retry(() => server.start(), retryCount);
     }
 
-    /**
-     * @param req
-     * @param socket
-     * @param head
-     * @param logic
-     */
     private async connect(
         req: Request,
         socket: INodeSocket,
