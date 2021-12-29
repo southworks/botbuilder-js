@@ -1352,7 +1352,7 @@ export class BotFrameworkAdapter
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
-                default:
+                default: {
                     if (!activity.serviceUrl) {
                         throw new Error('BotFrameworkAdapter.sendActivity(): missing serviceUrl.');
                     }
@@ -1385,6 +1385,7 @@ export class BotFrameworkAdapter
                         );
                     }
                     break;
+                }
             }
         }
         return responses;
@@ -1604,8 +1605,9 @@ export class BotFrameworkAdapter
      *
      * @remarks
      * When building credentials for bot-to-bot communication, oAuthScope must be passed in.
-     * @param appId
-     * @param oAuthScope
+     * @param appId The application id.
+     * @param oAuthScope The optional OAuth scope.
+     * @returns The app credentials to be used to acquire tokens.
      */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         // There is no cache for AppCredentials in JS as opposed to C#.
@@ -1695,12 +1697,6 @@ export class BotFrameworkAdapter
         );
     }
 
-    /**
-     * Generates the CallerId property for the activity based on
-     * https://github.com/microsoft/botframework-obi/blob/main/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
-     *
-     * @param identity
-     */
     private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
         if (!identity) {
             throw new TypeError('BotFrameworkAdapter.generateCallerId(): Missing identity parameter.');
@@ -1739,7 +1735,7 @@ export class BotFrameworkAdapter
      * a [TurnContext](xref:botbuilder-core.TurnContext). For a turn context, the context's
      * [activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl)
      * is used for the URL.
-     *
+     * @returns The endpoint that is used for API requests.
      * @remarks
      * Override this in a derived class to create a mock OAuth API endpoint for unit testing.
      */
@@ -1773,7 +1769,7 @@ export class BotFrameworkAdapter
      * Creates a turn context.
      *
      * @param request An incoming request body.
-     *
+     * @returns A new context for the turn
      * @remarks
      * Override this in a derived class to modify how the adapter creates a turn context.
      */
@@ -1992,10 +1988,6 @@ export class BotFrameworkAdapter
         await this.startWebSocket(nodeWebSocket);
     }
 
-    /**
-     * @param pipeName
-     * @param onListen
-     */
     private async startNamedPipeServer(pipeName: string, onListen?: () => void): Promise<void> {
         this.namedPipeName = pipeName;
         this.streamingServer = new NamedPipeServer(pipeName, this);
@@ -2095,13 +2087,11 @@ export class BotFrameworkAdapter
         return response;
     }
 
-    /**
+    /*
      * Determine if the serviceUrl was sent via an Http/Https connection or Streaming
      * This can be determined by looking at the ServiceUrl property:
      *   (1) All channels that send messages via http/https are not streaming
      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
-     *
-     * @param serviceUrl the serviceUrl provided in the resquest.
      */
     private static isStreamingServiceUrl(serviceUrl: string): boolean {
         return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
