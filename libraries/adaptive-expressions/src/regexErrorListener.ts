@@ -11,10 +11,6 @@ import { ANTLRErrorListener, Recognizer, RecognitionException } from 'antlr4ts';
 /**
  * Error listener for Regex.
  */
-
-/**
- *
- */
 export class RegexErrorListener implements ANTLRErrorListener<any> {
     public static readonly Instance: RegexErrorListener = new RegexErrorListener();
 
