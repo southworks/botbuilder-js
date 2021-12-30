@@ -47,7 +47,7 @@ export class TriggerTree {
     public totalTriggers = 0;
 
     /**
-     * @returns a string the represents the current object.
+     * @returns A string the represents the current object.
      */
     public toString(): string {
         return `TriggerTree with ${this.totalTriggers} triggers`;

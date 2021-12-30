@@ -35,7 +35,7 @@ export class Quantifier {
     public constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) {}
 
     /**
-     * @returns a string that represents the quantifier.
+     * @returns A string that represents the quantifier.
      */
     public toString(): string {
         return `${this.type} ${this.variable} ${this.bindings.length}`;
