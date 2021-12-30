@@ -14,7 +14,7 @@ type Input<T> = T[] | string | Expression;
 /**
  * `array` to json [ArrayExpression](xref:adaptive-expressions.ArrayExpression) converter.
  *
- * @param T The type of the items of the array.
+ * @template T The type of the items of the array.
  */
 export class ArrayExpressionConverter<T> {
     /**

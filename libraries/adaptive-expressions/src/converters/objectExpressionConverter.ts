@@ -14,7 +14,7 @@ type Input<T> = T | string | Expression;
 /**
  * `any` value to json [ObjectExpressionConverter](xref:adaptive-expressions.ObjectExpressionConverter) converter.
  *
- * @param T The type of the value.
+ * @template T The type of the value.
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export class ObjectExpressionConverter<T extends object = {}> {

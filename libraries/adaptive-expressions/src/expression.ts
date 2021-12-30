@@ -27,9 +27,9 @@ import { ReturnType } from './returnType';
  */
 export class Expression {
     /**
-     * Expected result of evaluating expression.
+     * Expected result of evaluating the expression.
      *
-     * @returns The expected result of evaluating expression.
+     * @returns The expected result of evaluating the expression.
      */
     public get returnType(): ReturnType {
         return this.evaluator.returnType;
@@ -386,9 +386,9 @@ export class Expression {
     /**
      * Evaluate the expression.
      *
-     * @param state Global state to evaluate accessor expressions against.  Can be Dictionary, otherwise reflection is used to access property and then indexer.
+     * @param state Global state to evaluate accessor expressions against. Can be Dictionary, otherwise reflection is used to access property and then indexer.
      * @param options Options used in the evaluation.
-     * @returns Computed value and an error string.  If the string is non-null, then there was an evaluation error.
+     * @returns Computed value and an error string. If the string is non-null, then there was an evaluation error.
      */
     public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
         if (!Extensions.isMemoryInterface(state)) {

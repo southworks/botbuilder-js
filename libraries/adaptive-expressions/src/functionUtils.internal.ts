@@ -238,7 +238,7 @@ export class InternalFunctionUtils {
      * @param options Options.
      * @returns The value of a path from a memory.
      */
-    public static wrapGetValue(state: MemoryInterface, path: string, options: Options): unknown {
+    public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         const result = state.getValue(path);
         if (result !== undefined) {
             return result;
