@@ -22,6 +22,9 @@ export class DialogsComponentRegistration
         pathResolvers: [],
     });
 
+    /**
+     * Configures the services.
+     */
     constructor() {
         super();
 

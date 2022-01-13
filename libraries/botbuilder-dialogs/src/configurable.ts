@@ -14,7 +14,9 @@ import { Converter, ConverterFactory } from './converter';
 export abstract class Configurable {
     /**
      * Fluent method for configuring the object.
+     *
      * @param config Configuration settings to apply.
+     * @returns The configuration with the settings applied.
      */
     public configure(config: Record<string, unknown>): this {
         for (const key in config) {
@@ -46,6 +48,10 @@ export abstract class Configurable {
         return this;
     }
 
+    /**
+     * @param _property The property.
+     * @returns The converter.
+     */
     public getConverter(_property: string): Converter | ConverterFactory {
         return undefined;
     }

@@ -55,7 +55,8 @@ export async function runDialog(
     }
 
     const dialogSet = new DialogSet(accessor);
-    dialogSet.telemetryClient = context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey) ?? dialog.telemetryClient;
+    dialogSet.telemetryClient =
+        context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey) ?? dialog.telemetryClient;
 
     dialogSet.add(dialog);
 
@@ -64,6 +65,13 @@ export async function runDialog(
     await internalRun(context, dialog.id, dialogContext);
 }
 
+/**
+ * @param context The turn context.
+ * @param dialogId The dialog id.
+ * @param dialogContext The dialog context.
+ * @param dialogStateManagerConfiguration (optional) The dialog state manager configuration.
+ * @returns The dialogs turn result
+ */
 export async function internalRun(
     context: TurnContext,
     dialogId: string,
@@ -174,8 +182,9 @@ async function innerRun(
 /**
  * Helper to determine if we should send an EoC to the parent or not.
  *
- * @param context
- * @param turnResult
+ * @param context The turn context.
+ * @param turnResult The turn result.
+ * @returns True if send an EoC is needed, otherwise, false.
  */
 export function shouldSendEndOfConversationToParent(context: TurnContext, turnResult: DialogTurnResult): boolean {
     if (!(turnResult.status == DialogTurnStatus.complete || turnResult.status == DialogTurnStatus.cancelled)) {
@@ -241,7 +250,8 @@ export function isFromParentToSkill(context: TurnContext): boolean {
 const sendStateSnapshotTrace = async (dialogContext: DialogContext): Promise<void> => {
     const adapter = dialogContext.context.adapter;
     const claimIdentity = dialogContext.context.turnState.get<ClaimsIdentity>(adapter.BotIdentityKey);
-    const traceLabel = claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
+    const traceLabel =
+        claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
 
     // Send trace of memory
     const snapshot = getActiveDialogContext(dialogContext).state.getMemorySnapshot();

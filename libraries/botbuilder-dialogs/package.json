@@ -36,6 +36,7 @@
     "botframework-connector": "4.1.6",
     "globalize": "^1.4.2",
     "lodash": "^4.17.21",
+    "uuid": "^8.3.2",
     "zod": "~1.11.17"
   },
   "devDependencies": {
@@ -47,7 +48,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores uuid,sinon",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",

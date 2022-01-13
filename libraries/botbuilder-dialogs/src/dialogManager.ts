@@ -94,6 +94,8 @@ export class DialogManager extends Configurable {
 
     /**
      * Values that will be copied to the `TurnContext.turnState` at the beginning of each turn.
+     *
+     * @returns The initial turn state.
      */
     public get initialTurnState(): TurnContextStateCollection {
         return this._initialTurnState;
@@ -157,7 +159,7 @@ export class DialogManager extends Configurable {
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured
         if (!this._rootDialogId) {
-            throw new Error(`DialogManager.onTurn: the bot's 'rootDialog' has not been configured.`);
+            throw new Error("DialogManager.onTurn: the bot's 'rootDialog' has not been configured.");
         }
 
         // Copy initial turn state to context
@@ -174,7 +176,7 @@ export class DialogManager extends Configurable {
         }
 
         if (!this.conversationState) {
-            throw new Error(`DialogManager.onTurn: the bot's 'conversationState' has not been configured.`);
+            throw new Error("DialogManager.onTurn: the bot's 'conversationState' has not been configured.");
         }
         botStateSet.add(this.conversationState);
 

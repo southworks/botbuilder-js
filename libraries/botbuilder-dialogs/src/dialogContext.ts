@@ -19,6 +19,7 @@ import { DialogContextError } from './dialogContextError';
  *
  * @param dialogContext source dialog context from which enriched error properties are sourced
  * @param promise a promise to await inside a try-catch for error enrichment
+ * @returns A promise representing the asynchronous operation.
  */
 const wrapErrors = async <T>(dialogContext: DialogContext, promise: Promise<T>): Promise<T> => {
     try {
@@ -75,6 +76,7 @@ export interface DialogState {
 export class DialogContext {
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
@@ -85,6 +87,7 @@ export class DialogContext {
 
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
@@ -95,6 +98,7 @@ export class DialogContext {
 
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     *
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
@@ -147,7 +151,7 @@ export class DialogContext {
     public parent: DialogContext | undefined;
 
     /**
-     * Returns dialog context for child if the active dialog is a container.
+     * @returns The dialog context for child if the active dialog is a container.
      */
     public get child(): DialogContext | undefined {
         const instance = this.activeDialog;
@@ -163,7 +167,7 @@ export class DialogContext {
     }
 
     /**
-     * Returns the state information for the dialog on the top of the dialog stack, or `undefined` if
+     * @returns The state information for the dialog on the top of the dialog stack, or `undefined` if
      * the stack is empty.
      */
     public get activeDialog(): DialogInstance | undefined {
@@ -181,9 +185,9 @@ export class DialogContext {
     public services: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
-     * Returns the current dialog manager instance. This property is obsolete.
+     * @returns The current dialog manager instance. This property is obsolete.
      *
-     * @obsolete This property serves no function.
+     * This property serves no function (obsolete).
      */
     public get dialogManager(): DialogManager {
         return this.context.turnState.get(DialogTurnStateConstants.dialogManager);
@@ -191,6 +195,7 @@ export class DialogContext {
 
     /**
      * Obtain the CultureInfo in DialogContext.
+     *
      * @returns a locale string.
      */
     public getLocale(): string {
@@ -215,7 +220,7 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the dialog when it starts.
-     *
+     * @returns A promise that represents the work queued to execute.
      * @remarks
      * If there's already an active dialog on the stack, that dialog will be paused until
      * it is again the top dialog on the stack.
@@ -264,7 +269,7 @@ export class DialogContext {
      * @param cancelParents Optional. If `true` all parent dialogs will be cancelled as well.
      * @param eventName Optional. Name of a custom event to raise as dialogs are cancelled. This defaults to [cancelDialog](xref:botbuilder-dialogs.DialogEvents.cancelDialog).
      * @param eventValue Optional. Value to pass along with custom cancellation event.
-     *
+     * @returns A promise that represents the work queued to execute.
      * @remarks
      * This calls each dialog's [Dialog.endDialog](xref:botbuilder-dialogs.Dialog.endDialog) method before
      * removing the dialog from the stack.
@@ -291,7 +296,7 @@ export class DialogContext {
         if (this.stack.length > 0 || this.parent != undefined) {
             // Cancel all local and parent dialogs while checking for interception
             let notify = false;
-            let dc: DialogContext = this;
+            let dc: DialogContext = Object.assign(this);
             while (dc != undefined) {
                 if (dc.stack.length > 0) {
                     // Check to see if the dialog wants to handle the event
@@ -322,7 +327,7 @@ export class DialogContext {
      * Searches for a dialog with a given ID.
      *
      * @param dialogId ID of the dialog to search for.
-     *
+     * @returns The dialog with that id.
      * @remarks
      * If the dialog to start is not found in the [DialogSet](xref:botbuilder-dialogs.DialogSet) associated
      * with this dialog context, it attempts to find the dialog in its parent dialog context.
@@ -341,6 +346,7 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      *      the activity to send as the initial prompt, or
@@ -363,6 +369,7 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      * the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
@@ -385,11 +392,13 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
+     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      * or the [Activity](xref:botframework-schema.Activity) to send as the initial prompt.
      * @param choices Optional. Array of choices for the user to choose from,
      * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * @returns A promise that represents the work queued to execute.
      * @remarks This helper method formats the object to use as the `options` parameter, and then calls
      * beginDialog to start the specified prompt dialog.
      *
@@ -423,6 +432,7 @@ export class DialogContext {
      * Continues execution of the active dialog, if there is one, by passing this dialog context to its
      * [Dialog.continueDialog](xref:botbuilder-dialogs.Dialog.continueDialog) method.
      *
+     * @returns A promise that represents the work queued to execute.
      * @remarks
      * After the call completes, you can check the turn context's [responded](xref:botbuilder-core.TurnContext.responded)
      * property to determine if the dialog sent a reply to the user.
@@ -478,6 +488,7 @@ export class DialogContext {
      *      on the stack, or if this was the last dialog on the stack, a parent dialog context or
      *      the bot's turn handler.
      *
+     * @returns A promise that represents the work queued to execute.
      * @remarks
      * The _parent_ dialog is the next dialog on the dialog stack, if there is one. This method
      * calls the parent's [Dialog.resumeDialog](xref:botbuilder-dialogs.Dialog.resumeDialog) method,
@@ -531,6 +542,7 @@ export class DialogContext {
      *
      * @param dialogId ID of the dialog to start.
      * @param options Optional. Arguments to pass into the new dialog when it starts.
+     * @returns A promise that represents the work queued to execute.
      *
      * @remarks
      * This is particularly useful for creating a loop or redirecting to another dialog.
@@ -588,6 +600,7 @@ export class DialogContext {
 
     /**
      * Searches for a dialog with a given ID.
+     *
      * @remarks
      * Emits a named event for the current dialog, or someone who started it, to handle.
      * @param name Name of the event to raise.
@@ -605,14 +618,15 @@ export class DialogContext {
         };
 
         // Find starting dialog
-        let dc: DialogContext = this;
+        let dc: DialogContext = Object.assign(this);
         if (fromLeaf) {
-            while (true) {
+            let searching = true;
+            while (searching) {
                 const childDc = dc.child;
                 if (childDc != undefined) {
                     dc = childDc;
                 } else {
-                    break;
+                    searching = false;
                 }
             }
         }

@@ -157,6 +157,7 @@ export class OAuthPrompt extends Dialog {
     private readonly PersistedCaller: string = 'botbuilder-dialogs.caller';
     /**
      * Creates a new OAuthPrompt instance.
+     *
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
      * @param settings Settings used to configure the prompt.
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
@@ -213,6 +214,7 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn
      * of the conversation.
      * @returns A `Promise` representing the asynchronous operation.
@@ -279,8 +281,10 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Attempts to retrieve the stored token for the current user.
+     *
      * @param context Context reference the user that's being looked up.
      * @param code (Optional) login code received from the user.
+     * @returns The token for the current user, or an exception if it fails.
      */
     public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined> {
         return UserTokenAccess.getUserToken(context, this.settings, code);
@@ -300,6 +304,7 @@ export class OAuthPrompt extends Dialog {
      * await prompt.signOutUser(context);
      * ```
      * @param context Context referencing the user that's being signed out.
+     * @returns A promise representing the asynchronous operation.
      */
     public async signOutUser(context: TurnContext): Promise<void> {
         return UserTokenAccess.signOutUser(context, this.settings);
@@ -585,7 +590,7 @@ export class OAuthPrompt extends Dialog {
      * @private
      */
     private static isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
-        if (obj.hasOwnProperty('token')) {
+        if (Object.prototype.hasOwnProperty.call(obj, 'token')) {
             return true;
         }
         return false;

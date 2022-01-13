@@ -28,7 +28,14 @@ import {
 
 const InitialSettings = z.record(z.unknown());
 
+/**
+ * Defines dialogs bot component.
+ */
 export class DialogsBotComponent extends BotComponent {
+    /**
+     * @param services Runtime service collection.
+     * @param configuration A [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
+     */
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
             const rootConfiguration = configuration.get();
