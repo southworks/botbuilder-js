@@ -3,21 +3,21 @@ const { Dialog, DialogReason, DialogSet, DialogTurnStatus, ComponentDialog, Wate
 const assert = require('assert');
 
 function simpleStepContextCheck(step) {
-    assert(step, `step not found.`);
-    assert(typeof step === 'object', `step is not a WaterfallStepContext.`);
+    assert(step, 'step not found.');
+    assert(typeof step === 'object', 'step is not a WaterfallStepContext.');
 }
 
 describe('ComponentDialog', function () {
     this.timeout(5000);
 
     it('should set initial dialog to be first dialog added via addDialog()', function () {
-        const simpleWaterfall = new WaterfallDialog('simpleWaterfall', [async (step) => {}]);
+        const simpleWaterfall = new WaterfallDialog('simpleWaterfall');
 
-        const simpleH2ofall = new WaterfallDialog('simpleH2ofall', [async (step) => {}]);
+        const simpleH2ofall = new WaterfallDialog('simpleH2ofall');
 
         const component = new ComponentDialog('component');
         component.addDialog(simpleWaterfall);
-        assert(component.initialDialogId === 'simpleWaterfall', `unexpected initialDialogId`);
+        assert(component.initialDialogId === 'simpleWaterfall', 'unexpected initialDialogId');
         component.addDialog(simpleH2ofall);
         assert(
             component.initialDialogId === 'simpleWaterfall',
@@ -68,7 +68,7 @@ describe('ComponentDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             await assert.rejects(async () => await dc.beginDialog('composite'), {
-                message: `Cannot read property 'status' of undefined`,
+                message: "Cannot read property 'status' of undefined",
             });
         });
         await adapter.send('Hi').startTest();
@@ -103,7 +103,7 @@ describe('ComponentDialog', function () {
         await adapter.send('Hi').startTest();
     });
 
-    it(`should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.`, async function () {
+    it("should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.", async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -137,12 +137,12 @@ describe('ComponentDialog', function () {
     });
 
     it('should return any found dialogs.', function () {
-        const simpleWaterfall = new WaterfallDialog('simpleWaterfall', [async (step) => {}]);
+        const simpleWaterfall = new WaterfallDialog('simpleWaterfall');
 
         const component = new ComponentDialog('component');
         component.addDialog(simpleWaterfall);
         const dialog = component.findDialog('simpleWaterfall');
-        assert(dialog === simpleWaterfall, `unexpected dialog returned`);
+        assert(dialog === simpleWaterfall, 'unexpected dialog returned');
     });
 
     it('should return undefined for not found dialogs.', function () {
@@ -385,7 +385,7 @@ describe('ComponentDialog', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(component);
         dialogs.telemetryClient = {
-            trackEvent: function (telemetry) {},
+            trackEvent: function () {},
             trackTrace: function (telemetry) {
                 if (telemetry.severityLevel === Severity.Warning) {
                     assert.equal(telemetry.message, 'Unhandled dialog event: versionChanged. Active Dialog: test');
