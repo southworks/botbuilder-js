@@ -11,9 +11,9 @@ describe('ComponentDialog', function () {
     this.timeout(5000);
 
     it('should set initial dialog to be first dialog added via addDialog()', function () {
-        const simpleWaterfall = new WaterfallDialog('simpleWaterfall');
+        const simpleWaterfall = new WaterfallDialog('simpleWaterfall', [async () => {}]);
 
-        const simpleH2ofall = new WaterfallDialog('simpleH2ofall');
+        const simpleH2ofall = new WaterfallDialog('simpleH2ofall', [async () => {}]);
 
         const component = new ComponentDialog('component');
         component.addDialog(simpleWaterfall);
@@ -141,7 +141,7 @@ describe('ComponentDialog', function () {
 
         const component = new ComponentDialog('component');
         component.addDialog(simpleWaterfall);
-        const dialog = component.findDialog('simpleWaterfall');
+        const dialog = component.findDialog('simpleWaterfall', [async () => {}]);
         assert(dialog === simpleWaterfall, 'unexpected dialog returned');
     });
 
