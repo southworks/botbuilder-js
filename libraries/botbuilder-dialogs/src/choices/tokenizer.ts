@@ -60,11 +60,11 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  * const stemmer = require('stemmer');
  *
  * function customTokenizer(text, locale) {
- * const tokens = defaultTokenizer(text, locale);
- * tokens.forEach((t) => {
- * t.normalized = stemmer(t.normalized);
- * });
- * return tokens;
+ *     const tokens = defaultTokenizer(text, locale);
+ *     tokens.forEach((t) => {
+ *         t.normalized = stemmer(t.normalized);
+ *     });
+ *     return tokens;
  * }
  *
  * const choices = ['red', 'green', 'blue'];
