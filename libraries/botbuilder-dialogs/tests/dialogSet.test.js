@@ -12,6 +12,20 @@ describe('DialogSet', function () {
     const conversationState = new ConversationState(storage);
     const dialogState = conversationState.createProperty('dialogState');
 
+    it('should check case insensitive', async function () {
+        const dialogSet = new DialogSet(dialogState);
+        dialogSet.add(new WaterfallDialog('a')).add(new WaterfallDialog('A'));
+        assert(dialogSet.find('a'), `dialog a found.`);
+        assert(dialogSet.find('a'), `dialog a found.`);
+    });
+
+    it('should check case sensitive', async function () {
+        const dialogSet = new DialogSet(dialogState);
+        dialogSet.add(new WaterfallDialog('a')).add(new WaterfallDialog('A'));
+        assert(dialogSet.find('a'), `dialog a found.`);
+        assert(dialogSet.find('A'), `dialog A found.`);
+    });
+
     it('should throw on createContext(undefined)', async function () {
         const dialogSet = new DialogSet(dialogState);
         await assert.rejects(async () => await dialogSet.createContext(undefined), {
