@@ -1195,12 +1195,6 @@ export class BotFrameworkAdapter
             status = 400;
             const request = await parseRequest(req);
 
-            if (!req.body.type) {
-                console.warn('BadRequest: Missing activity or activity type.');
-                status = StatusCodes.BAD_REQUEST;
-                return;
-            }
-
             // Authenticate the incoming request
             status = 401;
             const authHeader: string = req.headers.authorization || req.headers.Authorization || '';
