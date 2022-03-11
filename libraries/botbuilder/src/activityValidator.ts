@@ -19,7 +19,6 @@ export function validateAndFixActivity(activity: Activity): Activity {
         throw new Error('validateAndFixActivity(): invalid request body.');
     }
     if (typeof activity.type !== 'string') {
-        console.warn('BadRequest: Missing activity or activity type.');
         throw new Error('validateAndFixActivity(): missing activity type.');
     }
     if (typeof activity.timestamp === 'string') {
