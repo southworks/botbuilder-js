@@ -2,7 +2,7 @@
   "name": "botbuilder-azure-blobs",
   "author": "Microsoft Corp.",
   "description": "BotBuilder storage bindings for Azure Blobs services",
-  "version": "4.1.6",
+  "version": "4.16.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.2.1",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
+    "botbuilder-core": "4.16.0",
+    "botbuilder-stdlib": "4.16.0-internal",
     "get-stream": "^6.0.0",
     "p-map": "^4.0.0",
     "zod": "~1.11.17"

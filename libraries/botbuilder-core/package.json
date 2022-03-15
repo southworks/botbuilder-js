@@ -2,7 +2,7 @@
   "name": "botbuilder-core",
   "author": "Microsoft Corp.",
   "description": "Core components for Microsoft Bot Builder. Components in this library can run either in a browser or on the server.",
-  "version": "4.1.6",
+  "version": "4.16.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -27,10 +27,10 @@
     }
   },
   "dependencies": {
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "botframework-connector": "4.1.6",
-    "botframework-schema": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview",
+    "botbuilder-stdlib": "4.16.0-internal",
+    "botframework-connector": "4.16.0",
+    "botframework-schema": "4.16.0",
     "uuid": "^8.3.2",
     "zod": "~1.11.17"
   },

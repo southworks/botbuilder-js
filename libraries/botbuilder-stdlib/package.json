@@ -2,7 +2,7 @@
   "name": "botbuilder-stdlib",
   "author": "Microsoft Corp.",
   "description": "BotBuilder shared libraries, internal only",
-  "version": "4.1.6",
+  "version": "4.16.0-internal",
   "internal": true,
   "license": "MIT",
   "keywords": [],

@@ -2,7 +2,7 @@
   "name": "botbuilder-azure-queues",
   "author": "Microsoft Corp.",
   "description": "BotBuilder storage bindings for Azure Queue services",
-  "version": "4.1.6",
+  "version": "4.16.0-preview",
   "preview": true,
   "license": "MIT",
   "keywords": [
@@ -29,10 +29,10 @@
   },
   "dependencies": {
     "@azure/storage-queue": "^12.2.0",
-    "botbuilder-core": "4.1.6"
+    "botbuilder-core": "4.16.0"
   },
   "devDependencies": {
-    "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs": "4.16.0",
     "node-fetch": "^2.6.7"
   },
   "scripts": {

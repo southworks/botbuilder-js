@@ -2,7 +2,7 @@
   "name": "botbuilder-dialogs-adaptive-runtime-integration-azure-functions",
   "preview": true,
   "author": "Microsoft Corp.",
-  "version": "4.1.6",
+  "version": "4.16.0-preview",
   "license": "MIT",
   "description": "Bot Framework Adaptive Dialogs Azure Functions integration",
   "keywords": [
@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "@azure/functions": "^1.2.3",
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
+    "botbuilder": "4.16.0",
+    "botbuilder-dialogs-adaptive-runtime": "4.16.0-preview",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview",
     "mime": "^2.5.2",
     "zod": "~1.11.17"
   },

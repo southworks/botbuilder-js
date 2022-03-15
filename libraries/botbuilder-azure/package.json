@@ -2,7 +2,7 @@
   "name": "botbuilder-azure",
   "author": "Microsoft Corp.",
   "description": "Azure extensions for Microsoft BotBuilder.",
-  "version": "4.1.6",
+  "version": "4.16.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -31,7 +31,7 @@
     "@azure/cosmos": "^3.3.1",
     "@types/documentdb": "^1.10.5",
     "azure-storage": "2.10.2",
-    "botbuilder": "4.1.6",
+    "botbuilder": "4.16.0",
     "documentdb": "1.14.5",
     "lodash": "^4.17.20",
     "semaphore": "^1.1.0"

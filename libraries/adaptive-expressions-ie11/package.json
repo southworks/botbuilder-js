@@ -2,7 +2,7 @@
   "name": "adaptive-expressions-ie11",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.1.6",
+  "version": "4.16.0",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -19,7 +19,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "adaptive-expressions": "4.1.6",
+    "adaptive-expressions": "4.16.0",
     "clean-webpack-plugin": "^3.0.0",
     "core-js": "^3.3.2",
     "terser-webpack-plugin": "^4.2.3"

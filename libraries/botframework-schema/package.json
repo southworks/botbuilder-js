@@ -2,7 +2,7 @@
   "name": "botframework-schema",
   "author": "Microsoft Corp.",
   "description": "Activity schema for the Microsoft Bot Framework.",
-  "version": "4.1.6",
+  "version": "4.16.0",
   "license": "MIT",
   "keywords": [
     "botconnector",

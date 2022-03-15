@@ -1,6 +1,6 @@
 {
   "name": "botbuilder-dialogs-adaptive-testing",
-  "version": "4.1.6",
+  "version": "4.16.0-preview",
   "preview": true,
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
@@ -23,15 +23,15 @@
     }
   },
   "dependencies": {
-    "adaptive-expressions": "4.1.6",
+    "adaptive-expressions": "4.16.0",
     "bitwise": "^2.0.4",
-    "botbuilder-ai": "4.1.6",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
-    "botbuilder-dialogs-adaptive": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
+    "botbuilder-ai": "4.16.0",
+    "botbuilder-core": "4.16.0",
+    "botbuilder-dialogs": "4.16.0",
+    "botbuilder-dialogs-adaptive": "4.16.0-preview",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview",
+    "botbuilder-dialogs-declarative": "4.16.0-preview",
+    "botbuilder-stdlib": "4.16.0-internal",
     "murmurhash-js": "^1.0.0",
     "nock": "^11.9.1",
     "url-parse": "^1.5.9",

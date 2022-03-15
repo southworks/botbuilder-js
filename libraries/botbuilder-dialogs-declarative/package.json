@@ -2,7 +2,7 @@
   "name": "botbuilder-dialogs-declarative",
   "author": "Microsoft Corp.",
   "description": "Declarative library for the Microsoft BotBuilder dialog system.",
-  "version": "4.1.6",
+  "version": "4.16.0-preview",
   "preview": true,
   "license": "MIT",
   "keywords": [
@@ -28,15 +28,15 @@
     }
   },
   "dependencies": {
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
+    "botbuilder-core": "4.16.0",
+    "botbuilder-dialogs": "4.16.0",
+    "botbuilder-stdlib": "4.16.0-internal",
     "chokidar": "^3.4.0",
     "zod": "~1.11.17"
   },
   "devDependencies": {
-    "adaptive-expressions": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
+    "adaptive-expressions": "4.16.0",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview",
     "jsonschema": "^1.4.0"
   },
   "scripts": {

@@ -2,7 +2,7 @@
   "name": "botbuilder-ai-luis",
   "preview": true,
   "author": "Microsoft Corp.",
-  "version": "4.1.6",
+  "version": "4.16.0-preview",
   "license": "MIT",
   "description": "Luis component for Microsoft BotBuilder Adaptive Dialogs runtime",
   "keywords": [
@@ -30,7 +30,7 @@
     }
   },
   "dependencies": {
-    "botbuilder-ai": "4.1.6"
+    "botbuilder-ai": "4.16.0"
   },
   "scripts": {
     "build": "tsc -b",
