@@ -101,17 +101,14 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     const workspaceVersions = workspaces.reduce<Record<string, string>>(
         (acc, { pkg }) => ({
             ...acc,
-            [pkg.name]: getPackageVersion(
-                pkg,
-                pkg.private ? pkg.version : newVersion,
-                {
-                    buildLabel: flags.buildLabel,
-                    commitSha,
-                    date,
-                    deprecated: flags.deprecated,
-                    internal: flags.internal,
-                    preview: flags.preview,
-                }),
+            [pkg.name]: getPackageVersion(pkg, pkg.private ? pkg.version : newVersion, {
+                buildLabel: flags.buildLabel,
+                commitSha,
+                date,
+                deprecated: flags.deprecated,
+                internal: flags.internal,
+                preview: flags.preview,
+            }),
         }),
         {}
     );
