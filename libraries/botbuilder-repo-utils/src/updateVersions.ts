@@ -122,7 +122,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
                 return acc;
             }, {});
 
-    // Rewrite package.json files by updating version as well as dependencies and devDependencies.
+    // Rewrite package.json files by updating version as well as dependencies, devDependencies and peerDependencies.
     const results = await Promise.all<Result>(
         workspaces.map(async ({ absPath, pkg }) => {
             const newVersion = workspaceVersions[pkg.name];
@@ -140,6 +140,10 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
 
             if (pkg.devDependencies) {
                 pkg.devDependencies = rewriteWithNewVersions(pkg.devDependencies);
+            }
+
+            if (pkg.peerDependencies) {
+                pkg.peerDependencies = rewriteWithNewVersions(pkg.peerDependencies);
             }
 
             try {

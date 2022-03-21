@@ -39,13 +39,13 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6"
+    "botbuilder-dialogs-declarative": "4.16.0-preview",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview"
   },
   "devDependencies": {
-    "adaptive-expressions": "4.1.6",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6"
+    "adaptive-expressions": "4.16.0",
+    "botbuilder-core": "4.16.0",
+    "botbuilder-dialogs": "4.16.0"
   },
   "scripts": {
     "build": "tsc -b",

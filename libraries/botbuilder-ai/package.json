@@ -44,9 +44,9 @@
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
-    "adaptive-expressions": "4.1.6",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
+    "adaptive-expressions": "4.16.0",
+    "botbuilder-core": "4.16.0",
+    "botbuilder-dialogs": "4.16.0",
     "fs-extra": "^7.0.1",
     "nock": "^11.9.1"
   },
