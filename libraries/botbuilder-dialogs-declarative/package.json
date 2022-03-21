@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "adaptive-expressions": "4.16.0",
+    "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.16.0-preview",
     "jsonschema": "^1.4.0"
   },

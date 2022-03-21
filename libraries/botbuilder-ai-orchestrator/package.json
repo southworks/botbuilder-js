@@ -38,6 +38,15 @@
     "@microsoft/orchestrator-core": "~4.14.0",
     "uuid": "^8.3.2"
   },
+  "peerDependencies": {
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6"
+  },
+  "devDependencies": {
+    "adaptive-expressions": "4.1.6",
+    "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs": "4.1.6"
+  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai-orchestrator --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai-orchestrator .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Orchestrator\" --readme none",
