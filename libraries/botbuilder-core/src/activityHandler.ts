@@ -489,6 +489,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Provides default behavior for invoke activities.
+     *
      * @param context The context object for the current turn.
      *
      * @remarks
@@ -565,10 +566,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context the context object for the current turn
      * @param invokeValue incoming activity value
      */
-    protected onSearchInvoke(
-        context: TurnContext,
-        invokeValue: SearchInvokeValue
-    ): Promise<SearchInvokeResponse> {
+    protected onSearchInvoke(context: TurnContext, invokeValue: SearchInvokeValue): Promise<SearchInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
 
@@ -1048,6 +1046,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * An [InvokeResponse](xref:botbuilder.InvokeResponse) factory that initializes the body to the parameter passed and status equal to OK.
+     *
      * @param body JSON serialized content from a POST response.
      * @returns A new [InvokeResponse](xref:botbuilder.InvokeResponse) object.
      */

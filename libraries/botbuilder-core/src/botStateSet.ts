@@ -20,6 +20,7 @@ export class BotStateSet {
 
     /**
      * Creates a new BotStateSet instance.
+     *
      * @param botStates One or more BotState plugins to register.
      */
     public constructor(...botStates: BotState[]) {
@@ -28,6 +29,7 @@ export class BotStateSet {
 
     /**
      * Registers One or more `BotState` plugins with the set.
+     *
      * @param botStates One or more BotState plugins to register.
      */
     public add(...botStates: BotState[]): this {
@@ -35,7 +37,7 @@ export class BotStateSet {
             if (typeof botstate.load === 'function' && typeof botstate.saveChanges === 'function') {
                 this.botStates.push(botstate);
             } else {
-                throw new Error(`BotStateSet: a object was added that isn't an instance of BotState.`);
+                throw new Error("BotStateSet: a object was added that isn't an instance of BotState.");
             }
         });
 

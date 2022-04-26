@@ -815,7 +815,7 @@ export class TurnContext {
      */
     public set responded(value: boolean) {
         if (!value) {
-            throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
+            throw new Error("TurnContext: cannot set 'responded' to a value of 'false'.");
         }
         this._respondedRef.responded = true;
     }

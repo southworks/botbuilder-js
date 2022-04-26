@@ -390,15 +390,15 @@ export class ActivityHandlerBase {
      */
     public async run(context: TurnContext): Promise<void> {
         if (!context) {
-            throw new Error(`Missing TurnContext parameter`);
+            throw new Error('Missing TurnContext parameter');
         }
 
         if (!context.activity) {
-            throw new Error(`TurnContext does not include an activity`);
+            throw new Error('TurnContext does not include an activity');
         }
 
         if (!context.activity.type) {
-            throw new Error(`Activity is missing its type`);
+            throw new Error('Activity is missing its type');
         }
 
         // List of all Activity Types:
