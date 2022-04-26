@@ -73,6 +73,7 @@ export class AutoSaveStateMiddleware implements Middleware {
      * Adds additional `BotState` plugins to be saved.
      *
      * @param botStates One or more BotState plugins to add.
+     * @returns The updated BotStateSet object.
      */
     public add(...botStates: BotState[]): this {
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);

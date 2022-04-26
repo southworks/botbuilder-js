@@ -14,7 +14,7 @@ import { SignInUrlResponse, TokenResponse, TokenExchangeRequest } from 'botframe
 /**
  * Interface for User Token OAuth Single Sign On and Token Exchange APIs for BotAdapters
  *
- * @obsolete Use `UserTokenClient` instead.
+ * @deprecated Use `UserTokenClient` instead.
  */
 export interface ExtendedUserTokenProvider extends IUserTokenProvider {
     /**

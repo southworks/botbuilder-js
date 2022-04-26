@@ -45,7 +45,7 @@ export class MemoryStorage implements Storage {
      * @returns The read items.
      */
     public read(keys: string[]): Promise<StoreItems> {
-        return new Promise<StoreItems>((resolve: any, reject: any): void => {
+        return new Promise<StoreItems>((resolve: any): void => {
             if (!keys) {
                 throw new ReferenceError('Keys are required when reading.');
             }
@@ -64,14 +64,14 @@ export class MemoryStorage implements Storage {
      * Writes storage items to storage.
      *
      * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     public write(changes: StoreItems): Promise<void> {
-        const that: MemoryStorage = this;
-        function saveItem(key: string, item: any): void {
+        const saveItem = (key: string, item: any) => {
             const clone: any = { ...item };
-            clone.eTag = (that.etag++).toString();
-            that.memory[key] = JSON.stringify(clone);
-        }
+            clone.eTag = (this.etag++).toString();
+            this.memory[key] = JSON.stringify(clone);
+        };
 
         return new Promise<void>((resolve: any, reject: any): void => {
             if (!changes) {
@@ -99,9 +99,10 @@ export class MemoryStorage implements Storage {
      * Deletes storage items from storage.
      *
      * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     public delete(keys: string[]): Promise<void> {
-        return new Promise<void>((resolve: any, reject: any): void => {
+        return new Promise<void>((resolve: any): void => {
             keys.forEach((key: string) => (this.memory[key] = <any>undefined));
             resolve();
         });

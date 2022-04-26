@@ -151,8 +151,8 @@ export abstract class CloudAdapterBase extends BotAdapter {
      * @deprecated
      */
     async continueConversation(
-        reference: Partial<ConversationReference>,
-        logic: (context: TurnContext) => Promise<void>
+        _reference: Partial<ConversationReference>,
+        _logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error(
             '`CloudAdapterBase.continueConversation` is deprecated, please use `CloudAdapterBase.continueConversationAsync`'

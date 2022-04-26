@@ -1,10 +1,9 @@
 const assert = require('assert');
-const { TestAdapter, ActivityTypes, TestFlow, ActivityFactory, TurnContext } = require('../');
+const { TestAdapter, ActivityTypes, ActivityFactory, TurnContext } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
 const originalActivity = { text: 'original', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };
-const deletedActivityId = '1234';
 
 describe('TestAdapter', function () {
     this.timeout(5000);
@@ -87,7 +86,7 @@ describe('TestAdapter', function () {
 
     it('should call bot logic when send() is called.', async function () {
         let called = false;
-        const adapter = new TestAdapter((context) => {
+        const adapter = new TestAdapter(() => {
             called = true;
         });
 
@@ -184,7 +183,7 @@ describe('TestAdapter', function () {
         });
         await adapter
             .send('test')
-            .assertReply((reply, description) => {
+            .assertReply((reply) => {
                 assert(reply, 'reply not passed');
                 called = true;
             })
@@ -193,8 +192,8 @@ describe('TestAdapter', function () {
     });
 
     it('should timeout waiting for assertReply() when a string is expected.', async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -205,8 +204,8 @@ describe('TestAdapter', function () {
     });
 
     it('should timeout waiting for assertReply() when an Activity is expected.', async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -218,8 +217,8 @@ describe('TestAdapter', function () {
     });
 
     it('should timeout waiting for assertReply() when a custom inspector is expected.', async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -234,8 +233,8 @@ describe('TestAdapter', function () {
     });
 
     it('should timeout waiting for assertNoReply() when an Activity is not expected.', async function () {
-        const adapter = new TestAdapter((context) => {
-            return new Promise((resolve, reject) => {
+        const adapter = new TestAdapter(() => {
+            return new Promise((resolve) => {
                 setTimeout(() => resolve(), 600);
             });
         });
@@ -288,7 +287,7 @@ describe('TestAdapter', function () {
     });
 
     it('should return an error from continueConversation().', async function () {
-        const adapter = new TestAdapter((context) => {
+        const adapter = new TestAdapter(() => {
             assert.fail("shouldn't run bot logic.");
         });
         await assert.rejects(async () => await adapter.continueConversation(), {
@@ -349,7 +348,7 @@ describe('TestAdapter', function () {
 
     it("should run the bot's logic to activities without a from property via testActivities().", async function () {
         let counter = 0;
-        const adapter = new TestAdapter((context) => {
+        const adapter = new TestAdapter(() => {
             counter++;
         });
 

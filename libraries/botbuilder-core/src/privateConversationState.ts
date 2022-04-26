@@ -46,6 +46,7 @@ export class PrivateConversationState extends BotState {
      * Returns the storage key for the current PrivateConversation state.
      *
      * @param context Context for current turn of PrivateConversation with the user.
+     * @returns The storage key for the current PrivateConversation state.
      */
     public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;

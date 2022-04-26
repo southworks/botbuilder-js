@@ -77,54 +77,54 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
     /**
      * Creates a new instance of the [NullTelemetryClient](xref:botbuilder-core.NullTelemetryClient) class.
      *
-     * @param settings Optional. Settings for the telemetry client.
+     * @param _settings Optional. Settings for the telemetry client.
      */
-    constructor(settings?: any) {
+    constructor(_settings?: any) {
         // noop
     }
 
     /**
      * Logs an Application Insights page view.
      *
-     * @param telemetry An object implementing [TelemetryPageView](xref:botbuilder-core.TelemetryPageView).
+     * @param _telemetry An object implementing [TelemetryPageView](xref:botbuilder-core.TelemetryPageView).
      */
-    trackPageView(telemetry: TelemetryPageView) {
+    trackPageView(_telemetry: TelemetryPageView) {
         // noop
     }
 
     /**
      * Sends information about an external dependency (outgoing call) in the application.
      *
-     * @param telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
+     * @param _telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
      */
-    trackDependency(telemetry: TelemetryDependency) {
+    trackDependency(_telemetry: TelemetryDependency) {
         // noop
     }
 
     /**
      * Logs custom events with extensible named fields.
      *
-     * @param telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
+     * @param _telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
      */
-    trackEvent(telemetry: TelemetryEvent) {
+    trackEvent(_telemetry: TelemetryEvent) {
         // noop
     }
 
     /**
      * Logs a system exception.
      *
-     * @param telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
+     * @param _telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
      */
-    trackException(telemetry: TelemetryException) {
+    trackException(_telemetry: TelemetryException) {
         // noop
     }
 
     /**
      * Sends a trace message.
      *
-     * @param telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
+     * @param _telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
      */
-    trackTrace(telemetry: TelemetryTrace) {
+    trackTrace(_telemetry: TelemetryTrace) {
         // noop
     }
 

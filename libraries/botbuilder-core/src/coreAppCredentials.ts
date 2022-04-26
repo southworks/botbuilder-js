@@ -26,8 +26,8 @@ export interface CoreAppCredentials {
     /**
      * Signs a request with the Authentication header.
      *
-     * @param {WebResource} webResource The WebResource/request to be signed.
-     * @returns {Promise<WebResource>} The signed request object;
+     * @param {CoreWebResource} webResource The CoreWebResource/request to be signed.
+     * @returns {Promise<CoreWebResource>} The signed request object;
      */
     signRequest(webResource: CoreWebResource): Promise<CoreWebResource>;
 }

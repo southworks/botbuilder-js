@@ -74,7 +74,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
-        bot.onTurn(async (context, next) => {
+        bot.onTurn(async (_context, _next) => {
             onTurnCalled = true;
         });
 
@@ -94,14 +94,14 @@ describe('ActivityHandler', function () {
         let count = 0;
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = true;
             count++;
             await next();
         });
 
         let onMessageCalledAgain = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalledAgain = true;
             count++;
             await next();
@@ -442,7 +442,7 @@ describe('ActivityHandler', function () {
             const testAdapter = new TestAdapter();
 
             let onSearchInvokeCalled = false;
-            bot.onSearchInvoke = async (context, invokeValue) => {
+            bot.onSearchInvoke = async (_context, _invokeValue) => {
                 onSearchInvokeCalled = true;
                 return { statusCode: 200, value: 'called' };
             };

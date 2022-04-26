@@ -445,6 +445,7 @@ export class CardFactory {
      *
      * @param actions The array of action to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @returns A properly formatted array of actions.
      */
     public static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
         const list: CardAction[] = [];
@@ -469,6 +470,7 @@ export class CardFactory {
      *
      * @param images The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @returns A properly formatted array of card images.
      */
     public static images(images: (CardImage | string)[] | undefined): CardImage[] {
         const list: CardImage[] = [];
@@ -487,6 +489,7 @@ export class CardFactory {
      * Returns a properly formatted array of media URL objects.
      *
      * @param links The media URLs. Each `string` is converted to a media URL object.
+     * @returns A properly formatted array of media URL objects.
      */
     public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
         const list: MediaUrl[] = [];

@@ -117,6 +117,7 @@ export class ActivityFactory {
      * Generate the activity.
      *
      * @param lgResult string result from languageGenerator.
+     * @returns The generated MessageActivity.
      */
     public static fromObject(lgResult: any): Partial<Activity> {
         if (lgResult == null) {
@@ -138,6 +139,7 @@ export class ActivityFactory {
      * Given a lg result, create a text activity. This method will create a MessageActivity from text.
      *
      * @param text lg text output.
+     * @returns The created MessageActivity.
      */
     private static buildActivityFromText(text: string): Partial<Activity> {
         const msg: Partial<Activity> = {
@@ -156,6 +158,7 @@ export class ActivityFactory {
      * Given a structured lg result, create an activity. This method will create an MessageActivity from object
      *
      * @param lgValue lg output.
+     * @returns The created MessageActivity.
      */
     private static buildActivityFromLGStructuredResult(lgValue: any): Partial<Activity> {
         let activity: Partial<Activity> = {};
@@ -316,7 +319,7 @@ export class ActivityFactory {
             const value: any = input[key];
 
             switch (property.toLowerCase()) {
-                case 'contenttype':
+                case 'contenttype': {
                     const type: string = value.toString().toLowerCase();
                     if (this.genericCardTypeMapping.has(type)) {
                         attachment.contentType = this.genericCardTypeMapping.get(type);
@@ -326,9 +329,11 @@ export class ActivityFactory {
                         attachment.contentType = type;
                     }
                     break;
-                default:
+                }
+                default: {
                     attachment[this.realProperty(property, this.attachmentProperties)] = value;
                     break;
+                }
             }
         }
 
@@ -346,11 +351,12 @@ export class ActivityFactory {
             const value: any = input[key];
 
             switch (property) {
-                case 'tap':
+                case 'tap': {
                     card[property] = this.getCardAction(value);
                     break;
+                }
                 case 'image':
-                case 'images':
+                case 'images': {
                     if (type === CardFactory.contentTypes.heroCard || type === CardFactory.contentTypes.thumbnailCard) {
                         if (!('images' in card)) {
                             card['images'] = [];
@@ -362,7 +368,8 @@ export class ActivityFactory {
                         card['image'] = this.normalizedToMediaOrImage(value);
                     }
                     break;
-                case 'media':
+                }
+                case 'media': {
                     if (!('media' in card)) {
                         card['media'] = [];
                     }
@@ -370,7 +377,8 @@ export class ActivityFactory {
                     const mediaList = this.normalizedToList(value);
                     mediaList.forEach((u): any => card['media'].push(this.normalizedToMediaOrImage(u)));
                     break;
-                case 'buttons':
+                }
+                case 'buttons': {
                     if (!('buttons' in card)) {
                         card['buttons'] = [];
                     }
@@ -378,9 +386,10 @@ export class ActivityFactory {
                     const buttons: any[] = this.getButtons(value);
                     buttons.forEach((u): any => card[property].push(u));
                     break;
+                }
                 case 'autostart':
                 case 'shareable':
-                case 'autoloop':
+                case 'autoloop': {
                     const boolValue: boolean = this.getValidBooleanValue(value.toString());
                     if (boolValue !== undefined) {
                         card[property] = boolValue;
@@ -388,9 +397,11 @@ export class ActivityFactory {
                         card[property] = value;
                     }
                     break;
-                default:
+                }
+                default: {
                     card[this.realProperty(key.trim(), this.cardProperties)] = value;
                     break;
+                }
             }
         }
 

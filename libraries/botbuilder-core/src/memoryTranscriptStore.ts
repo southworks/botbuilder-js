@@ -25,6 +25,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      *
      * @param activity Activity to log.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     public logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
@@ -55,12 +56,13 @@ export class MemoryTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Get activities from the memory transcript store
+     * Get activities from the memory transcript store.
      *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
+     * @returns {Promise<PagedResult<Activity>>} A page of matching activities.
      */
     public getTranscriptActivities(
         channelId: string,
@@ -108,6 +110,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id.
      * @param continuationToken Continuation token to page through results.
+     * @returns {Promise<PagedResult<TranscriptInfo>>} A page of conversations for a channel from the store.
      */
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
@@ -152,6 +155,7 @@ export class MemoryTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {

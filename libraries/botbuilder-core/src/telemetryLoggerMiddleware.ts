@@ -60,7 +60,9 @@ export class TelemetryLoggerMiddleware implements Middleware {
     }
 
     /**
-     * Gets a value indicating whether determines whether to log personal information that came from the user.
+     * Gets a value indicating whether to log personal information that came from the user.
+     *
+     * @returns A value indicating whether to log personal information or not.
      */
     public get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
@@ -68,6 +70,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
     /**
      * Gets the currently configured botTelemetryClient that logs the events.
+     *
+     * @returns The currently configured [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) that logs the events.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
@@ -178,7 +182,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageUpdate".
      *
-     * @param activity
+     * @param activity Current activity sent from user.
      */
     protected async onUpdateActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
@@ -192,7 +196,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageDelete".
      *
-     * @param activity
+     * @param activity Current activity sent from user.
      */
     protected async onDeleteActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({

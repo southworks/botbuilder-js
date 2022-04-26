@@ -946,7 +946,7 @@ export class TestFlow {
         return new TestFlow(
             this.previous.then(() => {
                 // tslint:disable-next-line:promise-must-complete
-                return new Promise<void>((resolve: any, reject: any): void => {
+                return new Promise<void>((resolve: any): void => {
                     if (!timeout) {
                         timeout = 3000;
                     }

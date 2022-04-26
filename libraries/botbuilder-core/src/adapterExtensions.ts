@@ -16,6 +16,7 @@ import { RegisterClassMiddleware } from './registerClassMiddleware';
  *
  * @param botAdapter The adapter on which to register the state objects.
  * @param botStates The state objects to register.
+ * @returns The updated adapter.
  */
 export function useBotState(botAdapter: BotAdapter, ...botStates: BotState[]): BotAdapter {
     for (const botState of botStates) {

@@ -28,9 +28,10 @@ export class BotStateSet {
     }
 
     /**
-     * Registers One or more `BotState` plugins with the set.
+     * Registers one or more `BotState` plugins with the set.
      *
      * @param botStates One or more BotState plugins to register.
+     * @returns The updated BotStateSet.
      */
     public add(...botStates: BotState[]): this {
         botStates.forEach((botstate: BotState) => {
