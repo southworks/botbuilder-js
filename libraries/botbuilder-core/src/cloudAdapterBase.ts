@@ -31,6 +31,9 @@ import {
     StatusCodes,
 } from 'botframework-schema';
 
+/**
+ * An adapter that implements the Bot Framework Protocol and can be hosted in different cloud environments both public and private.
+ */
 export abstract class CloudAdapterBase extends BotAdapter {
     readonly ConnectorFactoryKey = Symbol('ConnectorFactory');
     readonly UserTokenClientKey = Symbol('UserTokenClient');
