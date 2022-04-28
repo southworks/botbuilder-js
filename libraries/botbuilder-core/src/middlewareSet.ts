@@ -95,9 +95,9 @@ export class MiddlewareSet implements Middleware {
      * @remarks This example adds a new piece of middleware to a set:
      * ```JavaScript
      * set.use(async (context, next) => {
-     * console.log(`Leading Edge`);
-     * await next();
-     * console.log(`Trailing Edge`);
+     *    console.log(`Leading Edge`);
+     *    await next();
+     *    console.log(`Trailing Edge`);
      * });
      * ```
      * @param {...any} middlewares One or more middleware handlers(s) to register.
