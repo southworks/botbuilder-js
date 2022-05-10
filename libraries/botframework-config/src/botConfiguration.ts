@@ -21,9 +21,6 @@ interface InternalBotConfig {
     location?: string;
 }
 
-/**
- * @deprecated See https://aka.ms/bot-file-basics for more information.
- */
 export class BotConfiguration extends BotConfigurationBase {
     private internal: InternalBotConfig = {};
 
