@@ -446,12 +446,13 @@ export enum Channels {
     // (undocumented)
     Omni = "omnichannel",
     // (undocumented)
+    Outlook = "outlook",
+    // (undocumented)
     Skype = "skype",
     // @deprecated (undocumented)
     Skypeforbusiness = "skypeforbusiness",
     // (undocumented)
     Slack = "slack",
-    // (undocumented)
     Sms = "sms",
     // (undocumented)
     Telegram = "telegram",
@@ -459,7 +460,7 @@ export enum Channels {
     Telephony = "telephony",
     // (undocumented)
     Test = "test",
-    // (undocumented)
+    // @deprecated (undocumented)
     Twilio = "twilio-sms",
     // (undocumented)
     Webchat = "webchat"

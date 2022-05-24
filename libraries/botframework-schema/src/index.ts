@@ -2238,7 +2238,7 @@ export enum SemanticActionStateTypes {
 /**
  * Defines values for ChannelIds for Channels.
  * Possible values include: 'alexa', 'console', 'cortana', 'directline', 'directlinespeech', 'email',
- * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'onmichannel', 'skype', 'skypeforbusiness',
+ * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'onmichannel', 'outlook', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
  *
  * @readonly
@@ -2263,12 +2263,16 @@ export enum Channels {
     Line = 'line',
     Msteams = 'msteams',
     Omni = 'omnichannel',
+    Outlook = 'outlook',
     Skype = 'skype',
     /**
      * @deprecated This channel is no longer available for bot developers.
      */
     Skypeforbusiness = 'skypeforbusiness',
     Slack = 'slack',
+    /**
+     * SMS (Twilio) channel.
+     */
     Sms = 'sms',
     Telegram = 'telegram',
     /**
@@ -2276,6 +2280,9 @@ export enum Channels {
      */
     Telephony = 'telephony',
     Test = 'test',
+    /**
+     * @deprecated This channel is no longer available for bot developers.
+     */
     Twilio = 'twilio-sms',
     Webchat = 'webchat',
 }
@@ -2426,7 +2433,7 @@ export interface SearchInvokeOptions {
  * Name of 'application/search'.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
+export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse { }
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
