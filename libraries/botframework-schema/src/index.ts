@@ -2433,7 +2433,7 @@ export interface SearchInvokeOptions {
  * Name of 'application/search'.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse { }
+export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
 
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
