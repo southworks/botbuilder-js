@@ -2238,7 +2238,7 @@ export enum SemanticActionStateTypes {
 /**
  * Defines values for ChannelIds for Channels.
  * Possible values include: 'alexa', 'console', 'cortana', 'directline', 'directlinespeech', 'email',
- * 'emulator', 'enterprisechannel', 'facebook', 'groupme', 'kaizala', 'kik', 'line', 'msteams', 'onmichannel', 'outlook', 'skype', 'skypeforbusiness',
+ * 'emulator', 'enterprisechannel', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'onmichannel', 'outlook', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
  *
  * @readonly
@@ -2261,10 +2261,6 @@ export enum Channels {
     EnterpriseChannel = 'enterprisechannel',
     Facebook = 'facebook',
     Groupme = 'groupme',
-    /**
-     * @deprecated This channel is no longer available for bot developers.
-     */
-    Kaizala = 'kaizala',
     /**
      * @deprecated This channel is no longer available for bot developers.
      */

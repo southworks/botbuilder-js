@@ -442,8 +442,6 @@ export enum Channels {
     // (undocumented)
     Groupme = "groupme",
     // @deprecated (undocumented)
-    Kaizala = "kaizala",
-    // @deprecated (undocumented)
     Kik = "kik",
     // (undocumented)
     Line = "line",
