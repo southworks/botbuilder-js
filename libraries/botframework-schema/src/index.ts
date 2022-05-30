@@ -2246,16 +2246,25 @@ export enum SemanticActionStateTypes {
  */
 export enum Channels {
     Alexa = 'alexa',
+    Console = 'console',
     /**
      * @deprecated This channel is no longer available for bot developers.
      */
-    Console = 'console',
+    Cortana = 'cortana',
     Directline = 'directline',
     DirectlineSpeech = 'directlinespeech',
     Email = 'email',
     Emulator = 'emulator',
+    /**
+     * @deprecated This channel is no longer available for bot developers.
+     */
+    EnterpriseChannel = 'enterprisechannel',
     Facebook = 'facebook',
     Groupme = 'groupme',
+    /**
+     * @deprecated This channel is no longer available for bot developers.
+     */
+    Kaizala = 'kairzala',
     /**
      * @deprecated This channel is no longer available for bot developers.
      */
@@ -2275,9 +2284,6 @@ export enum Channels {
      */
     Sms = 'sms',
     Telegram = 'telegram',
-    /**
-     * @deprecated This channel is no longer available for bot developers.
-     */
     Telephony = 'telephony',
     Test = 'test',
     /**
