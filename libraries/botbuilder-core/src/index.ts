@@ -44,6 +44,7 @@ export * from './storage';
 export * from './stringUtils';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
+export * from './signInTestAdapter';
 export * from './transcriptLogger';
 export * from './turnContext';
 export * from './turnContextStateCollection';
