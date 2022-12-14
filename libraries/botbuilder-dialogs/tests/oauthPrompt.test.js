@@ -22,6 +22,7 @@ const {
     ConversationState,
     InputHints,
     MemoryStorage,
+    SignInTestAdapter,
     TestAdapter,
     tokenResponseEventName,
     TurnContext,
@@ -813,8 +814,51 @@ describe('OAuthPrompt', function () {
                 });
             });
         });
-    });
 
+        it('OAuthPrompt sas url present in OAuthCard', async function () {
+            const convoState = new ConversationState(new MemoryStorage());
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(new OAuthPrompt('OAuthPrompt'));
+            const testAdapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                }
+                await convoState.saveChanges(turnContext);
+            });
+            const signAdapter = new SignInTestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                }
+                await convoState.saveChanges(turnContext);
+            });
+            const testCases = [
+                { adapter: testAdapter, containsSasurl: false },
+                { adapter: signAdapter, containsSasurl: true },
+            ];
+            testCases.forEach(async (testData) => {
+                await testData.adapter
+                    .send('hello')
+                    .assertReply((activity) => {
+                        assert(activity?.Attachments?.length == 1);
+                        assert(CardFactory.contentTypes.oauthCard == activity?.Attachments[0]?.ContentType);
+                        const oAuthCard = activity?.Attachments[0]?.Content;
+                        if (testData.containsSasurl) {
+                            assert(oAuthCard?.TokenPostResource != null);
+                            assert(oAuthCard?.TokenPostResource?.SasUrl != null);
+                        } else {
+                            assert(oAuthCard?.TokenPostResource == null);
+                        }
+                        assert(oAuthCard?.TokenExchangeResource != null);
+                    })
+                    .startTest();
+            });
+        });
+    });
     describe('Test Adapter should be able to exchange tokens for uri and token', function () {
         let adapter;
         const connectionName = 'myConnection';
@@ -1149,7 +1193,6 @@ async function testTimeout(
         )
     );
 
-    // Initialize TestAdapter.
     const adapter = new TestAdapter(async (turnContext) => {
         const dc = await dialogs.createContext(turnContext);
 
