@@ -1303,7 +1303,7 @@ class SignInTestAdapter extends TestAdapter {
      */
     async getSignInResource(turnContext, connectionName, userId, finalRedirect = null) {
         const result = await super.getSignInResource(turnContext, connectionName, userId, finalRedirect);
-        result.tokenPostResource.sasUrl = { sasUrl: `https://www.fakesas.com/${connectionName}/${userId}` };
+        result.tokenPostResource = { sasUrl: `https://www.fakesas.com/${connectionName}/${userId}` };
         return result;
     }
 }
