@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
 const assert = require('assert');
 const { spy } = require('sinon');
 const { ok } = require('assert');
@@ -22,7 +21,6 @@ const {
     ConversationState,
     InputHints,
     MemoryStorage,
-    SignInTestAdapter,
     TestAdapter,
     tokenResponseEventName,
     TurnContext,
@@ -1238,4 +1236,38 @@ async function testTimeout(
         .send(oauthPromptActivity)
         .assertReply(noTokenResponse)
         .startTest();
+}
+/**
+ * Sign in test adapter used for unit tests. This adapter can be used to simulate sending messages from the
+ * user to the bot.
+ *
+ * @remarks
+ * The following example sets up the test adapter and then executes a simple test:
+ *
+ * ```JavaScript
+ * const { TestAdapter } = require('botbuilder');
+ *
+ * const adapter = new TestAdapter(async (context) => {
+ *      await context.sendActivity(`Hello World`);
+ * });
+ *
+ * adapter.test(`hi`, `Hello World`)
+ *        .then(() => done());
+ * ```
+ */
+class SignInTestAdapter extends TestAdapter {
+    /**
+     * Gets a sign-in resource.
+     *
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User ID
+     * @param finalRedirect Final redirect URL.
+     * @returns A `Promise` with a new [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) object.
+     */
+    async getSignInResource(turnContext, connectionName, userId, finalRedirect = null) {
+        const result = await super.getSignInResource(turnContext, connectionName, userId, finalRedirect);
+        result.tokenPostResource.sasUrl = { sasUrl: `https://www.fakesas.com/${connectionName}/${userId}` };
+        return result;
+    }
 }
