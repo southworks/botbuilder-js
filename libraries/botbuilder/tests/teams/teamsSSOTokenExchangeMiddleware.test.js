@@ -48,7 +48,7 @@ class TeamsSSOAdapter extends TestAdapter {
     }
 
     send() {
-        return new TestFlow(this.processActivity(this.makeTokenExchangeActivity()), this);
+        return new TestFlow(this.processActivity(this.makeTokenExchangeActivity(), undefined, true), this);
     }
 
     makeTokenExchangeActivity() {
@@ -102,6 +102,7 @@ describe('TeamsSSOTokenExchangeMiddleware', function () {
             const adapter = new TeamsSSOAdapter(createConversationReference(), logic).use(
                 new TeamsSSOTokenExchangeMiddleware(new MemoryStorage(), connectionName)
             );
+
 
             adapter.addExchangeableToken(connectionName, Channels.Msteams, teamsUserId, fakeExchangeableItem, token);
 
