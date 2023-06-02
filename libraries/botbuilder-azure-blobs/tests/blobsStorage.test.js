@@ -23,7 +23,7 @@ describe('BlobsStorage', function () {
         it('throws for bad args', function () {
             assert.throws(() => new BlobsStorage(), 'throws for missing connectionString');
             assert.throws(() => new BlobsStorage('connectionString'), 'throws for missing containerName');
-            assert.throws(() => new BlobsStorage(null, null, [], {}), "throws for missing url");
+            assert.throws(() => new BlobsStorage(null, null, [], {}), 'throws for missing url');
             assert.throws(() => new BlobsStorage(null, null, 'url', {}), ReferenceError('Invalid credential type.'));
         });
 
@@ -32,7 +32,12 @@ describe('BlobsStorage', function () {
         });
 
         it('succeeds for good args using credential', function () {
-            new BlobsStorage(null, null, 'https://test.blob.core.windows.net/blob', new StorageSharedKeyCredential("accountName", "accountKey"));
+            new BlobsStorage(
+                null,
+                null,
+                'https://test.blob.core.windows.net/blob',
+                new StorageSharedKeyCredential('accountName', 'accountKey')
+            );
         });
     });
 

@@ -4,7 +4,12 @@
 import * as z from 'zod';
 import getStream from 'get-stream';
 import pmap from 'p-map';
-import { AnonymousCredential, ContainerClient, StoragePipelineOptions, StorageSharedKeyCredential } from '@azure/storage-blob';
+import {
+    AnonymousCredential,
+    ContainerClient,
+    StoragePipelineOptions,
+    StorageSharedKeyCredential,
+} from '@azure/storage-blob';
 import { Storage, StoreItems } from 'botbuilder-core';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
@@ -38,23 +43,23 @@ export class BlobsStorage implements Storage {
      *
      * @param {string} connectionString Azure Blob Storage connection string
      * @param {string} containerName Azure Blob Storage container name
+     * @param {string} url Azure Blob Storage container url
+     * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} credential Azure credential to access the resource
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
-    constructor
-        (
-            connectionString: string,
-            containerName: string,
-            url: string,
-            credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
-            options?: BlobsStorageOptions
-        ) {
-
+    constructor(
+        connectionString: string,
+        containerName: string,
+        url: string,
+        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
+        options?: BlobsStorageOptions
+    ) {
         if (url && credential != null) {
             z.object({ url: z.string() }).parse({
-                url
+                url,
             });
 
-            if (typeof credential != "object" || !isCredentialType(credential)) {
+            if (typeof credential != 'object' || !isCredentialType(credential)) {
                 throw new ReferenceError('Invalid credential type.');
             }
 
@@ -70,7 +75,11 @@ export class BlobsStorage implements Storage {
                 containerName,
             });
 
-            this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
+            this._containerClient = new ContainerClient(
+                connectionString,
+                containerName,
+                options?.storagePipelineOptions
+            );
 
             // At most one promise at a time to be friendly to local emulator users
             if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
