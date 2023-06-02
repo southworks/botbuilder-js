@@ -50,11 +50,11 @@ export class BlobsStorage implements Storage {
     constructor(
         connectionString: string,
         containerName: string,
-        url: string,
+        url: string = "",
         credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
         options?: BlobsStorageOptions
     ) {
-        if (url && credential != null) {
+        if (url != "" && credential != null) {
             z.object({ url: z.string() }).parse({
                 url,
             });
