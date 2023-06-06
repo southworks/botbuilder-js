@@ -13,7 +13,7 @@ import {
 import { Storage, StoreItems } from 'botbuilder-core';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
-import { TokenCredential } from '@azure/core-http';
+import { TokenCredential, isTokenCredential } from '@azure/core-http';
 
 /**
  * Optional settings for BlobsStorage
@@ -27,7 +27,7 @@ export interface BlobsStorageOptions {
 }
 
 function isCredentialType(value: any): value is TokenCredential {
-    return 'getToken' in value || 'create' in value;
+    return isTokenCredential(value) || 'create' in value;
 }
 
 /**
@@ -43,16 +43,16 @@ export class BlobsStorage implements Storage {
      *
      * @param {string} connectionString Azure Blob Storage connection string
      * @param {string} containerName Azure Blob Storage container name
+     * @param {BlobsStorageOptions} options Other options for BlobsStorage
      * @param {string} url Azure Blob Storage container url
      * @param {StorageSharedKeyCredential | AnonymousCredential | TokenCredential} credential Azure credential to access the resource
-     * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(
         connectionString: string,
         containerName: string,
+        options?: BlobsStorageOptions,
         url = '',
-        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential,
-        options?: BlobsStorageOptions
+        credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential
     ) {
         if (url != '' && credential != null) {
             z.object({ url: z.string() }).parse({

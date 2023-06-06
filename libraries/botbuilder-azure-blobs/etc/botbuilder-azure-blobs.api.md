@@ -17,7 +17,7 @@ import { TranscriptStore } from 'botbuilder-core';
 
 // @public
 export class BlobsStorage implements Storage_2 {
-    constructor(connectionString: string, containerName: string, url?: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential, options?: BlobsStorageOptions);
+    constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions, url?: string, credential?: StorageSharedKeyCredential | AnonymousCredential | TokenCredential);
     delete(keys: string[]): Promise<void>;
     read(keys: string[]): Promise<StoreItems>;
     write(changes: StoreItems): Promise<void>;
