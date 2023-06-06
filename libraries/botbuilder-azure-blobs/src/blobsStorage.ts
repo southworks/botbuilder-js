@@ -27,7 +27,9 @@ export interface BlobsStorageOptions {
 }
 
 function isCredentialType(value: any): value is TokenCredential {
-    return isTokenCredential(value) || 'create' in value;
+    return (
+        isTokenCredential(value) || value instanceof StorageSharedKeyCredential || value instanceof AnonymousCredential
+    );
 }
 
 /**
