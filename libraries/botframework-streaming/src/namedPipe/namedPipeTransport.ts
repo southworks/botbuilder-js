@@ -129,6 +129,13 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     }
 
     private trySignalData(): void {
+        if (this._activeReceiveReject) {
+            if (!this.socket) {
+                this._activeReceiveReject(new Error('Error: Null socket'));
+            } else if (this.socket.destroyed) {
+                this._activeReceiveReject(new Error('Error: Dead socket'));
+            }
+        }
         if (this._activeReceiveResolve) {
             if (!this._active && this._queue.length > 0) {
                 this._active = this._queue.shift();

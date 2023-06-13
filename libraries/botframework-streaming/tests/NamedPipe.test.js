@@ -6,6 +6,7 @@ const { NamedPipeTransport } = require('../lib/namedPipe');
 const { platform } = require('os');
 const { RequestHandler } = require('../lib');
 const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
+const Response = require('../lib/streamingResponse');
 
 class FauxSock {
     constructor(contentString) {
@@ -168,7 +169,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
 
         // TODO: 2023-04-24 [hawo] #4462 The code today does not allows the receive() call to be rejected by reading a dead socket.
         //                         The receive() call will be rejected IFF the socket is closed/error AFTER the receive() call.
-        it.skip('throws when reading from a dead socket', async function () {
+        it('throws when reading from a dead socket', async function () {
             const sock = new FauxSock();
             sock.destroyed = true;
             sock.connecting = false;
@@ -261,17 +262,44 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
         //                         Because the other side is not connected to anything, thus, no response is received.
         //                         Thus, the Promise is not resolved.
-        it.skip('sends without throwing', function (done) {
-            const req = new StreamingRequest();
-            req.Verb = 'POST';
-            req.Path = 'some/path';
-            req.setBody('Hello World!');
-            client
-                .send(req)
-                .catch((err) => {
-                    expect(err).to.be.undefined;
-                })
-                .then(done);
+        it('sends without throwing', function (done) {
+            const response = new Response.StreamingResponse();
+            response.statusCode = 111;
+            response.setBody('Test body.');
+            class TestRequestHandler extends RequestHandler {
+                constructor() {
+                    super();
+                }
+                processRequest(_request, _logger) {
+                    return response;
+                }
+            }
+            const server = new NamedPipeServer('pipeClientTest', new TestRequestHandler());
+            const client = new NamedPipeClient('pipeClientTest', false);
+            const pingServer = () =>
+                new Promise((resolve) => {
+                    // Ping server before sending any information, so the server makes the connection over the socket.
+                    client.send(new StreamingRequest());
+                    const interval = setInterval(() => {
+                        if (server.isConnected) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            try {
+                server.start(async () => {
+                    await client.connect();
+                    await pingServer();
+                    const result = await client.send(new StreamingRequest());
+                    expect(result.statusCode).to.equal(response.statusCode);
+                    server.disconnect();
+                    client.disconnect();
+                    done();
+                });
+            } catch (err) {
+                done(err);
+            }
         });
     });
 
@@ -313,18 +341,44 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
         // TODO: 2023-04-24 [hawo] #4462 The client.send() call will only resolve when the other side responded.
         //                         Because the other side is not connected to anything, thus, no response is received.
         //                         Thus, the Promise is not resolved.
-        it.skip('sends without throwing', function (done) {
-            const server = new NamedPipeServer('pipeA', new RequestHandler());
-            expect(server).to.be.instanceOf(NamedPipeServer);
-            expect(() => server.start()).to.not.throw();
-            const req = { verb: 'POST', path: '/api/messages', streams: [] };
-            server
-                .send(req)
-                .catch((err) => {
-                    expect(err).to.be.undefined;
-                })
-                .then(expect(() => server.disconnect()).to.not.throw())
-                .then(done);
+        it('sends without throwing', function (done) {
+            const response = new Response.StreamingResponse();
+            response.statusCode = 111;
+            response.setBody('Test body.');
+            class TestRequestHandler extends RequestHandler {
+                constructor() {
+                    super();
+                }
+                processRequest(_request, _logger) {
+                    return response;
+                }
+            }
+            const server = new NamedPipeServer('pipeServerTest');
+            const client = new NamedPipeClient('pipeServerTest', new TestRequestHandler());
+            const pingServer = () =>
+                new Promise((resolve) => {
+                    // Ping server before sending any information, so the server makes the connection over the socket.
+                    client.send(new StreamingRequest());
+                    const interval = setInterval(() => {
+                        if (server.isConnected) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            try {
+                server.start(async () => {
+                    await client.connect();
+                    await pingServer();
+                    const result = await server.send(new StreamingRequest());
+                    expect(result.statusCode).to.equal(response.statusCode);
+                    server.disconnect();
+                    client.disconnect();
+                    done();
+                });
+            } catch (err) {
+                done(err);
+            }
         });
 
         it('handles being disconnected', function () {
