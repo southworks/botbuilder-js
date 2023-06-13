@@ -1,6 +1,5 @@
 const assert = require('assert');
 const { expect } = require('chai');
-const { expectEventually } = require('./helpers/expectEventually');
 const {
     NamedPipeClient,
     NamedPipeServer,
@@ -171,9 +170,7 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             expect(() => transport.close()).to.not.throw();
         });
 
-        // TODO: 2023-04-24 [hawo] #4462 The code today does not allows the receive() call to be rejected by reading a dead socket.
-        //                         The receive() call will be rejected IFF the socket is closed/error AFTER the receive() call.
-        it.skip('throws when reading from a dead socket', async function () {
+        it('throws when reading from a dead socket', async function () {
             const sock = new FauxSock();
             sock.destroyed = true;
             sock.connecting = false;
@@ -181,7 +178,15 @@ describe.windowsOnly('Streaming Extensions NamedPipe Library Tests', function ()
             const transport = new NamedPipeTransport(sock, 'fakeSocket5');
             expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.false;
-            (await expectEventually(transport.receive(5))).to.throw();
+            expect(() => transport.receive(5)).to.throw();
+            expect(() => transport.close()).to.not.throw();
+        });
+
+        it('throws when reading from a null socket', async function () {
+            const transport = new NamedPipeTransport();
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
+            expect(transport.isConnected).to.be.false;
+            expect(() => transport.receive(5)).to.throw();
             expect(() => transport.close()).to.not.throw();
         });
 
