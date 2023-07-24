@@ -49,6 +49,7 @@
     "underscore": "1.13.1",
     "json-schema": "0.4.0",
     "@xmldom/xmldom": "0.8.6",
+    "xml2js": "^0.5.0",
     "**/botbuilder-ai/@azure/cognitiveservices-luis-runtime/@azure/ms-rest-js": "^2.7.0",
     "jsonwebtoken": "9.0.0",
     "**/request/tough-cookie": "^4.1.3",
