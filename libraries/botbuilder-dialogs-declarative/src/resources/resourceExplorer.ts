@@ -28,7 +28,7 @@ export class ResourceExplorer {
     private _kindToType: Map<string, Newable<unknown>> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
-    private _cache = new Map<string, unknown>();
+    private _cache = new WeakMap<Resource, unknown>();
     private _typesLoaded = false;
 
     /**
@@ -263,14 +263,14 @@ export class ResourceExplorer {
             throw new Error(`Resource ${typeof resourceOrId === 'string' ? resourceOrId : resourceOrId.id} not found.`);
         }
 
-        if (this._cache.has(resource.id)) {
-            return this._cache.get(resource.id) as T;
+        if (this._cache.has(resource)) {
+            return this._cache.get(resource) as T;
         }
 
         const json = resource.readText();
         const config = JSON.parse(json);
 
-        const result = this.preload<T>(config.$kind, resource.id);
+        const result = this.preload<T>(config.$kind, resource);
 
         Object.assign(
             result,
@@ -320,13 +320,13 @@ export class ResourceExplorer {
     }
 
     // preload type into cache.
-    private preload<T>(kind: string, resourceId: string): T {
+    private preload<T>(kind: string, resource: Resource): T {
         const type = this._kindToType.get(kind);
         if (!type) {
             throw new Error(`Type ${kind} not registered.`);
         }
         const result = new type();
-        this._cache.set(resourceId, result);
+        this._cache.set(resource, result);
         return result as T;
     }
 
