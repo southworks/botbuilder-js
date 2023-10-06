@@ -102,7 +102,7 @@ export class MsalAppCredentials extends AppCredentials {
     /**
      * @inheritdoc
      */
-    async getToken(forceRefresh: boolean): Promise<string> {
+    protected async refreshToken(): Promise<TokenResponse> {
         if (!this.clientApplication) {
             throw new Error('getToken should not be called for empty credentials.');
         }
@@ -115,7 +115,6 @@ export class MsalAppCredentials extends AppCredentials {
 
         const token = await this.clientApplication.acquireTokenByClientCredential({
             scopes: [scope],
-            skipCache: forceRefresh,
         });
 
         const { accessToken } = token ?? {};
@@ -123,10 +122,12 @@ export class MsalAppCredentials extends AppCredentials {
             throw new Error('Authentication: No access token received from MSAL.');
         }
 
-        return accessToken;
-    }
-
-    protected async refreshToken(): Promise<TokenResponse> {
-        throw new Error('NotImplemented');
+        return {
+            accessToken: token.accessToken,
+            expiresOn: new Date(token.expiresOn),
+            tokenType: 'Bearer',
+            expiresIn: (token.expiresOn.getTime() - Date.now()) / 1000,
+            resource: this.oAuthScope,
+        };
     }
 }
