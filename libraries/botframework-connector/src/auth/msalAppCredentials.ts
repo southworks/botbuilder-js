@@ -123,11 +123,13 @@ export class MsalAppCredentials extends AppCredentials {
             throw new Error('Authentication: No access token received from MSAL.');
         }
 
+        const expiresIn = (token.expiresOn.getTime() - Date.now()) / 1000;
+
         return {
             accessToken: token.accessToken,
             expiresOn: token.expiresOn,
-            tokenType: token.tokenType, 
-            expiresIn: ((token.expiresOn.getTime() - Date.now()) / 1000),
+            tokenType: token.tokenType,
+            expiresIn: expiresIn,
             resource: this.oAuthScope,
         };
     }
