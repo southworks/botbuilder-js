@@ -115,6 +115,7 @@ export class MsalAppCredentials extends AppCredentials {
 
         const token = await this.clientApplication.acquireTokenByClientCredential({
             scopes: [scope],
+            skipCache: true,
         });
 
         const { accessToken } = token ?? {};
@@ -124,9 +125,9 @@ export class MsalAppCredentials extends AppCredentials {
 
         return {
             accessToken: token.accessToken,
-            expiresOn: new Date(token.expiresOn),
-            tokenType: 'Bearer',
-            expiresIn: (token.expiresOn.getTime() - Date.now()) / 1000,
+            expiresOn: token.expiresOn,
+            tokenType: token.tokenType, 
+            expiresIn: ((token.expiresOn.getTime() - Date.now()) / 1000),
             resource: this.oAuthScope,
         };
     }
