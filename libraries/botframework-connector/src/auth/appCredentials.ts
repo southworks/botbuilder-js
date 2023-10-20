@@ -7,6 +7,8 @@
  */
 
 import * as msrest from '@azure/ms-rest-js';
+import { ServiceClientCredentials, WebResource } from "@azure/core-http";
+import { TokenCredential } from "@azure/core-auth"
 import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
@@ -14,7 +16,7 @@ import { AuthenticationConstants } from './authenticationConstants';
  * General AppCredentials auth implementation and cache. Supports any ADAL client credential flow.
  * Subclasses can implement refreshToken to acquire the token.
  */
-export abstract class AppCredentials implements msrest.ServiceClientCredentials {
+export abstract class AppCredentials implements ServiceClientCredentials {
     private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
 
     appId: string;
@@ -149,9 +151,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param webResource The WebResource HTTP request.
      * @returns A Promise representing the asynchronous operation.
      */
-    async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
+    async signRequest(webResource: WebResource): Promise<WebResource> {
         if (this.shouldSetToken()) {
-            return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
+            //return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
         }
 
         return webResource;

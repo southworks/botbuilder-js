@@ -5,7 +5,7 @@
 // Licensed under the MIT License.
 
 import * as adal from 'adal-node';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/core-http';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
