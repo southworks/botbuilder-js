@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import * as msrest from '@azure/ms-rest-js';
 import { ServiceClientCredentials, WebResource } from "@azure/core-http";
-import { TokenCredential } from "@azure/core-auth"
+import {TokenCredentials} from "./tokenCredentials"
 import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
@@ -153,7 +152,7 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      */
     async signRequest(webResource: WebResource): Promise<WebResource> {
         if (this.shouldSetToken()) {
-            //return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
+            return new TokenCredentials(await this.getToken()).signRequest(webResource);
         }
 
         return webResource;
