@@ -40,7 +40,6 @@
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "resolutions": {
-    "adal-node": "0.2.3",
     "async": "3.2.3",
     "minimist": "^1.2.6",
     "mixme": "0.5.2",
@@ -57,7 +56,6 @@
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
-    "@azure/ms-rest-js": "^2.7.0",
     "@microsoft/api-extractor": "^7.15.1",
     "@standardlabs/downlevel-dts": "^0.7.5",
     "@standardlabs/is-private": "^1.0.1",

@@ -10,9 +10,9 @@
 
 'use strict';
 
-const msRest = require('@azure/ms-rest-js');
+const {stripRequest, stripResponse, WebResource} = require("@azure/core-http");
 const uuid = require('uuid');
-const WebResource = msRest.WebResource;
+const WebResource = WebResource;
 
 /**
  * Deletes a tag value.
@@ -111,8 +111,8 @@ function _deleteValue(tagName, tagValue, options, callback) {
     if (statusCode !== 200 && statusCode !== 204) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -239,8 +239,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
     if (statusCode !== 200 && statusCode !== 201) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -276,8 +276,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -293,8 +293,8 @@ function _createOrUpdateValue(tagName, tagValue, options, callback) {
         }
       } catch (error) {
         let deserializationError1 = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError1.request = msRest.stripRequest(httpRequest);
-        deserializationError1.response = msRest.stripResponse(response);
+        deserializationError1.request = stripRequest(httpRequest);
+        deserializationError1.response = stripResponse(response);
         return callback(deserializationError1);
       }
     }
@@ -399,8 +399,8 @@ function _createOrUpdate(tagName, options, callback) {
     if (statusCode !== 200 && statusCode !== 201) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -436,8 +436,8 @@ function _createOrUpdate(tagName, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -453,8 +453,8 @@ function _createOrUpdate(tagName, options, callback) {
         }
       } catch (error) {
         let deserializationError1 = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError1.request = msRest.stripRequest(httpRequest);
-        deserializationError1.response = msRest.stripResponse(response);
+        deserializationError1.request = stripRequest(httpRequest);
+        deserializationError1.response = stripResponse(response);
         return callback(deserializationError1);
       }
     }
@@ -556,8 +556,8 @@ function _deleteMethod(tagName, options, callback) {
     if (statusCode !== 200 && statusCode !== 204) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -673,8 +673,8 @@ function _list(options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -710,8 +710,8 @@ function _list(options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -801,8 +801,8 @@ function _listNext(nextPageLink, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -838,8 +838,8 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }

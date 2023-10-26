@@ -401,7 +401,7 @@ describe('LuisRecognizer', function () {
         assert(res.entities.Address[0].$instance.State[0].score);
         assert(
             res.entities.Address[0].$instance.State[0].score > 0 &&
-                res.entities.Address[0].$instance.State[0].score <= 1
+            res.entities.Address[0].$instance.State[0].score <= 1
         );
     });
 

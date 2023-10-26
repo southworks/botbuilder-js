@@ -10,9 +10,9 @@
 
 'use strict';
 
-const msRest = require('@azure/ms-rest-js');
+const {stripRequest, stripResponse, WebResource} = require("@azure/core-http");
 const uuid = require('uuid');
-const WebResource = msRest.WebResource;
+const WebResource = WebResource;
 
 /**
  * Gets a deployments operation.
@@ -147,8 +147,8 @@ function _get(resourceGroupName, deploymentName, operationId, options, callback)
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -184,8 +184,8 @@ function _get(resourceGroupName, deploymentName, operationId, options, callback)
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -332,8 +332,8 @@ function _list(resourceGroupName, deploymentName, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -369,8 +369,8 @@ function _list(resourceGroupName, deploymentName, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }
@@ -460,8 +460,8 @@ function _listNext(nextPageLink, options, callback) {
     if (statusCode !== 200) {
       let error = new Error(responseBody);
       error.statusCode = response.statusCode;
-      error.request = msRest.stripRequest(httpRequest);
-      error.response = msRest.stripResponse(response);
+      error.request = stripRequest(httpRequest);
+      error.response = stripResponse(response);
       if (responseBody === '') responseBody = null;
       let parsedErrorResponse;
       try {
@@ -497,8 +497,8 @@ function _listNext(nextPageLink, options, callback) {
         }
       } catch (error) {
         let deserializationError = new Error(`Error ${error} occurred in deserializing the responseBody - ${responseBody}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
+        deserializationError.request = stripRequest(httpRequest);
+        deserializationError.response = stripResponse(response);
         return callback(deserializationError);
       }
     }

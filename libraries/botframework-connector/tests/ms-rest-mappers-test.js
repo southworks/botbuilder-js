@@ -1,6 +1,6 @@
-const msRest = require('@azure/ms-rest-js');
+const { Serializer } = require('@azure/core-http');
 const Mappers = require('../lib/connectorApi/models/mappers');
-const Serializer = new msRest.Serializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
+const Serializer = new Serializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
 const assert = require('assert');
 
 describe('serialize', function () {
