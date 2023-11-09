@@ -17,6 +17,9 @@ steps:
 
 - template: templates/test.yml
 
+- script: yarn audit
+  displayName: yarn audit
+
 - script: yarn package
   displayName: yarn package
 
