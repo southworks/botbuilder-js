@@ -6,7 +6,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  NodeVersion: 16.x
+  NodeVersion: 14.x
   Packaging.EnableSBOMSigning: true
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
   SDK_JS_org_registry_Url: https://registry.npmjs.org/
@@ -106,11 +106,6 @@ steps:
   continueOnError: true
   condition: succeededOrFailed()
 
-- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-  inputs:
-    ignoreDirectories: './testing,./tools,./generators'
-    failOnAlert: false
 
 
 
