@@ -13,11 +13,7 @@ steps:
     '-------------'; get-content ".npmrc"; '===================';
   displayName: Create .npmrc for SDK_JS_org feed
 
-- task: npmAuthenticate@0
-  inputs:
-    workingFile: .npmrc
-    customEndpoint: 'https://registry.npmjs.org/'
-  displayName: authenticate for SDK_JS_org feed
+
 
 - powershell: |
     ren yarn.lock yarn_ORIGINAL.lock
