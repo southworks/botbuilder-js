@@ -21,7 +21,7 @@ steps:
 # Compress files into .7z, .tar.gz, or .zip.
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '/' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
+    rootFolderOrFile: '/home/vsts/work/1/' # string. Required. Root folder or file to archive. Default: $(Build.BinariesDirectory).
     includeRootFolder: true # boolean. Prepend root folder name to archive paths. Default: true.
   # Archive
     archiveType: 'zip' # 'zip' | '7z' | 'tar' | 'wim'. Required. Archive type. Default: zip.
