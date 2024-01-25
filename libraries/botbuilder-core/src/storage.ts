@@ -116,27 +116,36 @@ export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {
+    let result = '';
     if (!item) {
-        return '';
+        return result;
     }
 
     const { eTag, ...rest } = item;
 
-    const seen = new WeakMap();
-    const result = JSON.stringify(rest, function circularReplacer(key, value) {
-        if (value === null || value === undefined || typeof value !== 'object') {
+    try {
+        result = JSON.stringify(rest);
+    } catch (error) {
+        if (!error?.message.includes('circular structure')) {
+            throw error;
+        }
+
+        const seen = new WeakMap();
+        result = JSON.stringify(rest, function circularReplacer(key, value) {
+            if (value === null || value === undefined || typeof value !== 'object') {
+                return value;
+            }
+
+            const path = seen.get(value);
+            if (path) {
+                return `[Circular *${path.join('.')}]`;
+            }
+
+            const parent = seen.get(this) ?? [];
+            seen.set(value, [...parent, key]);
             return value;
-        }
-
-        const path = seen.get(value);
-        if (path) {
-            return `[Circular *${path.join('.')}]`;
-        }
-
-        const parent = seen.get(this) ?? [];
-        seen.set(value, [...parent, key]);
-        return value;
-    });
+        });
+    }
 
     const hash = createHash('sha256', { encoding: 'utf-8' });
     const hashed = hash.update(result).digest('hex');
