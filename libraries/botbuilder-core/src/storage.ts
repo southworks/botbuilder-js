@@ -8,6 +8,7 @@
 
 import * as z from 'zod';
 import { TurnContext } from './turnContext';
+import { createHash } from 'crypto';
 
 /**
  * Callback to calculate a storage key.
@@ -127,10 +128,38 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
  * @returns change hash string
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy = { ...item };
-    if (cpy.eTag) {
-        delete cpy.eTag;
+    let result = '';
+    if (!item) {
+        return result;
     }
 
-    return JSON.stringify(cpy);
+    const { eTag, ...rest } = item;
+
+    try {
+        result = JSON.stringify(rest);
+    } catch (error) {
+        if (!error?.message.includes('circular structure')) {
+            throw error;
+        }
+
+        const seen = new WeakMap();
+        result = JSON.stringify(rest, function circularReplacer(key, value) {
+            if (value === null || value === undefined || typeof value !== 'object') {
+                return value;
+            }
+
+            const path = seen.get(value);
+            if (path) {
+                return `[Circular *${path.join('.')}]`;
+            }
+
+            const parent = seen.get(this) ?? [];
+            seen.set(value, [...parent, key]);
+            return value;
+        });
+    }
+
+    const hash = createHash('sha256', { encoding: 'utf-8' });
+    const hashed = hash.update(result).digest('hex');
+    return hashed;
 }
