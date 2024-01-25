@@ -7,6 +7,7 @@
  */
 import { TurnContext } from './turnContext';
 import { Assertion, assert } from 'botbuilder-stdlib';
+import { createHash } from 'crypto';
 
 /**
  * Callback to calculate a storage key.
@@ -115,10 +116,29 @@ export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
  * @param item Item to calculate the change hash for.
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy: any = { ...item };
-    if (cpy.eTag) {
-        delete cpy.eTag;
+    if (!item) {
+        return '';
     }
 
-    return JSON.stringify(cpy);
+    const { eTag, ...rest } = item;
+
+    const seen = new WeakMap();
+    const result = JSON.stringify(rest, function circularReplacer(key, value) {
+        if (value === null || value === undefined || typeof value !== 'object') {
+            return value;
+        }
+
+        const path = seen.get(value);
+        if (path) {
+            return `[Circular *${path.join('.')}]`;
+        }
+
+        const parent = seen.get(this) ?? [];
+        seen.set(value, [...parent, key]);
+        return value;
+    });
+
+    const hash = createHash('sha256', { encoding: 'utf-8' });
+    const hashed = hash.update(result).digest('hex');
+    return hashed;
 }
