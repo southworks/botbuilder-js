@@ -133,6 +133,7 @@ export function calculateChangeHash(item: StoreItem): string {
         return result;
     }
 
+    // eslint-disable-next-line  @typescript-eslint/no-unused-vars
     const { eTag, ...rest } = item;
 
     try {
