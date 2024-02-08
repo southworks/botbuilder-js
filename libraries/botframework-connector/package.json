@@ -47,7 +47,9 @@
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",
-    "should": "^13.2.3",
+    "should": "^13.2.3"
+  },
+  "resolutions": {
     "axios": "^0.21.1"
   },
   "scripts": {
