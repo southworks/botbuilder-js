@@ -39,8 +39,7 @@
     "node-fetch": "^2.6.7",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "zod": "^3.22.4",
-    "openssl-wrapper": "^0.3.4",
-    "axios": "^0.21.1"
+    "openssl-wrapper": "^0.3.4"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "8.3.5",
@@ -48,7 +47,8 @@
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",
-    "should": "^13.2.3"
+    "should": "^13.2.3",
+    "axios": "^0.21.1"
   },
   "scripts": {
     "build": "tsc -b",
