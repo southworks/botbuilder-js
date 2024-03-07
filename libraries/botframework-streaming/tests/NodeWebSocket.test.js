@@ -28,10 +28,9 @@ describe('NodeWebSocket', function () {
         const socket = new NodeWebSocket(new FauxSock());
         expect(
             socket.connect().catch((error) => {
-                expect(
-                    error.message === 'connect ECONNREFUSED 127.0.0.1:8082' ||
-                        error.message === 'connect ECONNREFUSED ::1:8082'
-                ).to.be.true;
+                const message = error.message != '' ? error.message : error.errors[0].message;
+                expect(message === 'connect ECONNREFUSED 127.0.0.1:8082' || message === 'connect ECONNREFUSED ::1:8082')
+                    .to.be.true;
             })
         );
     });

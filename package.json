@@ -58,8 +58,7 @@
     "**/@babel/plugin-proposal-class-properties/@babel/core": "^7.23.2",
     "follow-redirects": "^1.15.4",
     "@types/ramda": "0.26.0",
-    "@azure/msal-browser": "^2.38.3",
-    "@azure/msal-node": "^1.18.4",
+    "@azure/msal-node": "^2.0.0",
     "axios": "0.21.1"
   },
   "devDependencies": {
