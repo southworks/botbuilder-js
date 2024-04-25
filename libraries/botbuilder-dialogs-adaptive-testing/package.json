@@ -1,6 +1,6 @@
 {
   "name": "botbuilder-dialogs-adaptive-testing",
-  "version": "4.99.2",
+  "version": "4.99.3",
   "preview": true,
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
@@ -49,6 +49,6 @@
     "lib",
     "schemas",
     "src",
-    "node_modules/@microsoft/recognizers-text-suite"
+    "2node_modules/@microsoft/recognizers-text-suite"
   ]
 }
