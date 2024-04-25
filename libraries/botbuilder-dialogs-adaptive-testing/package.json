@@ -1,6 +1,6 @@
 {
   "name": "botbuilder-dialogs-adaptive-testing",
-  "version": "4.1.6",
+  "version": "4.99.2",
   "preview": true,
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
@@ -38,9 +38,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "botbuilder": "4.1.6",
     "@microsoft/recognizers-text-suite": "1.1.4",
-    "@types/nock": "^11.1.0"
+    "@types/nock": "^11.1.0",
+    "botbuilder": "4.1.6"
   },
   "author": "Microsoft",
   "license": "MIT",
@@ -48,6 +48,7 @@
     "_ts3.4",
     "lib",
     "schemas",
-    "src"
+    "src",
+    "node_modules/@microsoft/recognizers-text-suite"
   ]
 }
