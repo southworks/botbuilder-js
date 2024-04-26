@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.38",
+  "version": "4.99.39",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,7 +20,7 @@
   "browser": "./lib/browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-data-types-timex-expression": "file:node_modules/adaptive-expressions/vendor/@microsoft/recognizers-text-data-types-timex-expression",
+    "@microsoft/recognizers-text-data-types-timex-expression": "file:~/vendor/@microsoft/recognizers-text-data-types-timex-expression",
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lodash.isequal": "^4.5.5",
