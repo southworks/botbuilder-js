@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.66",
+  "version": "4.99.67",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,7 +20,6 @@
   "browser": "./lib/browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-data-types-timex-expression": "file:../../../../../node_modules/adaptive-expressions/@microsoft/recognizers-text-data-types-timex-expression",
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lodash.isequal": "^4.5.5",
@@ -46,6 +45,7 @@
     "typescript": "3.5.3"
   },
   "scripts": {
+    "preinstall": "npm link @microsoft/recognizers-text-data-types-timex-expression",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "build": "npm-run-all build:src build:tests",
