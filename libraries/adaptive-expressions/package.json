@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.100",
+  "version": "4.99.101",
   "license": "MIT",
   "keywords": [
     "botbuilder",
