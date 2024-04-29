@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.105",
+  "version": "4.99.106",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -47,6 +47,7 @@
     "typescript": "3.5.3"
   },
   "scripts": {
+    "install": "npm install --install-links",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "build": "npm-run-all build:src build:tests",
