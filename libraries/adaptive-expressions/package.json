@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.117",
+  "version": "4.99.128",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,8 +20,6 @@
   "browser": "./lib/browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text": "https://github.com/southworks/botbuilder-js/raw/joelmut/test/recognizers-text/vendor/microsoft-recognizers-text-1.1.4-workspace.tgz",
-    "@microsoft/recognizers-text-data-types-timex-expression": "file:../../vendor/microsoft-recognizers-text-data-types-timex-expression-1.1.4-workspace.tgz",
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lodash.isequal": "^4.5.5",
@@ -31,6 +29,7 @@
     "antlr4ts": "0.5.0-alpha.3",
     "atob-lite": "^2.0.0",
     "big-integer": "^1.6.48",
+    "botframework-schema": "4.99.128",
     "btoa-lite": "^1.0.0",
     "d3-format": "^1.4.4",
     "dayjs": "^1.10.3",
