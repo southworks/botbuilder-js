@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.130",
+  "version": "4.99.140",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -20,7 +20,7 @@
   "browser": "./lib/browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-date-time": "1.1.4-workspace",
+    "@microsoft/recognizers-text-date-time": "https://raw.githubusercontent.com/southworks/botbuilder-js/joelmut/test/recognizers-text/vendor/@microsoft/recognizers-text-date-time/1.1.4-workspace.tgz",
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lodash.isequal": "^4.5.5",
@@ -58,7 +58,9 @@
     "test:compat": "api-extractor run --verbose",
     "lint": "eslint . --ext .js,.ts",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
-    "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
+    "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor",
+    "prepublishOnly": "yarn workspace botbuilder-repo-utils copy-vendor prepublish $INIT_CWD",
+    "postpublish": "yarn workspace botbuilder-repo-utils copy-vendor postpublish"
   },
   "files": [
     "lib",
