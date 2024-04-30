@@ -2,7 +2,7 @@
   "name": "adaptive-expressions",
   "author": "Microsoft Corp.",
   "description": "Common Expression Language",
-  "version": "4.99.151",
+  "version": "4.99.152",
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -59,7 +59,7 @@
     "lint": "eslint . --ext .js,.ts",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
     "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor",
-    "prepack": "yarn workspace botbuilder-repo-utils copy-vendor prepublish"
+    "preversion": "yarn workspace botbuilder-repo-utils copy-vendor prepublish"
   },
   "files": [
     "lib",
