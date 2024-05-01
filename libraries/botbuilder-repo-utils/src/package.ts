@@ -18,4 +18,5 @@ export interface Package {
     peerDependencies?: Record<string, string>;
 
     scripts?: Record<string, string>;
+    config?: Record<string, string>; 
 }

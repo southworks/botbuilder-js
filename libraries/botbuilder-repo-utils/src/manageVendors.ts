@@ -5,141 +5,157 @@ import fs from 'fs';
 import readline from 'readline';
 import path from 'path';
 import globby from 'globby';
-import tar from 'tar-stream';
-import zlib from 'zlib';
-import url from 'url';
 import { EOL } from 'os';
 import { execSync } from 'child_process';
 
 import { run, Result, success, failure } from './run';
 import { gitRoot } from './git';
-import { collectWorkspacePackages } from './workspace';
-import { readJsonFile } from './file';
 import { Package } from './package';
 
-function readFile(file: string) {
+const cwd = process.env['INIT_CWD']!;
+const original = 'package.json';
+const backup = 'package.backup.json';
+
+interface PackageData {
+    path: string;
+    stream: string[];
+    isUpdated: () => boolean;
+    content: () => string;
+    json: () => Package;
+}
+
+interface PackageConfig {
+    repository: string,
+    branch: string,
+    location: string,
+}
+
+const repoPath = (config: PackageConfig) => `https://raw.githubusercontent.com/${config.repository}/j${config.branch}/${config.location}`
+
+function readPackage(file: string) {
     const stream: any[] = [];
     var rl = readline.createInterface({
         input: fs.createReadStream(file),
         output: process.stdout,
         terminal: false,
     });
-    return new Promise<any>((res) => {
-        rl.on('line', (line) => stream.push(line));
-        rl.on('close', () => {
-            const content = () => stream.join(EOL);
-            const name = path.posix.basename(file);
-            const dir = path.posix.dirname(file);
-            res({ name, dir, updated: false, stream, content, pkg: JSON.parse(content()) });
-        });
+    return new Promise<PackageData>((resolve, reject) => {
+        try {
+            rl.on('line', (line) => stream.push(line));
+            rl.on('close', () => {
+                const base = {
+                    stream: [...stream],
+                    content: '',
+                    json: {},
+                };
+                const result = {
+                    path: file,
+                    stream: base.stream,
+                    isUpdated: () => base.stream !== stream,
+                    content: () => (base.content = result.isUpdated() ? base.stream.join(EOL) : base.content),
+                    json: () => (base.json = result.isUpdated() ? JSON.parse(result.content()) : base.json),
+                };
+                resolve(result);
+            });
+        } catch (error) {
+            reject(error);
+        }
     });
 }
 
-const pkgName = 'package.json';
-const repoPath = 'https://raw.githubusercontent.com/southworks/botbuilder-js/joelmut/test/recognizers-text/vendor';
-
 async function getVendors() {
     const rootDir = await gitRoot();
-    const vendorDir = path.posix.join(rootDir, 'vendor');
-    const vendorPackages = await globby(path.posix.join(vendorDir, `**/${pkgName}`), {
+    const vendorPackages = await globby(path.posix.join(rootDir, 'vendor', `**/${original}`), {
         gitignore: true,
         cwd: rootDir,
     });
-    const vendors: Record<string, any> = {};
-    for (const pkgPath of vendorPackages) {
-        const dir = path.posix.dirname(pkgPath);
-        const file = await readFile(pkgPath);
-        const tgz = { path: `${repoPath}/${file.pkg.name}/${file.pkg.version}.tgz` };
-        vendors[file.pkg.name] = { dir, file, tgz, deps: [] };
-    }
+    const rootPackage = await readPackage(path.posix.join(rootDir, original));
+    return {
+        config: rootPackage.json().config,
+        data: await Promise.all(vendorPackages.map(readPackage)),
+    };
+}
 
-    return vendors;
+function updateDependency(root: PackageData, child: PackageData) {
+    const line = root.stream.find(
+        (e: string) => child.json().name !== root.json().name && e.includes(`"${child.json().name}"`)
+    );
+    if (!line?.includes(child.json().version)) {
+        return false;
+    }
+    const lineNumber = root.stream.indexOf(line);
+    root.stream[lineNumber] = line.replace(
+        `"${child.json().version}"`,
+        `"${repoPath}/${child.json().name}/${child.json().version}.tgz"`
+    );
+
+    return true;
 }
 
 const command = (argv: string[]) => async (): Promise<Result> => {
     try {
         const [command] = argv;
-        const cwd = process.env['INIT_CWD']!;
-
-        // const packageFile = await readJsonFile<Package>(path.join(rootDir, 'package.json'));
-        // const workspaces = await collectWorkspacePackages(rootDir, packageFile?.workspaces);
-        // console.log(workspaces)
-
-        // Load dependencies and update references
 
         if (command === 'pack') {
             const vendors = await getVendors();
-            const vendorsList = Object.entries(vendors);
-            for (const [name, data] of vendorsList) {
-                const original = data.file.content();
-                for (const [depName, depData] of vendorsList) {
-                    const line = data.file.stream.find((e: string) => depName !== name && e.includes(`"${depName}"`));
-                    if (line?.includes(depData.file.pkg.version)) {
-                        data.deps.push(depName);
-                        const lineNumber = data.file.stream.indexOf(line);
-                        const file = path.posix.relative(data.dir, depData.dir);
-                        data.file.updated = true;
-                        data.file.stream[lineNumber] = line.replace(
-                            `"${depData.file.pkg.version}"`,
-                            `"${depData.tgz.path}"`
-                        );
-                    }
+            for (const root of vendors.data) {
+                const dirname = path.posix.dirname(root.path);
+
+                for (const child of vendors.data) {
+                    updateDependency(root, child);
                 }
 
-                if (data.file.updated) {
-                    await fs.promises.writeFile(path.posix.join(data.file.dir, data.file.name), data.file.content(), {
-                        encoding: 'utf-8',
-                    });
+                // Update package.json.
+                if (root.isUpdated()) {
+                    await fs.promises.rename(root.path, path.posix.join(cwd, backup));
+                    await fs.promises.writeFile(root.path, root.content(), { encoding: 'utf-8' });
                 }
-                const removeTgzs = await globby('*.tgz', { cwd: data.file.dir });
+
+                // Remove existing .tgz.
+                const removeTgzs = await globby('*.tgz', { cwd: dirname, deep: 0 });
                 for (const tgz of removeTgzs) {
-                    await fs.promises.rm(path.join(data.file.dir, tgz), { force: true });
+                    await fs.promises.rm(path.join(dirname, tgz), { force: true });
                 }
-                execSync('npm pack', { cwd: data.file.dir });
-                if (data.file.updated) {
-                    await fs.promises.writeFile(path.posix.join(data.file.dir, data.file.name), original, {
-                        encoding: 'utf-8',
-                    });
+
+                // Create new .tgz.
+                execSync('npm pack', { cwd: dirname });
+
+                // Update package.json to original content.
+                if (root.isUpdated()) {
+                    await fs.promises.rename(path.posix.join(cwd, original), root.path);
                 }
-                const [tgz] = await globby('*.tgz', { cwd: data.file.dir });
-                await fs.promises.rename(
-                    path.join(data.file.dir, tgz),
-                    path.join(data.file.dir, `${data.file.pkg.version}.tgz`)
-                );
+
+                // Rename .tgz.
+                const [tgz] = await globby('*.tgz', { cwd: dirname, deep: 0 });
+                await fs.promises.rename(path.join(dirname, tgz), path.join(dirname, `${root.json().version}.tgz`));
             }
         } else if (command === 'postpublish') {
-            const libfile = path.posix.join(cwd, 'package.original.json');
+            // Update package.json to original content.
+            const libfile = path.posix.join(cwd, backup);
             if (fs.existsSync(libfile)) {
-                await fs.promises.rename(libfile, path.posix.join(cwd, 'package.json'));
+                await fs.promises.rename(libfile, path.posix.join(cwd, original));
             }
         } else if (command === 'prepublish') {
+            const libfile = path.posix.join(cwd, original);
+            const root = await readPackage(libfile);
             const vendors = await getVendors();
-            const vendorsList = Object.entries(vendors);
-            const libfile = path.join(cwd, 'package.json');
 
-            const file = await readFile(libfile);
-            for (const [depName, depData] of vendorsList) {
-                const line = file.stream.find((e: string) => e.includes(`"${depName}"`));
-                if (!line?.includes(depData.file.pkg.version)) {
-                    continue;
-                }
-                const lineNumber = file.stream.indexOf(line);
-                file.stream[lineNumber] = line.replace(`"${depData.file.pkg.version}"`, `"${depData.tgz.path}"`);
-                file.updated = true;
+            for (const child of vendors.data) {
+                updateDependency(root, child);
             }
 
-            if (file.updated) {
-                const parsed = path.posix.parse(file.name);
-                await fs.promises.rename(libfile, path.posix.join(file.dir, `${parsed.name}.original${parsed.ext}`));
-                await fs.promises.writeFile(libfile, file.content(), {
-                    encoding: 'utf-8',
-                });
+            // Update package.json.
+            if (root.isUpdated()) {
+                await fs.promises.rename(libfile, path.posix.join(cwd, backup));
+                await fs.promises.writeFile(libfile, root.content(), { encoding: 'utf-8' });
             }
+        } else {
+            return failure(`Command "${command}" not supported.`);
         }
 
         return success();
     } catch (err: any) {
-        return failure(err instanceof Error ? err.message : err, 22);
+        return failure(err instanceof Error ? err.message : err);
     }
 };
 

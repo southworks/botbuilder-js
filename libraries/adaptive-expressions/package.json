@@ -46,6 +46,8 @@
     "typescript": "3.5.3"
   },
   "scripts": {
+    "prepublishOnly": "yarn workspace botbuilder-repo-utils copy-vendor prepublish",
+    "postpublish": "yarn workspace botbuilder-repo-utils copy-vendor postpublish",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "build": "npm-run-all build:src build:tests",
@@ -58,9 +60,7 @@
     "test:compat": "api-extractor run --verbose",
     "lint": "eslint . --ext .js,.ts",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
-    "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor",
-    "prepublishOnly": "yarn workspace botbuilder-repo-utils copy-vendor prepublish",
-    "postpublish": "yarn workspace botbuilder-repo-utils copy-vendor postpublish"
+    "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
   },
   "files": [
     "lib",

@@ -4,6 +4,8 @@
   "preview": true,
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
+    "prepublishOnly": "yarn workspace botbuilder-repo-utils copy-vendor prepublish",
+    "postpublish": "yarn workspace botbuilder-repo-utils copy-vendor postpublish",
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
