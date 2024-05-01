@@ -2,7 +2,7 @@
   "name": "botframework-schema",
   "author": "Microsoft Corp.",
   "description": "Activity schema for the Microsoft Bot Framework.",
-  "version": "4.99.128",
+  "version": "4.1.6",
   "license": "MIT",
   "keywords": [
     "botconnector",
@@ -27,10 +27,9 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text": "1.1.4-workspace",
-    "adaptivecards": "1.2.3",
     "uuid": "^8.3.2",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "adaptivecards": "1.2.3"
   },
   "scripts": {
     "build": "tsc -b",
