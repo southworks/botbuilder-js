@@ -25,12 +25,13 @@ interface PackageData {
 }
 
 interface PackageConfig {
-    repository: string,
-    branch: string,
-    location: string,
+    repository: string;
+    branch: string;
+    directory: string;
 }
 
-const repoPath = (config: PackageConfig) => `https://raw.githubusercontent.com/${config.repository}/j${config.branch}/${config.location}`
+const repoPath = (config: PackageConfig) =>
+    `https://raw.githubusercontent.com/${config.repository}/${config.branch}/${config.directory}`;
 
 function readPackage(file: string) {
     const stream: any[] = [];
@@ -63,20 +64,46 @@ function readPackage(file: string) {
     });
 }
 
+async function getConfig(rootDir: string) {
+    const rootPackage = await readPackage(path.posix.join(rootDir, original));
+    if (!rootPackage) {
+        throw new Error(`Couldn't load "${path.posix.join(rootDir, original)}".`);
+    }
+
+    const config = rootPackage.json().config?.vendors as PackageConfig | undefined;
+    if (!config) {
+        throw new Error(`config.vendors property is required in "${rootPackage.path}".`);
+    }
+
+    if (!config.repository) {
+        throw new Error(`config.vendors.repository property is required in "${rootPackage.path}".`);
+    }
+
+    if (!config.branch) {
+        throw new Error(`config.vendors.branch property is required in "${rootPackage.path}".`);
+    }
+
+    if (!config.directory) {
+        throw new Error(`config.vendors.directory property is required in "${rootPackage.path}".`);
+    }
+
+    return config;
+}
+
 async function getVendors() {
     const rootDir = await gitRoot();
-    const vendorPackages = await globby(path.posix.join(rootDir, 'vendor', `**/${original}`), {
+    const config = await getConfig(rootDir);
+    const vendorPackages = await globby(path.posix.join(rootDir, config.directory, `**/${original}`), {
         gitignore: true,
         cwd: rootDir,
     });
-    const rootPackage = await readPackage(path.posix.join(rootDir, original));
     return {
-        config: rootPackage.json().config,
+        config,
         data: await Promise.all(vendorPackages.map(readPackage)),
     };
 }
 
-function updateDependency(root: PackageData, child: PackageData) {
+function updateDependency(config: PackageConfig, root: PackageData, child: PackageData) {
     const line = root.stream.find(
         (e: string) => child.json().name !== root.json().name && e.includes(`"${child.json().name}"`)
     );
@@ -86,7 +113,7 @@ function updateDependency(root: PackageData, child: PackageData) {
     const lineNumber = root.stream.indexOf(line);
     root.stream[lineNumber] = line.replace(
         `"${child.json().version}"`,
-        `"${repoPath}/${child.json().name}/${child.json().version}.tgz"`
+        `"${repoPath(config)}/${child.json().name}/${child.json().version}.tgz"`
     );
 
     return true;
@@ -98,37 +125,41 @@ const command = (argv: string[]) => async (): Promise<Result> => {
 
         if (command === 'pack') {
             const vendors = await getVendors();
-            for (const root of vendors.data) {
+            const result = vendors.data.map(async (root) => {
                 const dirname = path.posix.dirname(root.path);
+                const originalContent = root.content();
 
                 for (const child of vendors.data) {
-                    updateDependency(root, child);
+                    updateDependency(vendors.config, root, child);
                 }
 
-                // Update package.json.
-                if (root.isUpdated()) {
-                    await fs.promises.rename(root.path, path.posix.join(cwd, backup));
-                    await fs.promises.writeFile(root.path, root.content(), { encoding: 'utf-8' });
+                try {
+                    // Update package.json.
+                    if (root.isUpdated()) {
+                        await fs.promises.writeFile(root.path, root.content(), { encoding: 'utf-8' });
+                    }
+
+                    // Remove existing .tgz.
+                    const removeTgzs = await globby('*.tgz', { cwd: dirname, deep: 0 });
+                    for (const tgz of removeTgzs) {
+                        await fs.promises.rm(path.join(dirname, tgz), { force: true });
+                    }
+
+                    // Create new .tgz.
+                    execSync('npm pack', { cwd: dirname });
+
+                    // Rename .tgz.
+                    const [tgz] = await globby('*.tgz', { cwd: dirname, deep: 0 });
+                    await fs.promises.rename(path.join(dirname, tgz), path.join(dirname, `${root.json().version}.tgz`));
+                } finally {
+                    // Update package.json to original content.
+                    if (root.isUpdated()) {
+                        await fs.promises.writeFile(root.path, originalContent, { encoding: 'utf-8' });
+                    }
                 }
+            });
 
-                // Remove existing .tgz.
-                const removeTgzs = await globby('*.tgz', { cwd: dirname, deep: 0 });
-                for (const tgz of removeTgzs) {
-                    await fs.promises.rm(path.join(dirname, tgz), { force: true });
-                }
-
-                // Create new .tgz.
-                execSync('npm pack', { cwd: dirname });
-
-                // Update package.json to original content.
-                if (root.isUpdated()) {
-                    await fs.promises.rename(path.posix.join(cwd, original), root.path);
-                }
-
-                // Rename .tgz.
-                const [tgz] = await globby('*.tgz', { cwd: dirname, deep: 0 });
-                await fs.promises.rename(path.join(dirname, tgz), path.join(dirname, `${root.json().version}.tgz`));
-            }
+            await Promise.all(result);
         } else if (command === 'postpublish') {
             // Update package.json to original content.
             const libfile = path.posix.join(cwd, backup);
@@ -141,7 +172,7 @@ const command = (argv: string[]) => async (): Promise<Result> => {
             const vendors = await getVendors();
 
             for (const child of vendors.data) {
-                updateDependency(root, child);
+                updateDependency(vendors.config, root, child);
             }
 
             // Update package.json.
