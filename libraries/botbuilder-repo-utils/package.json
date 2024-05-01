@@ -30,7 +30,6 @@
     "lint": "eslint . --ext .js,.ts",
     "test": "mocha -r ts-node/register tests/*.test.ts",
     "update-versions": "ts-node src/updateVersions.ts",
-    "copy-vendor": "ts-node src/copyVendor.ts",
-    "move": "ts-node src/move.ts"
+    "mnage-vendors": "ts-node src/manageVendors.ts"
   }
 }
