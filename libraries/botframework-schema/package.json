@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text": "https://github.com/southworks/botbuilder-js/raw/joelmut/test/recognizers-text/vendor/microsoft-recognizers-text-1.1.4-workspace.tgz",
+    "@microsoft/recognizers-text": "1.1.4-workspace",
     "adaptivecards": "1.2.3",
     "uuid": "^8.3.2",
     "zod": "^3.22.4"

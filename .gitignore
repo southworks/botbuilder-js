@@ -316,3 +316,8 @@ coverage
 # typescript assets
 *.tsbuildinfo
 *.js.map
+
+# vendor packages
+**/libraries/**/vendor
+**/testing/**/vendor
+!**/libraries/vendor

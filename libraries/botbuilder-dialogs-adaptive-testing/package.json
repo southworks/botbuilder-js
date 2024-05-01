@@ -38,7 +38,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@microsoft/recognizers-text-suite": "1.1.4",
+    "@microsoft/recognizers-text-suite": "1.1.4-workspace",
     "@types/nock": "^11.1.0",
     "botbuilder": "4.1.6"
   },
@@ -48,7 +48,6 @@
     "_ts3.4",
     "lib",
     "schemas",
-    "src",
-    "2node_modules/@microsoft/recognizers-text-suite"
+    "src"
   ]
 }
