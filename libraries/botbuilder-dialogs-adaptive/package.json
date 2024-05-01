@@ -50,8 +50,8 @@
     "@types/node-fetch": "^2.5.3"
   },
   "scripts": {
-    "prepublishOnly": "yarn workspace botbuilder-repo-utils copy-vendor prepublish",
-    "postpublish": "yarn workspace botbuilder-repo-utils copy-vendor postpublish",
+    "prepublishOnly": "yarn workspace botbuilder-repo-utils manage-vendors prepublish",
+    "postpublish": "yarn workspace botbuilder-repo-utils manage-vendors postpublish",
     "build": "npm-run-all build:src build:tests",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "build:src": "tsc -b",

@@ -49,7 +49,7 @@
     "pack:vendor2": "wsrun -p @microsoft/* --bin=npm pack && yarn workspace botbuilder-repo-utils move ./vendor/**/*.tgz ./vendor",
     "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse",
     "feed": "wsrun --bin npm publish --registry http://localhost:4873",
-    "pack:vendor": "yarn workspace botbuilder-repo-utils copy-vendor pack"
+    "pack:vendor": "yarn workspace botbuilder-repo-utils manage-vendors pack"
   },
   "resolutions": {
     "async": "3.2.3",
