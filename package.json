@@ -13,7 +13,7 @@
   ],
   "config": {
     "vendors": {
-      "respository": "southworks/botbuilder-js",
+      "repository": "southworks/botbuilder-js",
       "branch": "joelmut/test/recognizers-text",
       "directory": "vendors"
     }
@@ -49,7 +49,7 @@
     "pack:vendor2": "wsrun -p @microsoft/* --bin=npm pack && yarn workspace botbuilder-repo-utils move ./vendor/**/*.tgz ./vendor",
     "postinstall": "npx rimraf node_modules/@microsoft/orchestrator-core/node_modules/@babel/traverse",
     "feed": "wsrun --bin npm publish --registry http://localhost:4873",
-    "pack:vendor": "yarn workspace botbuilder-repo-utils manage-vendors pack"
+    "pack:vendors": "yarn workspace botbuilder-repo-utils manage-vendors pack"
   },
   "resolutions": {
     "async": "3.2.3",
