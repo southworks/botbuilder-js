@@ -1,4 +1,4 @@
-const { Culture } = require('@microsoft/recognizers-text-suite');
+const { Culture } = require('botbuilder-recognizers-text-suite');
 const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder-core');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const user = {

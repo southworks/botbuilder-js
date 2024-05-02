@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-// NumberRangeEntityRecognizer not implemented due to lack of supoort in @microsoft/recognizers-text-suite
+// NumberRangeEntityRecognizer not implemented due to lack of supoort in botbuilder-recognizers-text-suite
 
 export * from './ageEntityRecognizer';
 export * from './channelMentionEntityRecognizer';

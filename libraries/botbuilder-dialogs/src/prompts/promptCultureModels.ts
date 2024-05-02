@@ -1,4 +1,4 @@
-import { Culture } from '@microsoft/recognizers-text-suite';
+import { Culture } from 'botbuilder-recognizers-text-suite';
 
 export interface PromptCultureModel {
     /**

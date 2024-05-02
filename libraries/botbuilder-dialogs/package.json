@@ -27,10 +27,10 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text-choice": "1.1.4-workspace",
-    "@microsoft/recognizers-text-date-time": "1.1.4-workspace",
-    "@microsoft/recognizers-text-number": "1.3.1-workspace",
-    "@microsoft/recognizers-text-suite": "1.1.4-workspace",
+    "botbuilder-recognizers-text-choice": "1.1.4-workspace",
+    "botbuilder-recognizers-text-date-time": "1.1.4-workspace",
+    "botbuilder-recognizers-text-number": "1.3.1-workspace",
+    "botbuilder-recognizers-text-suite": "1.1.4-workspace",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",

@@ -20,7 +20,7 @@
   "browser": "./lib/browser.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
-    "@microsoft/recognizers-text-date-time": "1.1.4-workspace",
+    "botbuilder-recognizers-text-date-time": "1.1.4-workspace",
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lodash.isequal": "^4.5.5",

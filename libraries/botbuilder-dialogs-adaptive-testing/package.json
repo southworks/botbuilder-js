@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "botbuilder": "4.1.6",
-    "@microsoft/recognizers-text-suite": "1.1.4-workspace",
+    "botbuilder-recognizers-text-suite": "1.1.4-workspace",
     "@types/nock": "^11.1.0"
   },
   "author": "Microsoft",

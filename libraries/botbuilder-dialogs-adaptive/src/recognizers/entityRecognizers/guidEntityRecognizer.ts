@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { recognizeGUID } from '@microsoft/recognizers-text-sequence';
+import { recognizeGUID } from 'botbuilder-recognizers-text-sequence';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 

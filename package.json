@@ -6,8 +6,8 @@
     "libraries/*",
     "libraries/functional-tests/dialogToDialog/*",
     "libraries/testskills/*",
+    "libraries/vendors/**",
     "testing/*",
-    "vendor/**",
     "tools",
     "transcripts"
   ],
