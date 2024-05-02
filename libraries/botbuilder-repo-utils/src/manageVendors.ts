@@ -137,7 +137,6 @@ async function getVendors(config: PackageConfig, rootDir: string) {
         gitignore: true,
         cwd: rootDir,
     });
-    console.log(vendorPackages);
     return Promise.all(vendorPackages.map(readPackage));
 }
 
