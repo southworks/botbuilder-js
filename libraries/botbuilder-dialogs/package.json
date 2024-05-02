@@ -44,8 +44,6 @@
     "line-reader": "^0.4.0"
   },
   "scripts": {
-    "prepublishOnly": "yarn workspace botbuilder-repo-utils manage-vendors prepublish",
-    "postpublish": "yarn workspace botbuilder-repo-utils manage-vendors postpublish",
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",

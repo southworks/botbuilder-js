@@ -46,8 +46,6 @@
     "typescript": "3.5.3"
   },
   "scripts": {
-    "prepublishOnly": "yarn workspace botbuilder-repo-utils manage-vendors prepublish",
-    "postpublish": "yarn workspace botbuilder-repo-utils manage-vendors postpublish",
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "build": "npm-run-all build:src build:tests",
