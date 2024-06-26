@@ -29,6 +29,10 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /node_modules[\\\/](microsoft-cognitiveservices-speech-sdk)[\\\/].*\.(js|ts)$/,
+                use: 'babel-loader'
             }
         ]
     },
@@ -39,14 +43,16 @@ module.exports = {
                 { from: resolve(__dirname, 'index.html'), to: '' }
             ]
         }),
-        // Work around for Buffer is undefined:
-        // https://github.com/webpack/changelog-v5/issues/10
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],
         }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
         }),
+        new webpack.IgnorePlugin({
+            resourceRegExp: /^\.\/locale$/,
+            contextRegExp: /moment$/
+        })
     ],
     resolve: {
         extensions: ['.css', '.js', '.ts'],
