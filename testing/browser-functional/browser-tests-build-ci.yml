@@ -69,11 +69,8 @@ steps:
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
-- script: yarn config network-timeout
-  displayName: yarn config set network-timeout 600000 -g
-
 - script: yarn
-  displayName: yarn install
+  displayName: yarn install --network-timeout 600000
 
 - script: yarn browser-functional-test chrome
   displayName: run chrome tests
