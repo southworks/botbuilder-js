@@ -6,6 +6,7 @@
 const { join, resolve, dirname } = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 // Returns absolute path to package.json file for a package
 const resolvePackageJson = (name) => require.resolve(`${name}/package.json`);
@@ -43,6 +44,14 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [{ from: resolve(__dirname, 'index.html'), to: '' }],
         }),
+        // Work around for Buffer is undefined:
+        // https://github.com/webpack/changelog-v5/issues/10
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
     ],
     resolve: {
         extensions: ['.css', '.js', '.ts'],
@@ -54,6 +63,7 @@ module.exports = {
             path: false,
             crypto: false,
             stream: require.resolve('stream-browserify'),
+            buffer: require.resolve('buffer'),
         },
     },
     output: {
