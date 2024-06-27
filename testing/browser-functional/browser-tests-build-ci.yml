@@ -3,7 +3,7 @@
 #
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 trigger:
 - main
@@ -35,6 +35,9 @@ steps:
   displayName: use node 16.x
   inputs:
     versionSpec: 16.x
+
+- script: cp -af `which chromedriver.exe` testing/browser-functional
+  displayName: Copy installed version of chromedriver.exe
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
