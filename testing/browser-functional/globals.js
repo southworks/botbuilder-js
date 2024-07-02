@@ -68,7 +68,7 @@ async function requirements() {
     });
 
     const isDriverRunning = await new Promise((res) => exe.stdout.on('data', (e) => {
-        console.log(e)
+        console.log(e.toString())
         res(true)
     }));
     const browserExists = isDriverRunning && (await driver.browser.exists(driver));
