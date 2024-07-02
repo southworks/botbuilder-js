@@ -104,6 +104,5 @@ module.exports = {
         if (!(await requirements())) {
             process.exit(1);
         }
-        process.exit(1);
     },
 };

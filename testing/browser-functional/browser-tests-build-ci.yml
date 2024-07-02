@@ -36,11 +36,11 @@ steps:
   inputs:
     versionSpec: 16.x
 
-- script: cp "%CHROMEWEBDRIVER%/chromedriver.exe" testing/browser-functional/drivers
-  displayName: use chromedriver.exe
-
-- script: cp "%GECKOWEBDRIVER%/geckodriver.exe" testing/browser-functional/drivers
-  displayName: use geckodriver.exe
+- script: |
+    mkdir "testing/browser-functional/drivers"
+    cp "%CHROMEWEBDRIVER%/chromedriver.exe" "testing/browser-functional/drivers"
+    cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
+  displayName: use browser drivers
 
 - script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
