@@ -67,7 +67,10 @@ async function requirements() {
         windowsHide: true,
     });
 
-    const isDriverRunning = await new Promise((res) => exe.stdout.on('data', () => res(true)));
+    const isDriverRunning = await new Promise((res) => exe.stdout.on('data', (e) => {
+        console.log(e)
+        res(true)
+    }));
     const browserExists = isDriverRunning && (await driver.browser.exists(driver));
     process.kill(exe.pid, 'SIGKILL');
     if (browserExists) {
