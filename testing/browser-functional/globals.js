@@ -75,7 +75,7 @@ async function requirements() {
         return true;
     }
 
-    console.log(
+    console.error(
         `  ❌ Browser: ${driver.browser.name}
      - The current Nightwatch configuration (nightwatch.conf.js) requires the '${driver.browser.name}' browser to be installed.
        Visit '${driver.browser.url}' website to download and install it.`
