@@ -89,7 +89,7 @@ async function browserExists(port, assertion) {
         await axios.delete(`http://localhost:${port}/session/${data.value.sessionId}`);
         return true;
     } catch (error) {
-        if (error.response.data.value.message.includes(assertion)) {
+        if (error?.response?.data?.value?.message?.includes(assertion)) {
             return false;
         }
 
