@@ -30,6 +30,8 @@
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^3.0.0",
+    "react": "~16.8.6",
+    "react-dom": "~16.8.6",
     "regenerator-runtime": "^0.13.2",
     "stream-browserify": "^3.0.0",
     "style-loader": "^0.23.1",
