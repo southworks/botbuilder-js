@@ -60,6 +60,11 @@ async function requirements() {
     }
     console.log(`  ✅ Driver : ${driver.name}`);
 
+    if(process.env.TF_BUILD != undefined) {
+        console.log(`  ✅ Browser: ${driver.browser.name}`);
+        return true;
+    }
+
     const exe = cp.spawn(driver.path, [`--port=${driver.port}`], {
         encoding: 'utf-8',
         shell: false,
