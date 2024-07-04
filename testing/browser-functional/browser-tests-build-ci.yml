@@ -36,7 +36,7 @@ steps:
   inputs:
     versionSpec: 16.x
 
-- script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
+- script: cd testing/browser-functional/browser-echo-bot && yarn --ignore-engines && yarn build
   displayName: yarn install and build browser-echo-bot
 
 - task: PowerShell@2
