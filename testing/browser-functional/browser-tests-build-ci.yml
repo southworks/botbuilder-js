@@ -42,6 +42,12 @@ steps:
     cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
   displayName: use browser drivers
 
+- script: |
+    mkdir "testing/browser-functional/drivers"
+    cp "%CHROMEWEBDRIVER%/chromedriver.exe" "testing/browser-functional/drivers"
+    cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
+  displayName: use browser drivers
+
 - script: cd testing/browser-functional/browser-echo-bot && yarn --ignore-engines && yarn build
   displayName: yarn install and build browser-echo-bot
 
