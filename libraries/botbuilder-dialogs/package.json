@@ -37,7 +37,7 @@
     "globalize": "^1.7.0",
     "lodash": "^4.17.21",
     "uuid": "^10.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/globalize": "^1.5.5",
