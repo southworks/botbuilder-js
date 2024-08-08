@@ -727,13 +727,13 @@ export const conversationParametersObject: z.ZodObject<{
         aadObjectId: z.ZodOptional<z.ZodString>;
         role: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }, {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }>;
@@ -743,13 +743,13 @@ export const conversationParametersObject: z.ZodObject<{
         aadObjectId: z.ZodOptional<z.ZodString>;
         role: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }, {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }>, "many">>;
@@ -770,13 +770,13 @@ export const conversationParametersObject: z.ZodObject<{
             aadObjectId: z.ZodOptional<z.ZodString>;
             role: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }>;
@@ -790,22 +790,22 @@ export const conversationParametersObject: z.ZodObject<{
             role: z.ZodOptional<z.ZodString>;
             properties: z.ZodOptional<z.ZodUnknown>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
             isGroup?: boolean;
             conversationType?: string;
             tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
             properties?: unknown;
         }, {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
             isGroup?: boolean;
             conversationType?: string;
             tenantId?: string;
+            id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
             properties?: unknown;
         }>;
         recipient: z.ZodObject<{
@@ -814,13 +814,13 @@ export const conversationParametersObject: z.ZodObject<{
             aadObjectId: z.ZodOptional<z.ZodString>;
             role: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }>;
@@ -832,13 +832,13 @@ export const conversationParametersObject: z.ZodObject<{
             aadObjectId: z.ZodOptional<z.ZodString>;
             role: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }>, "many">>;
@@ -848,13 +848,13 @@ export const conversationParametersObject: z.ZodObject<{
             aadObjectId: z.ZodOptional<z.ZodString>;
             role: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }, {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }>, "many">>;
@@ -892,20 +892,20 @@ export const conversationParametersObject: z.ZodObject<{
                 imageAltText: z.ZodOptional<z.ZodString>;
             }, "strip", z.ZodTypeAny, {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }, {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }>, "many">;
@@ -913,11 +913,11 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
@@ -925,11 +925,11 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
@@ -941,16 +941,16 @@ export const conversationParametersObject: z.ZodObject<{
             name: z.ZodOptional<z.ZodString>;
             thumbnailUrl: z.ZodOptional<z.ZodString>;
         }, "strip", z.ZodTypeAny, {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }, {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }>, "many">>;
         entities: z.ZodOptional<z.ZodArray<z.ZodEffects<z.ZodRecord<z.ZodString, z.ZodUnknown>, Record<string, unknown>, Record<string, unknown>>, "many">>;
@@ -969,13 +969,13 @@ export const conversationParametersObject: z.ZodObject<{
                 aadObjectId: z.ZodOptional<z.ZodString>;
                 role: z.ZodOptional<z.ZodString>;
             }, "strip", z.ZodTypeAny, {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             }, {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             }>>;
@@ -986,13 +986,13 @@ export const conversationParametersObject: z.ZodObject<{
                 aadObjectId: z.ZodOptional<z.ZodString>;
                 role: z.ZodOptional<z.ZodString>;
             }, "strip", z.ZodTypeAny, {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             }, {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             }>;
@@ -1006,22 +1006,22 @@ export const conversationParametersObject: z.ZodObject<{
                 role: z.ZodOptional<z.ZodString>;
                 properties: z.ZodOptional<z.ZodUnknown>;
             }, "strip", z.ZodTypeAny, {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             }, {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             }>;
             channelId: z.ZodString;
@@ -1029,26 +1029,26 @@ export const conversationParametersObject: z.ZodObject<{
         }, "strip", z.ZodTypeAny, {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
@@ -1056,26 +1056,26 @@ export const conversationParametersObject: z.ZodObject<{
         }, {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
@@ -1109,54 +1109,47 @@ export const conversationParametersObject: z.ZodObject<{
             entities?: Record<string, Record<string, unknown>>;
         }>>;
     }, "strip", z.ZodTypeAny, {
-        code?: string;
         type?: string;
-        value?: unknown;
-        name?: string;
         id?: string;
-        text?: string;
-        channelData?: unknown;
-        locale?: string;
-        conversation?: {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
-            isGroup?: boolean;
-            conversationType?: string;
-            tenantId?: string;
-            properties?: unknown;
-        };
-        channelId?: string;
-        serviceUrl?: string;
-        entities?: Record<string, unknown>[];
         timestamp?: Date;
         localTimestamp?: Date;
         localTimezone?: string;
         callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
         from?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
-        recipient?: {
-            name?: string;
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
             id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
         textFormat?: string;
         attachmentLayout?: string;
         membersAdded?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
         membersRemoved?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
@@ -1168,6 +1161,8 @@ export const conversationParametersObject: z.ZodObject<{
         }[];
         topicName?: string;
         historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
         speak?: string;
         inputHint?: string;
         summary?: string;
@@ -1175,54 +1170,59 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
         };
         attachments?: {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
         action?: string;
         replyToId?: string;
         label?: string;
         valueType?: string;
+        value?: unknown;
+        name?: string;
         relatesTo?: {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
             serviceUrl?: string;
         };
+        code?: string;
         importance?: string;
         deliveryMode?: string;
         listenFor?: string[];
@@ -1236,54 +1236,47 @@ export const conversationParametersObject: z.ZodObject<{
             entities?: Record<string, Record<string, unknown>>;
         };
     }, {
-        code?: string;
         type?: string;
-        value?: unknown;
-        name?: string;
         id?: string;
-        text?: string;
-        channelData?: unknown;
-        locale?: string;
-        conversation?: {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
-            isGroup?: boolean;
-            conversationType?: string;
-            tenantId?: string;
-            properties?: unknown;
-        };
-        channelId?: string;
-        serviceUrl?: string;
-        entities?: Record<string, unknown>[];
         timestamp?: Date;
         localTimestamp?: Date;
         localTimezone?: string;
         callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
         from?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
-        recipient?: {
-            name?: string;
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
             id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
         textFormat?: string;
         attachmentLayout?: string;
         membersAdded?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
         membersRemoved?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
@@ -1295,6 +1288,8 @@ export const conversationParametersObject: z.ZodObject<{
         }[];
         topicName?: string;
         historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
         speak?: string;
         inputHint?: string;
         summary?: string;
@@ -1302,54 +1297,59 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
         };
         attachments?: {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
         action?: string;
         replyToId?: string;
         label?: string;
         valueType?: string;
+        value?: unknown;
+        name?: string;
         relatesTo?: {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
             serviceUrl?: string;
         };
+        code?: string;
         importance?: string;
         deliveryMode?: string;
         listenFor?: string[];
@@ -1366,70 +1366,62 @@ export const conversationParametersObject: z.ZodObject<{
     channelData: z.ZodOptional<z.ZodUnknown>;
 }, "strip", z.ZodTypeAny, {
     isGroup?: boolean;
-    tenantId?: string;
-    channelData?: unknown;
     bot?: {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     };
-    topicName?: string;
     members?: {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }[];
+    topicName?: string;
+    tenantId?: string;
     activity?: {
-        code?: string;
         type?: string;
-        value?: unknown;
-        name?: string;
         id?: string;
-        text?: string;
-        channelData?: unknown;
-        locale?: string;
-        conversation?: {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
-            isGroup?: boolean;
-            conversationType?: string;
-            tenantId?: string;
-            properties?: unknown;
-        };
-        channelId?: string;
-        serviceUrl?: string;
-        entities?: Record<string, unknown>[];
         timestamp?: Date;
         localTimestamp?: Date;
         localTimezone?: string;
         callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
         from?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
-        recipient?: {
-            name?: string;
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
             id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
         textFormat?: string;
         attachmentLayout?: string;
         membersAdded?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
         membersRemoved?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
@@ -1441,6 +1433,8 @@ export const conversationParametersObject: z.ZodObject<{
         }[];
         topicName?: string;
         historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
         speak?: string;
         inputHint?: string;
         summary?: string;
@@ -1448,54 +1442,59 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
         };
         attachments?: {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
         action?: string;
         replyToId?: string;
         label?: string;
         valueType?: string;
+        value?: unknown;
+        name?: string;
         relatesTo?: {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
             serviceUrl?: string;
         };
+        code?: string;
         importance?: string;
         deliveryMode?: string;
         listenFor?: string[];
@@ -1509,72 +1508,65 @@ export const conversationParametersObject: z.ZodObject<{
             entities?: Record<string, Record<string, unknown>>;
         };
     };
+    channelData?: unknown;
 }, {
     isGroup?: boolean;
-    tenantId?: string;
-    channelData?: unknown;
     bot?: {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     };
-    topicName?: string;
     members?: {
-        name?: string;
         id?: string;
+        name?: string;
         aadObjectId?: string;
         role?: string;
     }[];
+    topicName?: string;
+    tenantId?: string;
     activity?: {
-        code?: string;
         type?: string;
-        value?: unknown;
-        name?: string;
         id?: string;
-        text?: string;
-        channelData?: unknown;
-        locale?: string;
-        conversation?: {
-            name?: string;
-            id?: string;
-            aadObjectId?: string;
-            role?: string;
-            isGroup?: boolean;
-            conversationType?: string;
-            tenantId?: string;
-            properties?: unknown;
-        };
-        channelId?: string;
-        serviceUrl?: string;
-        entities?: Record<string, unknown>[];
         timestamp?: Date;
         localTimestamp?: Date;
         localTimezone?: string;
         callerId?: string;
+        serviceUrl?: string;
+        channelId?: string;
         from?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
-        recipient?: {
-            name?: string;
+        conversation?: {
+            isGroup?: boolean;
+            conversationType?: string;
+            tenantId?: string;
             id?: string;
+            name?: string;
+            aadObjectId?: string;
+            role?: string;
+            properties?: unknown;
+        };
+        recipient?: {
+            id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         };
         textFormat?: string;
         attachmentLayout?: string;
         membersAdded?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
         membersRemoved?: {
-            name?: string;
             id?: string;
+            name?: string;
             aadObjectId?: string;
             role?: string;
         }[];
@@ -1586,6 +1578,8 @@ export const conversationParametersObject: z.ZodObject<{
         }[];
         topicName?: string;
         historyDisclosed?: boolean;
+        locale?: string;
+        text?: string;
         speak?: string;
         inputHint?: string;
         summary?: string;
@@ -1593,54 +1587,59 @@ export const conversationParametersObject: z.ZodObject<{
             to?: string[];
             actions?: {
                 type?: string;
-                value?: unknown;
                 title?: string;
                 image?: string;
                 text?: string;
                 displayText?: string;
+                value?: unknown;
                 channelData?: unknown;
                 imageAltText?: string;
             }[];
         };
         attachments?: {
-            name?: string;
             contentType?: string;
             contentUrl?: string;
             content?: unknown;
+            name?: string;
             thumbnailUrl?: string;
         }[];
+        entities?: Record<string, unknown>[];
+        channelData?: unknown;
         action?: string;
         replyToId?: string;
         label?: string;
         valueType?: string;
+        value?: unknown;
+        name?: string;
         relatesTo?: {
             ActivityId?: string;
             user?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             locale?: string;
             bot?: {
-                name?: string;
                 id?: string;
+                name?: string;
                 aadObjectId?: string;
                 role?: string;
             };
             conversation?: {
-                name?: string;
-                id?: string;
-                aadObjectId?: string;
-                role?: string;
                 isGroup?: boolean;
                 conversationType?: string;
                 tenantId?: string;
+                id?: string;
+                name?: string;
+                aadObjectId?: string;
+                role?: string;
                 properties?: unknown;
             };
             channelId?: string;
             serviceUrl?: string;
         };
+        code?: string;
         importance?: string;
         deliveryMode?: string;
         listenFor?: string[];
@@ -1654,6 +1653,7 @@ export const conversationParametersObject: z.ZodObject<{
             entities?: Record<string, Record<string, unknown>>;
         };
     };
+    channelData?: unknown;
 }>;
 
 // @public
