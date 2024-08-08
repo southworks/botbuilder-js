@@ -28,10 +28,10 @@
     }
   },
   "dependencies": {
-    "dependency-graph": "^0.10.0"
+    "dependency-graph": "^1.0.0"
   },
   "devDependencies": {
-    "mocha": "^10.4.0",
+    "mocha": "^10.7.0",
     "nyc": "^15.1.0"
   },
   "scripts": {
