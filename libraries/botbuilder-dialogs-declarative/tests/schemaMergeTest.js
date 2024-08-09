@@ -61,7 +61,6 @@ describe('Schema Merge Tests', function () {
             '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
             `-o "${testsSchemaPath}"`,
         ];
-
         try {
             await runCommand(mergeCommand.join(' '));
         } catch (err) {
@@ -69,11 +68,12 @@ describe('Schema Merge Tests', function () {
             // Try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
+
             try {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npm install --force @microsoft/botframework-cli@next', // install bf-cli using yarn and avoid warning errors saving them in log file
+                        'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
                         ...mergeCommand,
                     ].join(' '),
                     {
