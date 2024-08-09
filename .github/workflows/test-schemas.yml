@@ -39,7 +39,7 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: yarn install @microsoft/botframework-cli
-        run: yarn add --ignore-engines @microsoft/botframework-cli
+        run: yarn add global --ignore-engines @microsoft/botframework-cli
 
       - name: yarn build
         run: yarn build
