@@ -73,7 +73,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npm install --force @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
+                        'npm install --force @microsoft/botframework-cli@next', // install bf-cli using yarn and avoid warning errors saving them in log file
                         ...mergeCommand,
                     ].join(' '),
                     {
