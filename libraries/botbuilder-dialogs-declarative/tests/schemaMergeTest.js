@@ -54,13 +54,14 @@ describe('Schema Merge Tests', function () {
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
-        var mergeCommand = [
-            'bfa dialog:merge ./libraries/**/*.schema',
+        const mergeCommand = [
+            'bf dialog:merge ./libraries/**/*.schema',
             './libraries/**/*.uischema',
             '"!"**/testbot.schema',
             '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
             `-o "${testsSchemaPath}"`,
         ];
+
         try {
             await runCommand(mergeCommand.join(' '));
         } catch (err) {
@@ -70,14 +71,6 @@ describe('Schema Merge Tests', function () {
             // and we ensure it is installed while on it.
 
             try {
-                mergeCommand = [
-                    'bf dialog:merge ./libraries/**/*.schema',
-                    './libraries/**/*.uischema',
-                    '"!"**/testbot.schema',
-                    '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
-                    `-o "${testsSchemaPath}"`,
-                ];
-
                 // Rerun merge command.
                 await runCommand(
                     [
