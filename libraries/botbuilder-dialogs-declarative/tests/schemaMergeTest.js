@@ -74,7 +74,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npx --legacy-peer-deps -p @microsoft/botframework-cli', // invoke with npx to not alter repo dependencies
+                        'yarn global add --ignore-engines @microsoft/botframework-cli &&', // invoke with npx to not alter repo dependencies
                         ...mergeCommand,
                     ].join(' '),
                     {
