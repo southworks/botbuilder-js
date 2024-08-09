@@ -73,7 +73,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'yarn global add --ignore-engines @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
+                        'yarn add --ignore-engines @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
