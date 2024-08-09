@@ -54,8 +54,8 @@ describe('Schema Merge Tests', function () {
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
-        const mergeCommand = [
-            'bf dialog:merge ./libraries/**/*.schema',
+        var mergeCommand = [
+            'bfa dialog:merge ./libraries/**/*.schema',
             './libraries/**/*.uischema',
             '"!"**/testbot.schema',
             '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
@@ -70,10 +70,18 @@ describe('Schema Merge Tests', function () {
             // and we ensure it is installed while on it.
 
             try {
+                mergeCommand = [
+                    'bf dialog:merge ./libraries/**/*.schema',
+                    './libraries/**/*.uischema',
+                    '"!"**/testbot.schema',
+                    '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
+                    `-o "${testsSchemaPath}"`,
+                ];
+
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npx --legacy-peer-deps -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
+                        'npx --legacy-peer-deps -p @microsoft/botframework-cli', // invoke with npx to not alter repo dependencies
                         ...mergeCommand,
                     ].join(' '),
                     {
