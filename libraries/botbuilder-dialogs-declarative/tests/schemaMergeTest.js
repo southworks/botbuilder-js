@@ -69,13 +69,11 @@ describe('Schema Merge Tests', function () {
             // Try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
-
             try {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'yarn global add --ignore-engines @microsoft/botframework-cli &&', // invoke with npx to not alter repo dependencies
-                        ...mergeCommand,
+                        'yarn global add --ignore-engines @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
@@ -83,6 +81,8 @@ describe('Schema Merge Tests', function () {
                         BF_CLI_TELEMETRY: true,
                     }
                 );
+
+                await runCommand(mergeCommand.join(' '));
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
             }
