@@ -73,7 +73,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
+                        'npm i -g @microsoft/botframework-cli@next && ', // invoke with npx to not alter repo dependencies
                         ...mergeCommand,
                     ].join(' '),
                     {
