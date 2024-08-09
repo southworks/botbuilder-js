@@ -57,8 +57,8 @@ describe('Schema Merge Tests', function () {
         const mergeCommand = [
             'bf dialog:merge ./libraries/**/*.schema',
             './libraries/**/*.uischema',
-            '"!"**/testbot.schema',
-            '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
+            '!**/testbot.schema',
+            '!**/botbuilder-dialogs-adaptive/tests/schema/*.*',
             `-o "${testsSchemaPath}"`,
         ];
         try {
@@ -83,12 +83,12 @@ describe('Schema Merge Tests', function () {
                     }
                 );
             } catch (err2) {
-                assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
+                assert.fail(`Unable to merge schemas.\nFirst error: \n${err}\nSecond error: \n${err2}`);
             }
         }
 
         if (process.env.CI) {
-            // Check that newly-generated schema matches the schema from before the `dialog:merge`
+            // Check that newly-generated schema matches the schema from before the `dialog: merge`
             // command was run. We only test for this in CI because these files are expected to differ
             // when this test is run locally.
             const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(testsSchemaFileResource.readText());
