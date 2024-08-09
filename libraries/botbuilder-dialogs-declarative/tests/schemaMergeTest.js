@@ -73,7 +73,8 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'yarn add --ignore-engines @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
+                        'npm install --force @microsoft/botframework-cli@next > install.log 2>&1', // install bf-cli using yarn and avoid warning errors saving them in log file
+                        ...mergeCommand,
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
@@ -81,8 +82,6 @@ describe('Schema Merge Tests', function () {
                         BF_CLI_TELEMETRY: true,
                     }
                 );
-
-                await runCommand(mergeCommand.join(' '));
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
             }
