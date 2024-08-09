@@ -16,7 +16,7 @@ on:
 jobs:
   ci:
     name: test:schemas
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
