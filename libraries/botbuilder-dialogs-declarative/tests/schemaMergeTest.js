@@ -73,7 +73,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npm i --force @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
+                        'npm i -g @microsoft/botframework-cli@next > install.log 2>&1', // invoke with npx to not alter repo dependencies
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
