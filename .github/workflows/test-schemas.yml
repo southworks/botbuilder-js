@@ -38,6 +38,9 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
+      - name: npm install @microsoft/botframework-cli
+        run: npm i -g @microsoft/botframework-cli
+
       - name: yarn build
         run: yarn build
 

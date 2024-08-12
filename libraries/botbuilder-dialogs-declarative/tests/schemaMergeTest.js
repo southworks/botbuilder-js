@@ -57,8 +57,8 @@ describe('Schema Merge Tests', function () {
         const mergeCommand = [
             'bf dialog:merge ./libraries/**/*.schema',
             './libraries/**/*.uischema',
-            '!**/testbot.schema',
-            '!**/botbuilder-dialogs-adaptive/tests/schema/*.*',
+            '"!"**/testbot.schema',
+            '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
             `-o "${testsSchemaPath}"`,
         ];
         try {
@@ -73,7 +73,8 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npm i -g --force @microsoft/botframework-cli@next > install.log 2>&1', // invoke with npx to not alter repo dependencies
+                        'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
+                        ...mergeCommand,
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
@@ -81,15 +82,13 @@ describe('Schema Merge Tests', function () {
                         BF_CLI_TELEMETRY: true,
                     }
                 );
-
-                await runCommand(mergeCommand.join(' '));
             } catch (err2) {
-                assert.fail(`Unable to merge schemas.\nFirst error: \n${err}\nSecond error: \n${err2}`);
+                assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
             }
         }
 
         if (process.env.CI) {
-            // Check that newly-generated schema matches the schema from before the `dialog: merge`
+            // Check that newly-generated schema matches the schema from before the `dialog:merge`
             // command was run. We only test for this in CI because these files are expected to differ
             // when this test is run locally.
             const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(testsSchemaFileResource.readText());
