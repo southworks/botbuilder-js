@@ -73,8 +73,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 await runCommand(
                     [
-                        'npm i -g @microsoft/botframework-cli@next && ', // invoke with npx to not alter repo dependencies
-                        ...mergeCommand,
+                        'npm i -g @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
                     ].join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
@@ -82,6 +81,8 @@ describe('Schema Merge Tests', function () {
                         BF_CLI_TELEMETRY: true,
                     }
                 );
+
+                await runCommand(mergeCommand.join(' '));
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error: \n${err}\nSecond error: \n${err2}`);
             }
