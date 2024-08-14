@@ -4,13 +4,12 @@
   "version": "1.0.0",
   "description": "a test bot for working locally",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "MIT",
   "dependencies": {
     "botbuilder": "^4.1.6",
     "restify": "^11.1.0",
-    "dotenv": "^6.2.0"
+    "dotenv": "^16.4.5"
   }
 }
