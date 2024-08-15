@@ -40,7 +40,12 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: yarn
+      - name: yarn node 14
+        if: matrix.node-version == '14.x'
+        run: yarn --frozen-lockfile --ignore-engines
+  
+      - name: yarn node 16
+        if: matrix.node-version == '16.x'
         run: yarn --frozen-lockfile
 
       - name: yarn build

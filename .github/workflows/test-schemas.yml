@@ -16,15 +16,15 @@ on:
 jobs:
   ci:
     name: test:schemas
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: use node 14.x
+      - name: use node 16.x
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 14.x
+          node-version: 16.x
 
       - name: yarn cache dir
         id: yarn-cache-dir
@@ -33,10 +33,13 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node14.x-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node16.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
         run: yarn --frozen-lockfile
+      
+      - name: npm install @microsoft/botframework-cli
+        run: npm i -g @microsoft/botframework-cli
 
       - name: yarn build
         run: yarn build
