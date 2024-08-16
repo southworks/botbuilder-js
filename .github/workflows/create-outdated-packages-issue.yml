@@ -1,0 +1,19 @@
+name: Outdated Packages
+
+on: 
+  schedule: 
+    # Daily at 8:20 UTC
+    - cron: '20 8 * * *'
+
+jobs:
+  issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - run: |
+          https://cli.github.com/manual/gh_issue_create
+          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.html_url }}
