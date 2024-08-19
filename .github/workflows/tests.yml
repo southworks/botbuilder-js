@@ -18,10 +18,13 @@ jobs:
     name: "${{ github.workflow }} ${{ matrix.os }} (node ${{ matrix.node-version }})"
     runs-on: ${{ matrix.os }}-latest
 
+    timeout-minutes: 10
+    
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu, windows]
-        node-version: [14.x, 16.x]
+        node-version: [18.x, 20.x, 22.X]
 
     steps:
       - uses: actions/checkout@v2
@@ -50,7 +53,7 @@ jobs:
         run: yarn test:github
 
       - name: coveralls
-        if: matrix.node-version == '16.x'
+        if: matrix.node-version == '22.x'
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

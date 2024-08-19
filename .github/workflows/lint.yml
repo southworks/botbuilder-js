@@ -18,13 +18,21 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
 
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu]
+        node-version: [22.X]
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: use node 16.x
+      - name: use node ${{ matrix.node-version }}
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 16.x
+          node-version: ${{ matrix.node-version }}
 
       - name: yarn cache dir
         id: yarn-cache-dir
@@ -33,7 +41,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node16.x-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
         run: yarn --frozen-lockfile
