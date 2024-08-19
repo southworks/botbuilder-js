@@ -13,6 +13,7 @@ const resolvePackageJson = (name) => require.resolve(`${name}/package.json`);
 
 // Returns absolute path to directory containing package.json file for a package
 const resolvePackageRoot = (name) => dirname(resolvePackageJson(name));
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 module.exports = {
     entry: './src/app.ts',
@@ -50,8 +51,9 @@ module.exports = {
             Buffer: ['buffer', 'Buffer'],
         }),
         new webpack.ProvidePlugin({
-            process: 'process/browser',
+            process: 'process/browser.js',
         }),
+        new NodePolyfillPlugin(), // Work around for "Module not found: Error: Can't resolve 'child_process'" error
     ],
     resolve: {
         extensions: ['.css', '.js', '.ts'],
@@ -63,7 +65,11 @@ module.exports = {
             path: false,
             crypto: false,
             stream: require.resolve('stream-browserify'),
-            buffer: require.resolve('buffer')
+            buffer: require.resolve('buffer'),
+            "http": require.resolve("stream-http"),
+            "https": require.resolve("https-browserify"),
+            "util": require.resolve("util/"),
+            "child_process": false // Mockear child_process
         },
     },
     output: {

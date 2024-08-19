@@ -7,7 +7,6 @@
  */
 
 import * as z from 'zod';
-import { createHash } from 'crypto';
 import { stringify } from 'botbuilder-stdlib';
 import { TurnContext } from './turnContext';
 
@@ -131,9 +130,22 @@ export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val
 export function calculateChangeHash(item: StoreItem): string {
     // eslint-disable-next-line  @typescript-eslint/no-unused-vars
     const { eTag, ...rest } = item;
-
     const result = stringify(rest);
-    const hash = createHash('sha256', { encoding: 'utf-8' });
-    const hashed = hash.update(result).digest('hex');
-    return hashed;
+    if (typeof window === 'undefined') {
+        const crypto_1 = require('crypto');
+
+        const hash = crypto_1.createHash('sha256');
+        hash.update(result);
+        const hashed = hash.digest('hex');
+        console.log(hashed);
+        return hashed;
+    } else {
+        const crypto_1 = require('crypto-js');
+
+        const hash = crypto_1.SHA256(result);
+        const hashed = hash.toString(crypto_1.enc.Hex);
+        console.log(hashed);
+        return hashed;
+    }
+
 }
