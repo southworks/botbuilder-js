@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@azure/core-http": "^3.0.2",
-    "@azure/identity": "^2.0.4",
-    "@azure/msal-node": "^1.18.4",
+    "@azure/identity": "^4.4.1",
+    "@azure/msal-node": "^2.13.0",
     "axios": "^1.7.2",
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
