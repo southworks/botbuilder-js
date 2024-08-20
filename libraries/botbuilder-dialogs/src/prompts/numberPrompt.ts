@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Globalize from 'globalize';
+const Globalize = require("globalize");
 import * as Recognizers from '@microsoft/recognizers-text-number';
 import * as locales from '../i18n';
 import { InputHints, TurnContext } from 'botbuilder-core';

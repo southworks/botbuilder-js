@@ -13,7 +13,7 @@ import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 
 import { getFetch } from '../globals';
-const fetch = getFetch();
+import fetch from 'node-fetch';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: Record<'name' | 'version', string> = require('../../package.json');
