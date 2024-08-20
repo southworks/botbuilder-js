@@ -182,16 +182,16 @@ $Content = "
 $($Content)
 "
 
-$Issue = gh issue list --state "open" --search "hash$($Hash)" --limit 1 --json
-if($Issue){
-    gh issue edit $Issue.Number --body $Content;
-} else {
-    gh issue create --title "Update dependencies" --body $Content
-}
+# $Issue = gh issue list --state "open" --search "hash$($Hash)" --limit 1 --json
+# if($Issue){
+#     gh issue edit $Issue.Number --body $Content;
+# } else {
+#     gh issue create --title "Update dependencies" --body $Content
+# }
 
 
 
-# Set-Content .\update-detector\test.md $Content
+Set-Content .\update-detector\test.md $Content
 
 
 # For Minor Mayor Patch use emotes https://github.com/github/markup/issues/1440#issuecomment-1739304044
