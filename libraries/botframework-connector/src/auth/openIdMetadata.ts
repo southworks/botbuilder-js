@@ -27,7 +27,7 @@ export class OpenIdMetadata {
      * @param url Metadata Url.
      * @param proxySettings The proxy settings for the request.
      */
-    constructor(private url: string, private proxySettings?: ProxySettings) { }
+    constructor(private url: string, private proxySettings?: ProxySettings) {}
 
     /**
      * Gets the Signing key.

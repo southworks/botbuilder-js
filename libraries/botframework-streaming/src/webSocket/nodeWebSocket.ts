@@ -26,7 +26,7 @@ export class NodeWebSocket implements ISocket {
      *
      * @param wsSocket The `ws` WebSocket instance to build this connection on.
      */
-    constructor(private wsSocket?: WebSocket) { }
+    constructor(private wsSocket?: WebSocket) {}
 
     /**
      * Create and set a `ws` WebSocket with an HTTP Request, Socket and Buffer.
@@ -86,7 +86,7 @@ export class NodeWebSocket implements ISocket {
         try {
             url = new URL(serverAddressOrHostName);
             // eslint-disable-next-line no-empty
-        } catch (_error) { }
+        } catch (_error) {}
 
         if (url?.hostname) {
             return new Promise<void>((resolve, reject) => {
