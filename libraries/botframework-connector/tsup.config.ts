@@ -8,28 +8,23 @@ export default defineConfig({
     name: 'browser',
     platform: 'browser',
     entry: ['./src/index.ts'],
-    //   external: [mswCore, ecosystemDependencies],
     format: ['esm', 'cjs'],
-    outDir: './dist',
+    outDir: './lib/browser',
     bundle: true,
     splitting: false,
     sourcemap: true,
-    cjsInterop: true,
-    // dts: true,
-    // outExtension({ format }) {
-    //     return {
-    //       js: `index.${format}.js`,
-    //     }
-    //   },
+    outExtension({ format }) {
+        const ext =
+            {
+                esm: 'mjs',
+            }[format] ?? format;
+        return {
+            js: `.${ext}`,
+        };
+    },
     noExternal: Object.keys(packageJson.dependencies).filter((packageName) => {
         return packageName;
     }),
-    /**
-     * @note Use a proxy TypeScript configuration where the "compilerOptions.composite"
-     * option is set to false.
-     * @see https://github.com/egoist/tsup/issues/571
-     */
-    //   tsconfig: path.resolve(__dirname, 'src/browser/tsconfig.browser.build.json'),
     esbuildPlugins: [
         polyfillNode({
             polyfills: {
@@ -44,13 +39,12 @@ export default defineConfig({
             },
         }),
     ],
-    esbuildOptions(options, context) {
+    esbuildOptions(options) {
+        options.inject = ['./esbuild.inject.js'];
         options.define = {
             global: 'globalThis',
         };
-
         options.alias = {
-            buffer: 'Buffer',
             stream: 'stream-browserify',
             http: 'stream-http',
             https: 'https-browserify',

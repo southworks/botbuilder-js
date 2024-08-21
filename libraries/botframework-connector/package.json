@@ -20,14 +20,12 @@
   "exports": {
     ".": {
       "browser": {
-        "import": "./dist/index.mjs",
-        "default": "./dist/index.js"
+        "import": "./lib/browser/index.mjs",
+        "default": "./lib/browser/index.cjs"
       },
-      "default": {
-        "require": "./lib/index.js",
-        "default": "./lib/index.js"
-      }
-    }
+      "default": "./lib/index.js"
+    },
+    "./lib/*": "./lib/*.js"
   },
   "types": "lib/index.d.ts",
   "typesVersions": {
@@ -46,6 +44,7 @@
     "base64url": "^3.0.0",
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
+    "buffer": "^6.0.3",
     "cross-fetch": "^3.0.5",
     "crypto-browserify": "^3.12.0",
     "https-browserify": "^1.0.0",
@@ -53,6 +52,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^2.6.7",
     "openssl-wrapper": "^0.3.4",
+    "process": "^0.11.10",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
@@ -61,8 +61,8 @@
   "devDependencies": {
     "@types/node": "^10.17.27",
     "botbuilder-test-utils": "0.0.0",
-    "esbuild-plugin-polyfill-node": "^0.3.0",
     "dotenv": "^6.2.0",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
     "nock": "^11.9.1",
     "should": "^13.2.3",
     "tsup": "^8.2.4"
