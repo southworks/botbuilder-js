@@ -21,10 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: use node 14.x
+      - name: use node 22.x
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 14.x
+          node-version: 22.x
 
       - name: yarn cache dir
         id: yarn-cache-dir
@@ -37,6 +37,9 @@ jobs:
 
       - name: yarn
         run: yarn --frozen-lockfile
+
+      - name: install bf-cli
+        run: npm i -g @microsoft/botframework-cli
 
       - name: yarn build
         run: yarn build
