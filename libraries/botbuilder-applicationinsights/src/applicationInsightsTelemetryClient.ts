@@ -8,7 +8,7 @@
  */
 import * as appInsights from 'applicationinsights';
 import * as cls from 'cls-hooked';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 import {
     Activity,
