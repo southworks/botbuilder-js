@@ -3,7 +3,8 @@
   "compilerOptions": {
     "lib": ["es2015"],
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "esModuleInterop": true,
   },
   "include": [
     "src/**/*"
