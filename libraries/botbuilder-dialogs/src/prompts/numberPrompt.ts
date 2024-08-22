@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Globalize from 'globalize';
-import * as Recognizers from '@microsoft/recognizers-text-number';
+import Globalize from 'globalize';
+import Recognizers from '@microsoft/recognizers-text-number';
 import * as locales from '../i18n';
 import { InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
@@ -95,12 +95,12 @@ export class NumberPrompt extends Prompt<number> {
 
             // Note: if we encounter an exception loading a globalize number parser, fall back to the
             // parser for the default locale
-            const parser = Globalize(this.getCultureFormattedForGlobalize(locale));
+            const parser = Globalize.default(this.getCultureFormattedForGlobalize(locale));
             let numberParser: (value: string) => number;
             try {
                 numberParser = parser.numberParser();
             } catch {
-                numberParser = Globalize(this.getCultureFormattedForGlobalize(defaultLocale)).numberParser();
+                numberParser = Globalize.default(this.getCultureFormattedForGlobalize(defaultLocale)).numberParser();
             }
 
             result.value = numberParser(resolution.value);

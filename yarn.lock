@@ -2816,10 +2816,10 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/globalize@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@types/globalize/-/globalize-1.5.0.tgz#090f28530144df981684e6ee56d8f521d3136b65"
-  integrity sha512-gkhKU/moHzIuSwZ+z6sjaJOjdh/eZaiptpPArkjvumdL9YhWFipa8/RKMg9QvT993b0CWv7l/MPpqBMEPCNSjg==
+"@types/globalize@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@types/globalize/-/globalize-1.5.5.tgz#4ad6806a635f65a378b176f8e86575c18befff55"
+  integrity sha512-UINIthRJ3ElD3JP4kTiX+YNkctR6duTCpyzcEkafiGLxoLowvW9WiL2miayN45g9mOVqrBy2a1tgFQuCD6vdOw==
   dependencies:
     "@types/cldrjs" "*"
 
@@ -6942,10 +6942,10 @@ global-prefix@^1.0.1:
     is-windows "^1.0.1"
     which "^1.2.14"
 
-globalize@^1.4.2:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/globalize/-/globalize-1.6.0.tgz#b6c659cfa6a47fa1a8279187a45689560d8591b1"
-  integrity sha512-MTuAU3Tnbtga8PvxbpSPdQNIs6K5UdATWIuarWJK2Z3e1DghXpxb/GmShSVagzHqCOYgZr7N/Hi7D1mrHG30jQ==
+globalize@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/globalize/-/globalize-1.7.0.tgz#321201eb18ded16d3f03c8d4ddbcb5d1edd6d4c2"
+  integrity sha512-faR46vTIbFCeAemyuc9E6/d7Wrx9k2ae2L60UhakztFg6VuE42gENVJNuPFtt7Sdjrk9m2w8+py7Jj+JTNy59w==
   dependencies:
     cldrjs "^0.5.4"
 
