@@ -46,9 +46,7 @@
     "@types/ramda": "0.26.0",
     "babel-traverse": "npm:@babel/traverse@^7.24.7",
     "lodash.pick": "file:overrides/lodash.pick",
-    "**/nightwatch/ejs": "^3.1.10",
-    "**/@azure/core-tracing": "1.0.0-preview.13",
-    "@azure/msal-node": "^2.13.0"
+    "**/nightwatch/ejs": "^3.1.10"
   },
   "resolutionComments": {
     "lodash.pick": "Remove the resolution and override project when supporting Node >=18. Because we can't update nightwatch due to jsdom requires node >= 18. https://github.com/lodash/lodash/issues/5809#issuecomment-1910560681",
@@ -66,6 +64,9 @@
     "@typescript-eslint/parser": "^4.16.1",
     "applicationinsights": "^1.7.5",
     "browserify": "^17.0.0",
+    "browserify-fs": "^1.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "depcheck": "^1.4.7",
     "eslint": "^7.21.0",
     "eslint-config-prettier": "^8.1.0",
@@ -77,6 +78,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-security": "^1.4.0",
     "exorcist": "^2.0.0",
+    "https-browserify": "^1.0.0",
     "mocha": "^10.4.0",
     "mocha-junit-reporter": "^2.0.0",
     "npm-run-all": "^4.1.5",
@@ -88,6 +90,8 @@
     "sinon": "^9.2.4",
     "source-map-support": "^0.5.19",
     "sponge": "^0.1.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "ts-node": "^10.0.0",
     "typedoc": "^0.24.8",
     "typedoc-plugin-external-module-name": "^4.0.6",

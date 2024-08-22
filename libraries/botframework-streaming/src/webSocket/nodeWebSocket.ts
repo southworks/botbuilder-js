@@ -8,7 +8,7 @@
 
 import { IncomingMessage, request } from 'http';
 import { URL } from 'url';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 import WebSocket from 'ws';
 
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../interfaces';
