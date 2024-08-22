@@ -3,13 +3,13 @@ import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 import packageJson from './package.json';
 
 export default defineConfig({
-    // minify: true,
-    treeshake: true,
     name: 'browser',
     platform: 'browser',
     entry: ['./src/index.ts'],
     format: ['esm', 'cjs'],
     outDir: './lib/browser',
+    minify: true,
+    treeshake: true,
     bundle: true,
     splitting: false,
     sourcemap: true,
