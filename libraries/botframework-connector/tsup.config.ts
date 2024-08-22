@@ -6,7 +6,7 @@ export default defineConfig({
     name: 'browser',
     platform: 'browser',
     entry: ['./src/index.ts'],
-    format: ['esm', 'cjs'],
+    format: ['cjs'],
     outDir: './lib/browser',
     minify: true,
     treeshake: true,
@@ -14,13 +14,8 @@ export default defineConfig({
     splitting: false,
     sourcemap: true,
     outExtension({ format }) {
-        const ext =
-            {
-                esm: 'mjs',
-            }[format] ?? format;
-        return {
-            js: `.${ext}`,
-        };
+        const ext = { esm: 'mjs' }[format] ?? format;
+        return { js: `.${ext}` };
     },
     noExternal: Object.keys(packageJson.dependencies).filter((packageName) => {
         return packageName;
