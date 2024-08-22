@@ -8,7 +8,7 @@ export default defineConfig({
     entry: ['./src/index.ts'],
     format: ['cjs'],
     outDir: './lib/browser',
-    minify: true,
+    // minify: true,
     treeshake: true,
     bundle: true,
     splitting: false,
@@ -26,6 +26,7 @@ export default defineConfig({
                 buffer: false,
                 child_process: true,
                 crypto: false,
+                fs: false,
                 http: false,
                 https: false,
                 net: true,
@@ -40,10 +41,11 @@ export default defineConfig({
             global: 'globalThis',
         };
         options.alias = {
-            stream: 'stream-browserify',
+            crypto: 'crypto-browserify',
+            fs: 'browserify-fs',
             http: 'stream-http',
             https: 'https-browserify',
-            crypto: 'crypto-browserify',
+            stream: 'stream-browserify',
         };
     },
 });
