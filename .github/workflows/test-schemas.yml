@@ -35,8 +35,8 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.dir }}
           key: ${{ runner.os }}-node20.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - name: yarn install @microsoft/botframework-cli@next -g
-        run: yarn install @microsoft/botframework-cli@next -g
+      - name: yarn global add @microsoft/botframework-cli@next
+        run: yarn global add @microsoft/botframework-cli@next
 
       - name: yarn
         run: yarn --frozen-lockfile
