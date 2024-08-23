@@ -1,2 +1,2 @@
-export let Buffer = require('buffer').Buffer;
-export let process = require('process/browser');
+/* eslint-disable @typescript-eslint/no-var-requires */
+export const Buffer = require('buffer').Buffer;

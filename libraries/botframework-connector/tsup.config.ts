@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { defineConfig } from 'tsup';
 import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 import packageJson from './package.json';
@@ -8,7 +9,7 @@ export default defineConfig({
     entry: ['./src/index.ts'],
     format: ['cjs'],
     outDir: './lib/browser',
-    // minify: true,
+    minify: true,
     treeshake: true,
     bundle: true,
     splitting: false,

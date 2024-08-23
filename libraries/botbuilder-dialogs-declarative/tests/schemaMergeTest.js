@@ -72,10 +72,7 @@ describe('Schema Merge Tests', function () {
             try {
                 // Rerun merge command.
                 await runCommand(
-                    [
-                        'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
-                        ...mergeCommand,
-                    ].join(' '),
+                    mergeCommand.join(' '),
                     {
                         // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
                         // We need to set an environment variable so the prompt doesn't appear and halt install, causing a timeout.

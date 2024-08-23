@@ -17,9 +17,9 @@ const window = require('./custom.window');
  * @returns {any} The fetch library.
  */
 export function getFetch() {
-    if (!!global) {
-        return global.fetch = require('node-fetch');
+    if (global) {
+        return (global.fetch = require('node-fetch'));
     }
 
-    return window.fetch;
+    return window?.fetch;
 }
