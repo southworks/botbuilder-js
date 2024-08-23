@@ -112,9 +112,3 @@ steps:
   displayName: 'Dir workspace except node_modules'
   continueOnError: true
   condition: succeededOrFailed()
-
-- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-  displayName: 'Component Detection'
-  inputs:
-    ignoreDirectories: './testing,./tools,./generators'
-    failOnAlert: false
