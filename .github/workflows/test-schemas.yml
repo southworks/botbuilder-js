@@ -36,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-node20.x-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn global add @microsoft/botframework-cli@next
-        run: yarn global add @microsoft/botframework-cli@next
+        run: yarn global add @microsoft/botframework-cli@next --ignore-engines
 
       - name: yarn
         run: yarn --frozen-lockfile
