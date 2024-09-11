@@ -6,9 +6,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+//require('./instrumentation'); // Ensure this is the first import
+//const { setupOpentelemetry } = await import('./instrumentation');
+
 import * as appInsights from 'applicationinsights';
 import * as cls from 'cls-hooked';
-import * as crypto from 'crypto';
+//import * as crypto from 'crypto';
 
 import {
     Activity,
@@ -24,16 +27,24 @@ import {
 // This is the currently recommended work-around for using Application Insights with async/await
 // https://github.com/Microsoft/ApplicationInsights-node.js/issues/296
 // This allows AppInsights to automatically apply the appropriate context objects deep inside the async/await chain.
-import {
-    CorrelationContext,
-    CorrelationContextManager,
-} from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+// import {
+//     CorrelationContext,
+//     CorrelationContextManager,
+// } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+import { CorrelationContextManager } from 'applicationinsights/out/src/shim/CorrelationContextManager';
+import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
+import { CorrelationContext, MapContext } from './CorrelationContext';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { CustomSpanProcessor } from './customSpanProcessor';
+import { registerInstrumentations } from '@opentelemetry/instrumentation';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
 
 function getCurrentContext(): CorrelationContext {
-    return ns.get('ctx') || origGetCurrentContext();
+    return ns.get('ctx') || MapContext(origGetCurrentContext());
 }
 
 // Overwrite the built-in getCurrentContext() method with a new one.
@@ -44,7 +55,7 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
     // If so, set it into the Application Insights context.
     const activity: Partial<Activity> = req.body;
     if (activity && activity.id) {
-        const context: CorrelationContext = appInsights.getCorrelationContext();
+        const context: ICorrelationContext = appInsights.getCorrelationContext();
         context['activity'] = req.body;
     }
 
@@ -104,14 +115,31 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
             .setup(setupString)
             .setAutoDependencyCorrelation(true)
             .setAutoCollectRequests(true)
-            .setAutoCollectPerformance(true)
+            .setAutoCollectPerformance(true, true) //default was true.
+            //.setAutoCollectPerformance(true)
             .setAutoCollectExceptions(true)
             .setAutoCollectDependencies(true)
             .start();
 
         this.client = appInsights.defaultClient;
 
-        this.client.addTelemetryProcessor(addBotIdentifiers);
+        //setupOpentelemetry();
+
+        //this.client.addTelemetryProcessor(addBotIdentifiers);
+
+        // Initialize the tracer provider
+        const provider = new NodeTracerProvider();
+
+        // Add the custom span processor
+        provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+
+        // Register the tracer provider
+        provider.register();
+
+        // Register instrumentations
+        registerInstrumentations({
+            instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+        });
     }
 
     // Protects against JSON.stringify cycles
@@ -182,7 +210,13 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryPageView](xref:botbuilder-core.TelemetryPageView) to track.
      */
     trackPageView(telemetry: TelemetryPageView): void {
-        this.defaultClient.trackPageView(telemetry);
+        const telemetry2 = {
+            id: '',
+            name: telemetry.name,
+            properties: telemetry.properties,
+            measurements: telemetry.metrics,
+        };
+        this.defaultClient.trackPageView(telemetry2);
     }
 
     /**
@@ -196,29 +230,30 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
  * so that application insights can correlate related events.
  */
-function addBotIdentifiers(envelope: appInsights.Contracts.Envelope, context: { [name: string]: any }): boolean {
-    if (context.correlationContext && context.correlationContext.activity) {
-        const activity: Partial<Activity> = context.correlationContext.activity;
-        const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
-        const userId: string = activity.from ? activity.from.id : '';
-        const channelId: string = activity.channelId || '';
-        const conversationId: string = activity.conversation ? activity.conversation.id : '';
-        // Hashed ID is used due to max session ID length for App Insights session Id
-        const sessionId: string = conversationId
-            ? crypto.createHash('sha256').update(conversationId).digest('base64')
-            : '';
+// function addBotIdentifiers(envelope: Envelope, context: { [name: string]: any }): boolean {
+// //function addBotIdentifiers(envelope: appInsights.Contracts.Envelope, context: { [name: string]: any }): boolean {
+//     if (context.correlationContext && context.correlationContext.activity) {
+//         const activity: Partial<Activity> = context.correlationContext.activity;
+//         const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+//         const userId: string = activity.from ? activity.from.id : '';
+//         const channelId: string = activity.channelId || '';
+//         const conversationId: string = activity.conversation ? activity.conversation.id : '';
+//         // Hashed ID is used due to max session ID length for App Insights session Id
+//         const sessionId: string = conversationId
+//             ? crypto.createHash('sha256').update(conversationId).digest('base64')
+//             : '';
 
-        // set user id and session id
-        envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
-        envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+//         // set user id and session id
+//         envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+//         envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
 
-        // Add additional properties
-        telemetryItem.properties = telemetryItem.properties || {};
-        telemetryItem.properties.activityId = activity.id;
-        telemetryItem.properties.channelId = channelId;
-        telemetryItem.properties.activityType = activity.type;
-        telemetryItem.properties.conversationId = conversationId;
-    }
+//         // Add additional properties
+//         telemetryItem.properties = telemetryItem.properties || {};
+//         telemetryItem.properties.activityId = activity.id;
+//         telemetryItem.properties.channelId = channelId;
+//         telemetryItem.properties.activityType = activity.type;
+//         telemetryItem.properties.conversationId = conversationId;
+//     }
 
-    return true;
-}
+//     return true;
+// }

@@ -4,7 +4,8 @@
 import { TelemetryLoggerMiddleware } from 'botbuilder-core';
 import { Middleware } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
-import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+//import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
+import { ICorrelationContext as CorrelationContext } from 'applicationinsights/out/src/shim/types';
 import * as appInsights from 'applicationinsights';
 
 /**
