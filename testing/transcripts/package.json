@@ -9,7 +9,7 @@
     "author": "Microsoft Corp.",
     "license": "MIT",
     "dependencies": {
-        "@types/node": "^22.5.0",
+        "@types/node": "18.19.47",
         "@types/restify": "^8.5.12",
         "botbuilder": "4.1.6",
         "botbuilder-ai": "4.1.6",
