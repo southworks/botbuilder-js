@@ -119,7 +119,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('logActivityTelemetry() getter calls logActivityTelemetry function passed into constructor', function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         let passedInFunctionWasCalled = false;
         const middleware = new TelemetryInitializerMiddleware(logger, () => {
             passedInFunctionWasCalled = true;
@@ -132,7 +134,7 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('telemetryClient() getter calls returns client passed into constructor', function () {
-        const fakeKey = 'fakeKey';
+        const fakeKey = 'InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333';
         const logger = new TelemetryLoggerMiddleware(new TelemetryClient(fakeKey));
         const middleware = new TelemetryInitializerMiddleware(logger);
 
@@ -141,7 +143,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('throws an error if onTurn() context is null', async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
 
         await assert.rejects(
@@ -156,7 +160,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it("onTurn() uses default appInsights CorrelationContext if instance's _correlationContext not set", async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
         client._correlationContext = null;
 
@@ -183,7 +189,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('onTurn() does not change correlationContext if no activity is present', async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
         client._correlationContext = null;
 
@@ -208,7 +216,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('onTurn() does not change correlationContext if activity is present, but correlationContext is not', async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
         client._correlationContext = null;
 
@@ -237,7 +247,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('onTurn() performs next() callback itself if no telemetryLoggerMiddleware present', async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
         client._logActivityTelemetry = false;
         client._telemetryLoggerMiddleware = false;
@@ -252,7 +264,9 @@ describe('TelemetryInitializerMiddleware', function () {
     });
 
     it('onTurn() does not attempt to perform next() callback if not present', async function () {
-        const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
+        const logger = new TelemetryLoggerMiddleware(
+            new TelemetryClient('InstrumentationKey=1aa11111-bbbb-1ccc-8ddd-eeeeffff3333')
+        );
         const client = new TelemetryInitializerMiddleware(logger);
         client._logActivityTelemetry = false;
         client._telemetryLoggerMiddleware = false;

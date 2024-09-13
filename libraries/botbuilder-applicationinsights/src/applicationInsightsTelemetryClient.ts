@@ -34,11 +34,12 @@ import {
 import { CorrelationContextManager } from 'applicationinsights/out/src/shim/CorrelationContextManager';
 import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
 import { CorrelationContext, MapContext } from './CorrelationContext';
-import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { BatchSpanProcessor, ConsoleSpanExporter, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { CustomSpanProcessor } from './customSpanProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { Span, trace, Tracer } from '@opentelemetry/api';
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
@@ -83,6 +84,8 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
     private client: appInsights.TelemetryClient;
     private config: appInsights.Configuration;
+    private provider: NodeTracerProvider;
+    private tracer: Tracer;
 
     /**
      * Creates a new instance of the
@@ -128,18 +131,23 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
         //this.client.addTelemetryProcessor(addBotIdentifiers);
 
         // Initialize the tracer provider
-        const provider = new NodeTracerProvider();
+        this.provider = new NodeTracerProvider();
+
+        const exporter = new ConsoleSpanExporter(); //TODO: replace with correct exporter.
 
         // Add the custom span processor
-        provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+        // this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+        this.provider.addSpanProcessor(new BatchSpanProcessor(exporter));
 
         // Register the tracer provider
-        provider.register();
+        this.provider.register();
 
         // Register instrumentations
         registerInstrumentations({
             instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
         });
+
+        this.tracer = trace.getTracer('applicationInsightsTelemetryClient');
     }
 
     // Protects against JSON.stringify cycles
@@ -182,8 +190,12 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     trackEvent(telemetry: TelemetryEvent): void {
-        const { name, properties, metrics: measurements } = telemetry;
-        this.defaultClient.trackEvent({ name, properties, measurements });
+        this.tracer.startActiveSpan('trackEvent', (span: Span) => {
+            const { name, properties, metrics: measurements } = telemetry;
+            span.setAttribute('userId', 'user-id');
+            this.defaultClient.trackEvent({ name, properties, measurements });
+            span.end();
+        });
     }
 
     /**
