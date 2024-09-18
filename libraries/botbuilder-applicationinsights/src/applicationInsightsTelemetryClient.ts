@@ -137,8 +137,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
         // Add the custom span processor
         // this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
-        const context = CorrelationContextManager.getCurrentContext();
-        this.provider.addSpanProcessor(new CustomSpanProcessor(this.client, context));
+        this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
 
         // Register the tracer provider
         this.provider.register();
@@ -191,12 +190,12 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     trackEvent(telemetry: TelemetryEvent): void {
-        const attributes: Attributes = getBotIdentifiers();
-        const options: SpanOptions = {
-            attributes: attributes,
-        };
-        const span = this.tracer.startSpan('track-event', options);
-        const { name, properties, metrics: measurements } = telemetry;
+        const telemetry2 = addBotIdentifiers(telemetry);
+        // const options: SpanOptions = {
+        //     attributes: attributes,
+        // };
+        const span = this.tracer.startSpan('track-event');
+        const { name, properties, metrics: measurements } = telemetry2;
         this.defaultClient.trackEvent({ name, properties, measurements });
         span.end();
     }
@@ -245,32 +244,29 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
  * so that application insights can correlate related events.
  */
-function getBotIdentifiers(): Attributes {
-    const correlationContext = CorrelationContextManager.getCurrentContext;
-    if (correlationContext && correlationContext.customProperties['activity']) {
-        const activity: Partial<Activity> = context.correlationContext.activity;
-        const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+function addBotIdentifiers(telemetry: TelemetryEvent): TelemetryEvent {
+    const correlationContext = CorrelationContextManager.getCurrentContext();
+    if (correlationContext && correlationContext['activity']) {
+        const activity: Partial<Activity> = correlationContext['activity'];
+        //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
         const userId: string = activity.from ? activity.from.id : '';
         const channelId: string = activity.channelId || '';
         const conversationId: string = activity.conversation ? activity.conversation.id : '';
         // Hashed ID is used due to max session ID length for App Insights session Id
-        const sessionId: string = conversationId
-            ? crypto.createHash('sha256').update(conversationId).digest('base64')
-            : '';
-
-        // set user id and session id
-        envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
-        envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+        const sessionId: string = conversationId;
+        // ? crypto.createHash('sha256').update(conversationId).digest('base64')
+        // : '';
 
         // Add additional properties
-        telemetryItem.properties = telemetryItem.properties || {};
-        telemetryItem.properties.activityId = activity.id;
-        telemetryItem.properties.channelId = channelId;
-        telemetryItem.properties.activityType = activity.type;
-        telemetryItem.properties.conversationId = conversationId;
+        telemetry.properties = telemetry.properties || {};
+        telemetry.properties.activityId = activity.id;
+        telemetry.properties.channelId = channelId;
+        telemetry.properties.activityType = activity.type;
+        telemetry.properties.conversationId = conversationId;
+        // telemetry.properties.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+        // telemetry.properties.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
     }
-
-    return true;
+    return telemetry;
 }
 
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
