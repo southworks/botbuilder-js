@@ -34,12 +34,12 @@ import {
 import { CorrelationContextManager } from 'applicationinsights/out/src/shim/CorrelationContextManager';
 import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
 import { CorrelationContext, MapContext } from './CorrelationContext';
-import { BatchSpanProcessor, ConsoleSpanExporter, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { CustomSpanProcessor } from './customSpanProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { Span, trace, Tracer } from '@opentelemetry/api';
+import { Attributes, SpanOptions, Tracer } from '@opentelemetry/api';
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
@@ -133,11 +133,12 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
         // Initialize the tracer provider
         this.provider = new NodeTracerProvider();
 
-        const exporter = new ConsoleSpanExporter(); //TODO: replace with correct exporter.
+        //const exporter = new ConsoleSpanExporter(); //TODO: replace with correct exporter.
 
         // Add the custom span processor
         // this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
-        this.provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+        const context = CorrelationContextManager.getCurrentContext();
+        this.provider.addSpanProcessor(new CustomSpanProcessor(this.client, context));
 
         // Register the tracer provider
         this.provider.register();
@@ -147,7 +148,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
             instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
         });
 
-        this.tracer = trace.getTracer('applicationInsightsTelemetryClient');
+        this.tracer = this.provider.getTracer('applicationInsightsTelemetryClient');
     }
 
     // Protects against JSON.stringify cycles
@@ -190,12 +191,14 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     trackEvent(telemetry: TelemetryEvent): void {
-        this.tracer.startActiveSpan('trackEvent', (span: Span) => {
-            const { name, properties, metrics: measurements } = telemetry;
-            span.setAttribute('userId', 'user-id');
-            this.defaultClient.trackEvent({ name, properties, measurements });
-            span.end();
-        });
+        const attributes: Attributes = getBotIdentifiers();
+        const options: SpanOptions = {
+            attributes: attributes,
+        };
+        const span = this.tracer.startSpan('track-event', options);
+        const { name, properties, metrics: measurements } = telemetry;
+        this.defaultClient.trackEvent({ name, properties, measurements });
+        span.end();
     }
 
     /**
@@ -237,6 +240,37 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
     flush(): void {
         this.defaultClient.flush();
     }
+}
+
+/* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
+ * so that application insights can correlate related events.
+ */
+function getBotIdentifiers(): Attributes {
+    const correlationContext = CorrelationContextManager.getCurrentContext;
+    if (correlationContext && correlationContext.customProperties['activity']) {
+        const activity: Partial<Activity> = context.correlationContext.activity;
+        const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+        const userId: string = activity.from ? activity.from.id : '';
+        const channelId: string = activity.channelId || '';
+        const conversationId: string = activity.conversation ? activity.conversation.id : '';
+        // Hashed ID is used due to max session ID length for App Insights session Id
+        const sessionId: string = conversationId
+            ? crypto.createHash('sha256').update(conversationId).digest('base64')
+            : '';
+
+        // set user id and session id
+        envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+        envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+
+        // Add additional properties
+        telemetryItem.properties = telemetryItem.properties || {};
+        telemetryItem.properties.activityId = activity.id;
+        telemetryItem.properties.channelId = channelId;
+        telemetryItem.properties.activityType = activity.type;
+        telemetryItem.properties.conversationId = conversationId;
+    }
+
+    return true;
 }
 
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
