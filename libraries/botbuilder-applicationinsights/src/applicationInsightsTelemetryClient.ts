@@ -39,7 +39,32 @@ import { CustomSpanProcessor } from './customSpanProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { Attributes, SpanOptions, Tracer } from '@opentelemetry/api';
+import { Attributes, SpanOptions, Tracer, trace, TracerProvider } from '@opentelemetry/api';
+import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
+
+import { Context, Span } from '@opentelemetry/api';
+import { ReadableSpan, SpanProcessor } from '@opentelemetry/sdk-trace-base';
+const { useAzureMonitor } = require('@azure/monitor-opentelemetry');
+const resources = require('@opentelemetry/resources');
+
+class SpanEnrichingProcessor implements SpanProcessor {
+    forceFlush(): Promise<void> {
+        return Promise.resolve();
+    }
+    onStart(span: Span, parentContext: Context): void {
+        return;
+    }
+    onEnd(span: ReadableSpan): void {
+        console.log('t2');
+        // span.attributes['custom-attribute'] = 'custom-value';
+        span.attributes['_MS.baseType'] = 'EventData';
+        span.attributes[SemanticAttributes.HTTP_CLIENT_IP] = '192.1.0.1';
+        span.attributes[SemanticAttributes.ENDUSER_ID] = 'user-id';
+    }
+    shutdown(): Promise<void> {
+        return Promise.resolve();
+    }
+}
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
@@ -84,7 +109,7 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
     private client: appInsights.TelemetryClient;
     private config: appInsights.Configuration;
-    private provider: NodeTracerProvider;
+    private provider: TracerProvider;
     private tracer: Tracer;
 
     /**
@@ -114,38 +139,78 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @internal
      */
     constructor(setupString: string) {
-        this.config = appInsights
-            .setup(setupString)
-            .setAutoDependencyCorrelation(true)
-            .setAutoCollectRequests(true)
-            .setAutoCollectPerformance(true, true) //default was true.
-            //.setAutoCollectPerformance(true)
-            .setAutoCollectExceptions(true)
-            .setAutoCollectDependencies(true)
-            .start();
+        // this.config = appInsights
+        //     .setup(setupString)
+        //     .setAutoDependencyCorrelation(true)
+        //     .setAutoCollectRequests(true)
+        //     .setAutoCollectPerformance(true, true) //default was true.
+        //     //.setAutoCollectPerformance(true)
+        //     .setAutoCollectExceptions(true)
+        //     .setAutoCollectDependencies(true)
+        //     .start();
 
-        this.client = appInsights.defaultClient;
+        const customResource = resources.Resource.EMPTY;
+        customResource.attributes[SemanticAttributes.ENDUSER_ID] = "my-instance";
+
+        useAzureMonitor({
+            azureMonitorExporterOptions: {
+                connectionString: setupString,
+            },
+            // spanProcessors: [new SpanEnrichingProcessor()],
+            resource: customResource,
+        });
+
+        this.provider = trace.getTracerProvider();
+
+        // var resource = resources.Resource;
+
+        // this.client = new appInsights.TelemetryClient(setupString);
+        // this.client.config.enableAutoDependencyCorrelation = true;
+        // this.client.config.enableAutoCollectRequests = true;
+        // this.client.config.enableAutoCollectPerformance = true;
+        // this.client.config.enableAutoCollectExceptions = true;
+        // this.client.config.enableAutoCollectDependencies = true;
+        // this.client.config.enableSendLiveMetrics = true;
+        // this.client.config.enableWebInstrumentation = true;
+        // this.client.config.azureMonitorOpenTelemetryOptions = {
+        //     // resource: { [appInsights.defaultClient.context.keys.userId]: 'testing2' }
+        //     resource: new resources.Resource({
+        //         ['user_Id']: 'testing3',
+        //         [this.client.context.keys.userId]: 'testing2',
+        //     }),
+        // };
+
+        // this.client.context.tags[this.client.context.keys.cloudRole] = 'node123';
+        // this.client = appInsights.defaultClient;
+        // this.client = new appInsights.TelemetryClient(setupString)
+        // this.config = this.client.config;
+        // this.client.initialize();
+        // this.client.commonProperties["customattribute2"] = "custom-value2";
+        // appInsights.defaultClient.commonProperties["customattribute3"] = "custom-value3";
+        // appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "MyRoleName3";
+        // this.client.context.tags[appInsights.defaultClient.context.keys.userId] = "testing2";
+        console.log('t1');
 
         //setupOpentelemetry();
 
         //this.client.addTelemetryProcessor(addBotIdentifiers);
 
         // Initialize the tracer provider
-        this.provider = new NodeTracerProvider();
+        // this.provider = new NodeTracerProvider();
 
         //const exporter = new ConsoleSpanExporter(); //TODO: replace with correct exporter.
 
         // Add the custom span processor
         // this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
-        this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+        // this.provider.addSpanProcessor(new SpanEnrichingProcessor());
 
         // Register the tracer provider
-        this.provider.register();
+        // this.provider.register();
 
         // Register instrumentations
-        registerInstrumentations({
-            instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
-        });
+        // registerInstrumentations({
+        //     instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+        // });
 
         this.tracer = this.provider.getTracer('applicationInsightsTelemetryClient');
     }
@@ -190,13 +255,13 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     trackEvent(telemetry: TelemetryEvent): void {
-        const telemetry2 = addBotIdentifiers(telemetry);
+        // const telemetry2 = addBotIdentifiers(telemetry);
         // const options: SpanOptions = {
         //     attributes: attributes,
         // };
         const span = this.tracer.startSpan('track-event');
-        const { name, properties, metrics: measurements } = telemetry2;
-        this.defaultClient.trackEvent({ name, properties, measurements });
+        // const { name, properties, metrics: measurements } = telemetry;
+        // this.defaultClient.trackEvent({ name, properties, measurements });
         span.end();
     }
 
