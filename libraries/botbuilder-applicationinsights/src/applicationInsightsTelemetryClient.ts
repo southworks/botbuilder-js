@@ -34,12 +34,13 @@ import {
 import { CorrelationContextManager } from 'applicationinsights/out/src/shim/CorrelationContextManager';
 import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
 import { CorrelationContext, MapContext } from './CorrelationContext';
-import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
+import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { CustomSpanProcessor } from './customSpanProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { Attributes, SpanOptions, Tracer } from '@opentelemetry/api';
+import { AzureMonitorTraceExporter } from '@azure/monitor-opentelemetry-exporter';
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
@@ -121,33 +122,52 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
             .setAutoCollectPerformance(true, true) //default was true.
             //.setAutoCollectPerformance(true)
             .setAutoCollectExceptions(true)
-            .setAutoCollectDependencies(true)
-            .start();
+            .setAutoCollectDependencies(true);
+        // .start();
+
+        appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
+            spanProcessors: [new CustomSpanProcessor(this.client)],
+        };
+
+        appInsights.start();
 
         this.client = appInsights.defaultClient;
+
+        // this.client.config.azureMonitorOpenTelemetryOptions = {
+        //     spanProcessors: [new CustomSpanProcessor(this.client)],
+        // };
 
         //setupOpentelemetry();
 
         //this.client.addTelemetryProcessor(addBotIdentifiers);
 
         // Initialize the tracer provider
-        this.provider = new NodeTracerProvider();
+        //this.provider = new NodeTracerProvider();
 
         //const exporter = new ConsoleSpanExporter(); //TODO: replace with correct exporter.
 
         // Add the custom span processor
         // this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
-        this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+        //this.provider.addSpanProcessor(new CustomSpanProcessor(this.client));
+        // this.provider.addSpanProcessor(
+        //     new BatchSpanProcessor(
+        //         new AzureMonitorTraceExporter({
+        //             connectionString:
+        //                 'InstrumentationKey=xxxx;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://westus.livediagnostics.monitor.azure.com/;ApplicationId=xxxx',
+        //         })
+        //     )
+        // );
 
         // Register the tracer provider
-        this.provider.register();
+        // this.provider.register();
 
         // Register instrumentations
-        registerInstrumentations({
-            instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
-        });
+        // registerInstrumentations({
+        //     instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation()],
+        // });
 
-        this.tracer = this.provider.getTracer('applicationInsightsTelemetryClient');
+        //this.tracer = this.provider.getTracer('applicationInsightsTelemetryClient');
+        //this.tracer = this.client.config..getTracer();
     }
 
     // Protects against JSON.stringify cycles
@@ -190,14 +210,14 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
      */
     trackEvent(telemetry: TelemetryEvent): void {
-        const telemetry2 = addBotIdentifiers(telemetry);
+        //const telemetry2 = addBotIdentifiers(telemetry);
         // const options: SpanOptions = {
         //     attributes: attributes,
         // };
-        const span = this.tracer.startSpan('track-event');
-        const { name, properties, metrics: measurements } = telemetry2;
+        //const span = this.tracer.startSpan('track-event');
+        const { name, properties, metrics: measurements } = telemetry;
         this.defaultClient.trackEvent({ name, properties, measurements });
-        span.end();
+        //span.end();
     }
 
     /**
@@ -245,15 +265,15 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
  * so that application insights can correlate related events.
  */
 function addBotIdentifiers(telemetry: TelemetryEvent): TelemetryEvent {
-    const correlationContext = CorrelationContextManager.getCurrentContext();
+    const correlationContext = appInsights.getCorrelationContext(); //CorrelationContextManager.getCurrentContext();
     if (correlationContext && correlationContext['activity']) {
         const activity: Partial<Activity> = correlationContext['activity'];
         //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
-        const userId: string = activity.from ? activity.from.id : '';
+        //const userId: string = activity.from ? activity.from.id : '';
         const channelId: string = activity.channelId || '';
         const conversationId: string = activity.conversation ? activity.conversation.id : '';
         // Hashed ID is used due to max session ID length for App Insights session Id
-        const sessionId: string = conversationId;
+        //const sessionId: string = conversationId;
         // ? crypto.createHash('sha256').update(conversationId).digest('base64')
         // : '';
 

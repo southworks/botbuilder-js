@@ -1,5 +1,6 @@
 import { SpanProcessor, Span } from '@opentelemetry/sdk-trace-base';
 import { TelemetryClient } from 'applicationinsights';
+import { CorrelationContextManager } from 'applicationinsights/out/src/shim/CorrelationContextManager';
 import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
 import { Activity } from 'botframework-schema';
 import * as crypto from 'crypto';
@@ -19,34 +20,32 @@ export class CustomSpanProcessor implements SpanProcessor {
     }
 
     onStart(span: Span): void {
-        // span.setAttribute('userId', 'user-id');
-        // if (this.context && this.context.customProperties['activity']) {
-        //     const activity: Partial<Activity> = this.context.customProperties['activity'];
-        //     //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
-        //     const userId: string = activity.from ? activity.from.id : '';
-        //     const channelId: string = activity.channelId || '';
-        //     const conversationId: string = activity.conversation ? activity.conversation.id : '';
-        //     // Hashed ID is used due to max session ID length for App Insights session Id
-        //     const sessionId: string = conversationId
-        //         ? crypto.createHash('sha256').update(conversationId).digest('base64')
-        //         : '';
+        const correlationContext = CorrelationContextManager.spanToContextObject(
+            span.spanContext(),
+            span.parentSpanId,
+            span.name
+        );
+        if (correlationContext && correlationContext['activity']) {
+            const activity: Partial<Activity> = correlationContext['activity'];
+            //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+            //const userId: string = activity.from ? activity.from.id : '';
+            // const channelId: string = activity.channelId || '';
+            // const conversationId: string = activity.conversation ? activity.conversation.id : '';
+            // Hashed ID is used due to max session ID length for App Insights session Id
+            //const sessionId: string = conversationId;
+            // ? crypto.createHash('sha256').update(conversationId).digest('base64')
+            // : '';
 
-        //     // set user id and session id
-        //     envelope.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
-        //     envelope.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
-
-
-        //     // Add additional properties
-        //     // telemetryItem.properties = telemetryItem.properties || {};
-        //     // telemetryItem.properties.activityId = activity.id;
-        //     // telemetryItem.properties.channelId = channelId;
-        //     // telemetryItem.properties.activityType = activity.type;
-        //     // telemetryItem.properties.conversationId = conversationId;
-        //     span.setAttribute('activityId', activity.id);
-        //     span.setAttribute('channelId', channelId);
-        //     span.setAttribute('activityType', activity.type);
-        //     span.setAttribute('conversationId', conversationId);
-        // }
+            // Add additional properties
+            span.setAttribute('activityId', activity.id);
+            // telemetry.properties = telemetry.properties || {};
+            // telemetry.properties.activityId = activity.id;
+            // telemetry.properties.channelId = channelId;
+            // telemetry.properties.activityType = activity.type;
+            // telemetry.properties.conversationId = conversationId;
+            // telemetry.properties.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+            // telemetry.properties.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+        }
     }
 
     onEnd(span: Span): void {
