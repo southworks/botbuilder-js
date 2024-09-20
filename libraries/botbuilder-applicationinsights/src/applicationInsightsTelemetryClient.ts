@@ -36,6 +36,7 @@ import { ICorrelationContext } from 'applicationinsights/out/src/shim/types';
 import { CorrelationContext, MapContext } from './CorrelationContext';
 import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 import { CustomSpanProcessor } from './customSpanProcessor';
+import { CustomLogRecordProcessor } from './customLogRecordProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
@@ -127,11 +128,13 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 
         appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
             spanProcessors: [new CustomSpanProcessor(this.client)],
+            logRecordProcessors: [new CustomLogRecordProcessor()],
         };
 
         appInsights.start();
 
         this.client = appInsights.defaultClient;
+        //this.client.context.tags = { ['userId']: 'user-id' };
 
         // this.client.config.azureMonitorOpenTelemetryOptions = {
         //     spanProcessors: [new CustomSpanProcessor(this.client)],
