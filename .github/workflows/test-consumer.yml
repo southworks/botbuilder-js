@@ -14,7 +14,7 @@ on:
     - '4.13'
 
 jobs:
-  ci:
+  # ci:
     # name: test:consumer
     # runs-on: ubuntu-latest
   ci:
