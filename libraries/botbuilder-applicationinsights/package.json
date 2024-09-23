@@ -33,6 +33,7 @@
     "@opentelemetry/instrumentation": "^0.53.0",
     "@opentelemetry/instrumentation-express": "^0.42.0",
     "@opentelemetry/instrumentation-http": "^0.53.0",
+    "@opentelemetry/sdk-logs": "^0.53.0",
     "@opentelemetry/sdk-trace-base": "^1.26.0",
     "@opentelemetry/sdk-trace-node": "^1.26.0",
     "applicationinsights": "^3.2.2",
