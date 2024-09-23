@@ -15,8 +15,16 @@ on:
 
 jobs:
   ci:
-    name: test:consumer
-    runs-on: ubuntu-latest
+    # name: test:consumer
+    # runs-on: ubuntu-latest
+  ci:
+    name: "${{ github.workflow }} ${{ matrix.os }} (node ${{ matrix.node-version }})"
+    runs-on: ${{ matrix.os }}-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu, windows, macos]
+        node-version: [18.x, 20.x]
 
     steps:
       - uses: actions/checkout@v2
