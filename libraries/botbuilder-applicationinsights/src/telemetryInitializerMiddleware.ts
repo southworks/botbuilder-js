@@ -7,6 +7,7 @@ import { TurnContext } from 'botbuilder-core';
 //import { CorrelationContext } from 'applicationinsights/out/AutoCollection/CorrelationContextManager';
 import { ICorrelationContext as CorrelationContext } from 'applicationinsights/out/src/shim/types';
 import * as appInsights from 'applicationinsights';
+import { ApplicationInsightsTelemetryClient } from './applicationInsightsTelemetryClient';
 
 /**
  * Middleware for storing the incoming activity to be made available to Application Insights and optionally run the TelemetryLoggerMiddleware.
@@ -76,8 +77,10 @@ export class TelemetryInitializerMiddleware implements Middleware {
         if (context.activity && context.activity.id) {
             const correlationContext: CorrelationContext =
                 this._correlationContext || appInsights.getCorrelationContext();
-            if (correlationContext) {
-                correlationContext['activity'] = context.activity;
+            if (this.telemetryClient.telemetryClient) {
+                (this.telemetryClient.telemetryClient as ApplicationInsightsTelemetryClient).defaultClient.context[
+                    'activity'
+                ] = context.activity;
             }
         }
 

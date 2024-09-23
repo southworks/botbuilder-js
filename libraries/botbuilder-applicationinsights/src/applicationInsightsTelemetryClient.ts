@@ -22,6 +22,7 @@ import {
     TelemetryException,
     TelemetryTrace,
     TelemetryPageView,
+    IActivity,
 } from 'botbuilder-core';
 
 // This is the currently recommended work-around for using Application Insights with async/await
@@ -39,8 +40,27 @@ import { CustomSpanProcessor } from './customSpanProcessor';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { Attributes, SpanOptions, Tracer } from '@opentelemetry/api';
+import { Attributes, SpanOptions, Tracer, trace } from '@opentelemetry/api';
+import { logs } from '@opentelemetry/api-logs';
 import { AzureMonitorTraceExporter } from '@azure/monitor-opentelemetry-exporter';
+import { LogRecord, LogRecordProcessor, LoggerProvider } from '@opentelemetry/sdk-logs';
+
+class SimpleLogRecordProcessor implements LogRecordProcessor {
+    constructor(private client) {}
+    onEmit(logRecord: LogRecord) {
+        const ac = this.client.context['activity'];
+        if (ac) {
+            logRecord.setAttribute('activity', ac);
+        }
+        console.log('record activity');
+    }
+    forceFlush() {
+        return Promise.resolve();
+    }
+    shutdown() {
+        return Promise.resolve();
+    }
+}
 
 const origGetCurrentContext = CorrelationContextManager.getCurrentContext;
 const ns = cls.createNamespace('my.request');
@@ -68,6 +88,16 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
         next();
     });
 };
+
+type TelemetryCommonProperties = {
+    activity: IActivity;
+    keys: any;
+    tags: any;
+}
+
+// interface TelemetryClient extends appInsights.TelemetryClient {
+//     context: Partial<TelemetryCommonProperties>
+// }
 
 /**
  * This is a wrapper class around the Application Insights node client.
@@ -125,13 +155,20 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
             .setAutoCollectDependencies(true);
         // .start();
 
+        this.client = appInsights.defaultClient;
         appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
+            azureMonitorExporterOptions: {
+                connectionString: setupString,
+            },
             spanProcessors: [new CustomSpanProcessor(this.client)],
+            logRecordProcessors: [new SimpleLogRecordProcessor(this.client)],
         };
 
         appInsights.start();
 
-        this.client = appInsights.defaultClient;
+        // this.client.context['activity'] = { type: 'message' };
+
+        // (logs.getLoggerProvider() as LoggerProvider).addLogRecordProcessor(new SimpleLogRecordProcessor(this.client));
 
         // this.client.config.azureMonitorOpenTelemetryOptions = {
         //     spanProcessors: [new CustomSpanProcessor(this.client)],
@@ -264,30 +301,61 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
  * so that application insights can correlate related events.
  */
-function addBotIdentifiers(telemetry: TelemetryEvent): TelemetryEvent {
-    const correlationContext = appInsights.getCorrelationContext(); //CorrelationContextManager.getCurrentContext();
-    if (correlationContext && correlationContext['activity']) {
-        const activity: Partial<Activity> = correlationContext['activity'];
-        //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
-        //const userId: string = activity.from ? activity.from.id : '';
-        const channelId: string = activity.channelId || '';
-        const conversationId: string = activity.conversation ? activity.conversation.id : '';
-        // Hashed ID is used due to max session ID length for App Insights session Id
-        //const sessionId: string = conversationId;
-        // ? crypto.createHash('sha256').update(conversationId).digest('base64')
-        // : '';
+// function addBotIdentifiers(telemetry: TelemetryEvent): TelemetryEvent {
+//     const correlationContext = appInsights.getCorrelationContext(); //CorrelationContextManager.getCurrentContext();
+//     if (correlationContext && correlationContext['activity']) {
+//         const activity: Partial<Activity> = correlationContext['activity'];
+//         //const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+//         //const userId: string = activity.from ? activity.from.id : '';
+//         const channelId: string = activity.channelId || '';
+//         const conversationId: string = activity.conversation ? activity.conversation.id : '';
+//         // Hashed ID is used due to max session ID length for App Insights session Id
+//         //const sessionId: string = conversationId;
+//         // ? crypto.createHash('sha256').update(conversationId).digest('base64')
+//         // : '';
 
-        // Add additional properties
-        telemetry.properties = telemetry.properties || {};
-        telemetry.properties.activityId = activity.id;
-        telemetry.properties.channelId = channelId;
-        telemetry.properties.activityType = activity.type;
-        telemetry.properties.conversationId = conversationId;
-        // telemetry.properties.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
-        // telemetry.properties.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
-    }
-    return telemetry;
-}
+//         // Add additional properties
+//         telemetry.properties = telemetry.properties || {};
+//         telemetry.properties.activityId = activity.id;
+//         telemetry.properties.channelId = channelId;
+//         telemetry.properties.activityType = activity.type;
+//         telemetry.properties.conversationId = conversationId;
+//         // telemetry.properties.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+//         // telemetry.properties.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+//     }
+//     return telemetry;
+// }
+
+/* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
+ * so that application insights can correlate related events.
+ */
+// function addBotIdentifiers(context: { [name: string]: any }): boolean {
+// //function addBotIdentifiers(envelope: appInsights.Contracts.Envelope, context: { [name: string]: any }): boolean {
+//     if (context.correlationContext && context.correlationContext.activity) {
+//         const activity: Partial<Activity> = context.correlationContext.activity;
+//         const telemetryItem: any = envelope.data['baseData']; // TODO: update when envelope ts definition includes baseData
+//         const userId: string = activity.from ? activity.from.id : '';
+//         const channelId: string = activity.channelId || '';
+//         const conversationId: string = activity.conversation ? activity.conversation.id : '';
+//         // Hashed ID is used due to max session ID length for App Insights session Id
+//         const sessionId: string = conversationId
+//             ? crypto.createHash('sha256').update(conversationId).digest('base64')
+//             : '';
+
+//         // set user id and session id
+//         context.tags[appInsights.defaultClient.context.keys.userId] = channelId + userId;
+//         context.tags[appInsights.defaultClient.context.keys.sessionId] = sessionId;
+
+//         // Add additional properties
+//         telemetryItem.properties = telemetryItem.properties || {};
+//         telemetryItem.properties.activityId = activity.id;
+//         telemetryItem.properties.channelId = channelId;
+//         telemetryItem.properties.activityType = activity.type;
+//         telemetryItem.properties.conversationId = conversationId;
+//     }
+
+//     return true;
+// }
 
 /* Define the telemetry initializer function which is responsible for setting the userId. sessionId and some other values
  * so that application insights can correlate related events.

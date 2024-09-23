@@ -20,6 +20,7 @@ export class CustomSpanProcessor implements SpanProcessor {
     }
 
     onStart(span: Span): void {
+        console.log(1);
         const correlationContext = CorrelationContextManager.spanToContextObject(
             span.spanContext(),
             span.parentSpanId,
@@ -49,6 +50,7 @@ export class CustomSpanProcessor implements SpanProcessor {
     }
 
     onEnd(span: Span): void {
+        console.log(2);
         const context = this.telemetryClient.context;
         // const envelope: any = {}; // Create an envelope object to hold telemetry data
         // const activity: any = span.attributes['ai.operation.id'];
