@@ -84,10 +84,32 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
  * ```
  */
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
-    private client: appInsights.TelemetryClient;
-    private config: appInsights.Configuration;
+    private static client: appInsights.TelemetryClient;
+    private static config: appInsights.Configuration;
     private provider: NodeTracerProvider;
     private tracer: Tracer;
+
+    // eslint-disable-next-line prettier/prettier
+    static {
+        console.log('static block called');
+        this.config = appInsights
+        .setup()
+        .setAutoDependencyCorrelation(true)
+        .setAutoCollectRequests(true)
+        .setAutoCollectPerformance(true, true) //default was true.
+        //.setAutoCollectPerformance(true)
+        .setAutoCollectExceptions(true)
+        .setAutoCollectDependencies(true);
+
+        this.client = appInsights.defaultClient;
+        
+        appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
+            spanProcessors: [new CustomSpanProcessor(this.client)],
+            logRecordProcessors: [new CustomLogRecordProcessor()],
+        };
+
+        appInsights.start();
+    }
 
     /**
      * Creates a new instance of the
@@ -116,24 +138,24 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @internal
      */
     constructor(setupString: string) {
-        this.config = appInsights
-            .setup(setupString)
-            .setAutoDependencyCorrelation(true)
-            .setAutoCollectRequests(true)
-            .setAutoCollectPerformance(true, true) //default was true.
-            //.setAutoCollectPerformance(true)
-            .setAutoCollectExceptions(true)
-            .setAutoCollectDependencies(true);
+        // this.config = appInsights
+        //     .setup(setupString)
+        //     .setAutoDependencyCorrelation(true)
+        //     .setAutoCollectRequests(true)
+        //     .setAutoCollectPerformance(true, true) //default was true.
+        //     //.setAutoCollectPerformance(true)
+        //     .setAutoCollectExceptions(true)
+        //     .setAutoCollectDependencies(true);
         // .start();
 
-        appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
-            spanProcessors: [new CustomSpanProcessor(this.client)],
-            logRecordProcessors: [new CustomLogRecordProcessor()],
-        };
+        // appInsights.defaultClient.config.azureMonitorOpenTelemetryOptions = {
+        //     spanProcessors: [new CustomSpanProcessor(this.client)],
+        //     logRecordProcessors: [new CustomLogRecordProcessor()],
+        // };
 
-        appInsights.start();
+        //appInsights.start();
 
-        this.client = appInsights.defaultClient;
+        // this.client = appInsights.defaultClient;
         //this.client.context.tags = { ['userId']: 'user-id' };
 
         // this.client.config.azureMonitorOpenTelemetryOptions = {
@@ -186,7 +208,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @returns app insights configuration
      */
     get configuration(): appInsights.Configuration {
-        return this.config;
+        return ApplicationInsightsTelemetryClient.config;
     }
 
     /**
@@ -195,7 +217,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
      * @returns app insights telemetry client
      */
     get defaultClient(): appInsights.TelemetryClient {
-        return this.client;
+        return ApplicationInsightsTelemetryClient.client;
     }
 
     /**
