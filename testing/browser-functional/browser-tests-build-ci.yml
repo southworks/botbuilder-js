@@ -45,8 +45,8 @@ steps:
 - script: yarn --network-timeout 600000
   displayName: yarn install
 
-- script: cd testing/browser-functional/browser-echo-bot && yarn build
-  displayName: yarn build browser-echo-bot
+- script: yarn build
+  displayName: yarn build
 
 - task: PowerShell@2
   inputs:
