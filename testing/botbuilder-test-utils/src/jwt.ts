@@ -6,7 +6,7 @@ import forge from 'node-forge';
 import jwt, { Algorithm } from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
 import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 import url from 'url';
-import { nanoid } from 'nanoid';
+//import { nanoid } from 'nanoid';
 import { ok } from 'assert';
 
 /**
@@ -57,7 +57,8 @@ const formatHost = (url: url.Url): string => `${url.protocol}//${url.host}`;
  * @param {Partial<Options>} options options for stubbing jwt
  * @returns {Result} helpers for stubbed jwt
  */
-export function stub(options: Partial<Options> = {}): Result {
+export async function stub(options: Partial<Options> = {}): Promise<Result> {
+    const { nanoid } = await import('nanoid');
     const {
         algorithm = 'RS256',
         bits = 2048,

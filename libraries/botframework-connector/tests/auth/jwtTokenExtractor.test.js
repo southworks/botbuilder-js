@@ -9,8 +9,8 @@ const { StatusCodes } = require('../../../botframework-schema');
 describe('JwtTokenExtractor', function () {
     jwt.mocha();
 
-    const initialize = () => {
-        const { algorithm, issuer, metadata, sign, verify } = jwt.stub();
+    const initialize = async () => {
+        const { algorithm, issuer, metadata, sign, verify } = await jwt.stub();
 
         const client = new JwtTokenExtractor(
             {
@@ -25,7 +25,7 @@ describe('JwtTokenExtractor', function () {
 
     describe('getIdentityFromAuthHeader', function () {
         it('works end-to-end', async function () {
-            const { client, issuer, sign, verify } = initialize();
+            const { client, issuer, sign, verify } = await initialize();
 
             const key = 'value';
 
@@ -41,7 +41,7 @@ describe('JwtTokenExtractor', function () {
 
     describe('validateToken', function () {
         it('throws with expired token', async function () {
-            const { algorithm, issuer, metadata, sign } = jwt.stub();
+            const { algorithm, issuer, metadata, sign } = await jwt.stub();
             const key = 'value';
             const token = sign({ key });
 

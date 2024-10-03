@@ -57,7 +57,7 @@ describe('JwtTokenValidation', function () {
             version = '1.0',
         }) => {
             // Stub OpenID/JWKS calls so that we can generate signed JWTs in the tests
-            const { sign, verify: verifyJwt } = jwt.stub({
+            const { sign, verify: verifyJwt } = await jwt.stub({
                 issuer: parameters.issuer[0],
                 metadata: url.parse(metadata),
             });
