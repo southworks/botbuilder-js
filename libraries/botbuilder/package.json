@@ -51,7 +51,7 @@
   "scripts": {
     "build": "npm-run-all clean build:tsc build:tsup",
     "build:tsc": "tsc -b",
-    "build:tsup": "tsup src/**/* --format cjs,esm --sourcemap --outDir lib",
+    "build:tsup": "tsup src/ --format cjs,esm --sourcemap --outDir lib",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "build:rollup": "yarn clean && yarn build:tsc && yarn build:tsup && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
