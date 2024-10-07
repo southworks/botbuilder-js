@@ -36,7 +36,7 @@
     "botframework-schema": "4.1.6",
     "botframework-streaming": "4.1.6",
     "dayjs": "^1.11.13",
-    "filenamify": "^4.3.0",
+    "filenamify": "^6.0.0",
     "fs-extra": "^11.2.0",
     "htmlparser2": "^9.0.1",
     "uuid": "^10.0.0",
@@ -49,14 +49,16 @@
     "node-mocks-http": "^1.16.0"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "npm-run-all clean build:tsc build:tsup",
+    "build:tsc": "tsc -b",
+    "build:tsup": "tsup src/**/* --format cjs,esm --sourcemap --outDir lib",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
-    "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
+    "build:rollup": "yarn clean && yarn build:tsc && yarn build:tsup && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "npm-run-all build test:mocha",
+    "test": "npm-run-all build:tsc build:tsup test:mocha",
     "test:compat": "api-extractor run --verbose",
     "test:mocha": "nyc mocha tests"
   },
