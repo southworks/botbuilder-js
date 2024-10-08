@@ -8,7 +8,6 @@
 import { join, parse } from 'path';
 import { mkdirp, pathExists, readdir, readFile, remove, writeFile } from 'fs-extra';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import filenamify from 'filenamify';
 
 /**
  * @private
@@ -123,8 +122,8 @@ export class FileTranscriptStore implements TranscriptStore {
             throw new Error('activity cannot be null for logActivity()');
         }
 
-        const conversationFolder: string = this.getTranscriptFolder(activity.channelId, activity.conversation.id);
-        const activityFileName: string = this.getActivityFilename(activity);
+        const conversationFolder: string = await this.getTranscriptFolder(activity.channelId, activity.conversation.id);
+        const activityFileName: string = await this.getActivityFilename(activity);
 
         return this.saveActivity(activity, conversationFolder, activityFileName);
     }
@@ -153,7 +152,7 @@ export class FileTranscriptStore implements TranscriptStore {
         }
 
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
-        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+        const transcriptFolder: string = await this.getTranscriptFolder(channelId, conversationId);
 
         const exists = await pathExists(transcriptFolder);
         if (!exists) {
@@ -195,7 +194,7 @@ export class FileTranscriptStore implements TranscriptStore {
         }
 
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
-        const channelFolder: string = this.getChannelFolder(channelId);
+        const channelFolder: string = await this.getChannelFolder(channelId);
 
         const exists = await pathExists(channelFolder);
         if (!exists) {
@@ -230,7 +229,7 @@ export class FileTranscriptStore implements TranscriptStore {
             throw new Error('Missing conversationId');
         }
 
-        const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
+        const transcriptFolder: string = await this.getTranscriptFolder(channelId, conversationId);
 
         return remove(transcriptFolder);
     }
@@ -256,28 +255,29 @@ export class FileTranscriptStore implements TranscriptStore {
     /**
      * @private
      */
-    private getActivityFilename(activity: Activity): string {
-        return `${getTicks(activity.timestamp)}-${this.sanitizeKey(activity.id)}.json`;
+    private async getActivityFilename(activity: Activity): Promise<string> {
+        return `${getTicks(activity.timestamp)}-${await this.sanitizeKey(activity.id)}.json`;
     }
 
     /**
      * @private
      */
-    private getChannelFolder(channelId: string): string {
-        return join(this.rootFolder, this.sanitizeKey(channelId));
+    private async getChannelFolder(channelId: string): Promise<string> {
+        return join(this.rootFolder, await this.sanitizeKey(channelId));
     }
 
     /**
      * @private
      */
-    private getTranscriptFolder(channelId: string, conversationId: string): string {
-        return join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
+    private async getTranscriptFolder(channelId: string, conversationId: string): Promise<string> {
+        return join(this.rootFolder, await this.sanitizeKey(channelId), await this.sanitizeKey(conversationId));
     }
 
     /**
      * @private
      */
-    private sanitizeKey(key: string): string {
-        return filenamify(key);
+    private async sanitizeKey(key: string): Promise<string> {
+        const filenamify = await import('filenamify');
+        return filenamify.default(key);
     }
 }
