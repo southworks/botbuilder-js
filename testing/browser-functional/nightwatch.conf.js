@@ -1,58 +1,150 @@
-const { drivers, browsers } = require('./globals');
-const seleniumServer = require('selenium-server');
+// Refer to the online docs for more details:
+// https://nightwatchjs.org/gettingstarted/configuration/
+//
 
-module.exports = {
-    src_folders: ['tests'],
-    page_objects_path: 'tests/tests_pages',
-    globals_path: './globals.js',
+//  _   _  _         _      _                     _          _
+// | \ | |(_)       | |    | |                   | |        | |
+// |  \| | _   __ _ | |__  | |_ __      __  __ _ | |_   ___ | |__
+// | . ` || | / _` || '_ \ | __|\ \ /\ / / / _` || __| / __|| '_ \
+// | |\  || || (_| || | | || |_  \ V  V / | (_| || |_ | (__ | | | |
+// \_| \_/|_| \__, ||_| |_| \__|  \_/\_/   \__,_| \__| \___||_| |_|
+//             __/ |
+//            |___/
+
+const { Browser } = require('selenium-webdriver');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const { browserExists } = require('./nightwatch/requirements');
+
+const config = {
+    // An array of folders (excluding subfolders) where your tests are located;
+    // if this is not specified, the test source must be passed as the second argument to the test runner.
+    src_folders: ['nightwatch/tests'],
+
+    // See https://nightwatchjs.org/guide/concepts/page-object-model.html
+    page_objects_path: ['nightwatch/pages'],
+
+    // See https://nightwatchjs.org/guide/extending-nightwatch/adding-custom-commands.html
+    custom_commands_path: [],
+
+    // See https://nightwatchjs.org/guide/extending-nightwatch/adding-custom-assertions.html
+    custom_assertions_path: [],
+
+    // See https://nightwatchjs.org/guide/extending-nightwatch/adding-plugins.html
+    plugins: [],
+
+    // See https://nightwatchjs.org/guide/concepts/test-globals.html
+    // globals_path: './globals.js',
+    globals: {
+        async before() {
+            // Start browser-echo-bot
+            console.log('before');
+
+            const eFlag = process.argv.indexOf('-e', 2);
+            let browser = eFlag >= 0 ? process.argv[eFlag + 1] : undefined;
+            browser ??= config.test_settings.default.desiredCapabilities.browserName;
+            const exists = await browserExists(browser);
+            if (!exists) {
+                process.exit(1);
+            }
+            process.exit(1);
+        },
+    },
+
+    webdriver: {},
+
+    test_workers: {
+        enabled: true,
+    },
+
     test_settings: {
         default: {
-            request_timeout_options: {
-                timeout: 100000,
-                retry_attempts: 3,
+            disable_error_log: false,
+            launch_url: process.env.TestURI,
+
+            screenshots: {
+                enabled: false,
+                path: 'screens',
+                on_failure: true,
+            },
+
+            desiredCapabilities: {
+                browserName: 'chrome',
+            },
+
+            webdriver: {
+                start_process: true,
+                server_path: '',
             },
         },
 
-        selenium: {
-            selenium: {
-                start_process: true,
-                check_process_delay: 10000,
-                port: drivers[browsers.FIREFOX].port,
-                server_path: seleniumServer.path,
-                cli_args: {
-                    'webdriver.gecko.driver': drivers[browsers.FIREFOX].path,
+        firefox: {
+            desiredCapabilities: {
+                browserName: 'firefox',
+                alwaysMatch: {
+                    acceptInsecureCerts: true,
+                    'moz:firefoxOptions': {
+                        args: [
+                            // '-headless',
+                            // '-verbose'
+                        ],
+                    },
                 },
             },
             webdriver: {
-                start_process: false,
+                start_process: true,
+                server_path: '',
+                cli_args: [
+                    // very verbose geckodriver logs
+                    // '-vv'
+                ],
             },
         },
 
-        [browsers.CHROME]: {
-            silent: true,
-            selenium: {
-                start_process: false,
+        chrome: {
+            desiredCapabilities: {
+                browserName: 'chrome',
+                'goog:chromeOptions': {
+                    // More info on Chromedriver: https://sites.google.com/a/chromium.org/chromedriver/
+                    args: [
+                        //'--no-sandbox',
+                        //'--ignore-certificate-errors',
+                        //'--allow-insecure-localhost',
+                        //'--headless=new'
+                    ],
+                },
             },
+
             webdriver: {
                 start_process: true,
-                server_path: drivers[browsers.CHROME].path,
-                port: drivers[browsers.CHROME].port,
-            },
-            desiredCapabilities: {
-                browserName: browsers.CHROME,
-                javascriptEnabled: true,
-                acceptSslCerts: true,
+                server_path: '',
+                cli_args: [
+                    // --verbose
+                ],
             },
         },
 
-        [browsers.FIREFOX]: {
-            extends: 'selenium',
-            silent: true,
+        edge: {
             desiredCapabilities: {
-                browserName: browsers.FIREFOX,
-                javascriptEnabled: true,
-                acceptSslCerts: true,
+                browserName: 'MicrosoftEdge',
+                'ms:edgeOptions': {
+                    // More info on EdgeDriver: https://docs.microsoft.com/en-us/microsoft-edge/webdriver-chromium/capabilities-edge-options
+                    args: [
+                        //'--headless=new'
+                    ],
+                },
+            },
+
+            webdriver: {
+                start_process: true,
+                server_path: '',
+                cli_args: [
+                    // --verbose
+                ],
             },
         },
     },
 };
+
+module.exports = config;
