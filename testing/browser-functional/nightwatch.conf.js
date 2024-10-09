@@ -11,11 +11,13 @@
 //             __/ |
 //            |___/
 
-const { Browser } = require('selenium-webdriver');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { browserExists } = require('./nightwatch/requirements');
+const { Browser } = require('selenium-webdriver');
+const { validate, prepare } = require('./nightwatch/requirements');
+const { DEFAULT_BROWSER } = require('./nightwatch/utils');
+const { spawn } = require('child_process');
 
 const config = {
     // An array of folders (excluding subfolders) where your tests are located;
@@ -38,17 +40,8 @@ const config = {
     // globals_path: './globals.js',
     globals: {
         async before() {
-            // Start browser-echo-bot
-            console.log('before');
-
-            const eFlag = process.argv.indexOf('-e', 2);
-            let browser = eFlag >= 0 ? process.argv[eFlag + 1] : undefined;
-            browser ??= config.test_settings.default.desiredCapabilities.browserName;
-            const exists = await browserExists(browser);
-            if (!exists) {
-                process.exit(1);
-            }
-            process.exit(1);
+            await validate();
+            await prepare();
         },
     },
 
@@ -70,7 +63,7 @@ const config = {
             },
 
             desiredCapabilities: {
-                browserName: 'chrome',
+                browserName: DEFAULT_BROWSER,
             },
 
             webdriver: {
@@ -81,7 +74,7 @@ const config = {
 
         firefox: {
             desiredCapabilities: {
-                browserName: 'firefox',
+                browserName: Browser.FIREFOX,
                 alwaysMatch: {
                     acceptInsecureCerts: true,
                     'moz:firefoxOptions': {
@@ -104,7 +97,7 @@ const config = {
 
         chrome: {
             desiredCapabilities: {
-                browserName: 'chrome',
+                browserName: Browser.CHROME,
                 'goog:chromeOptions': {
                     // More info on Chromedriver: https://sites.google.com/a/chromium.org/chromedriver/
                     args: [
@@ -127,7 +120,7 @@ const config = {
 
         edge: {
             desiredCapabilities: {
-                browserName: 'MicrosoftEdge',
+                browserName: Browser.EDGE,
                 'ms:edgeOptions': {
                     // More info on EdgeDriver: https://docs.microsoft.com/en-us/microsoft-edge/webdriver-chromium/capabilities-edge-options
                     args: [
