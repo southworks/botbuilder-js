@@ -13,7 +13,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "nightwatch --env firefox,chrome"
+    "test": "nightwatch --parallel --headless --fail-fast --env firefox,chrome,edge --config nightwatch/config.js",
+    "start:echo": "cd browser-echo-bot && yarn start"
   },
   "author": "Microsoft Corp.",
   "license": "MIT"

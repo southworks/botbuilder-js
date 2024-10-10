@@ -1,9 +1,9 @@
-const { spawn } = require('child_process');
-const { DEFAULT_BROWSER, getFlag, getBrowser, logs, isBrowserInstalled } = require('./utils');
+const { DEFAULT_BROWSER, getFlag, getBrowser, logs, isBrowserInstalled, isBotRunning } = require('./utils');
 
 async function validate() {
     const inputs = getFlag(['-e', '--env']).split(',');
 
+    let isBotValidated = false;
     for (const input of inputs) {
         let /** @type {import('./types').IBrowser} */ browser, /** @type {Error} */ err;
         [browser, err] = getBrowser(input);
@@ -12,36 +12,27 @@ async function validate() {
             [browser] = getBrowser(DEFAULT_BROWSER);
         }
 
+        if(!isBotValidated){
+            err = await isBotRunning(browser);
+            isBotValidated = true;
+            if (err) {
+                logs.echoBotNotRunningError(err);
+                return false;
+            } else {
+                logs.echoBotRunningLog();
+            }
+        }
+
         err = await isBrowserInstalled(browser);
         if (err) {
             logs.browserNotFoundError(browser);
-            process.exit(1);
+            return false;
+        } else {
+            logs.browserInstalledLog(browser);
         }
-
-        logs.browserInstalledLog(browser);
     }
+
+    return true;
 }
 
-async function prepare() {
-    // TODO: Start browser-echo-bot
-    // check installed
-    // check build
-    // then start
-    // spawn('yarn start', [script, 'detached'], {
-    //     stdio: 'ignore',
-    //     detached: true,
-    //     cwd: `${process.cwd()}/browser-echo-bot`,
-    //   }).unref();
-    // const exe = cp.spawn(driver.path, [`--port=${driver.port}`], {
-    //     encoding: 'utf-8',
-    //     shell: false,
-    //     detached: true,
-    //     windowsHide: true,
-    // });
-    // const isDriverRunning = await new Promise((res) => exe.stdout.on('data', () => res(true)));
-    // const browserExists = isDriverRunning && (await driver.browser.exists(driver));
-    // process.kill(exe.pid, 'SIGKILL');
-    // process.exit(1);
-}
-
-module.exports = { validate, prepare };
+module.exports = { validate };

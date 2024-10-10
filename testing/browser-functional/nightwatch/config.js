@@ -14,8 +14,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { validate, prepare } = require('./nightwatch/requirements');
-const { DEFAULT_BROWSER, browsers } = require('./nightwatch/utils');
+const { validate } = require('./requirements');
+const { DEFAULT_BROWSER, browsers } = require('./utils');
 
 const config = {
     // An array of folders (excluding subfolders) where your tests are located;
@@ -38,8 +38,10 @@ const config = {
     // globals_path: './globals.js',
     globals: {
         async before() {
-            await validate();
-            await prepare();
+            const valid = await validate();
+            if (!valid) {
+                process.exit(1);
+            }
         },
     },
 

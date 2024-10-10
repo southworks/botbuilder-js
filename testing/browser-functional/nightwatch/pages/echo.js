@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
+    name: 'EchoBot',
     url: process.env.TestURI,
     elements: {
         webchatContainer: {

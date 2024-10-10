@@ -1,5 +1,5 @@
-const { Capabilities } = require('nightwatch');
 const { Builder, Browser } = require('selenium-webdriver');
+const echoPage = require('./pages/echo');
 
 const DEFAULT_BROWSER = Browser.CHROME;
 
@@ -44,7 +44,7 @@ const browsers = {
 
 const logs = {
     browserInstalledLog(browser) {
-        console.log(`  ✅ Browser '${browser.name}' detected`);
+        console.info(`  ✅ Browser '${browser.name}' detected`);
     },
     browserNotFoundWarn(err) {
         console.warn(`  ⚠️  ${err.message} - Using default browser: ${DEFAULT_BROWSER}`);
@@ -53,6 +53,12 @@ const logs = {
         console.error(
             `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url}`
         );
+    },
+    echoBotNotRunningError(err) {
+        console.error(`  ❌ ${err.message} - Please start the bot by executing 'yarn start:echo' and try again`);
+    },
+    echoBotRunningLog() {
+        console.info(`  ✅ The '${echoPage.name}' is running at '${echoPage.url}'`);
     },
 };
 
@@ -65,18 +71,29 @@ async function isBrowserInstalled(browser) {
         return false;
     }
 
+    let driver;
     try {
-        // const caps = Capabilities.chrome();
-        // caps.set('goog:chromeOptions', {
-        //     args: ['--headless'],
-        // });
-        const driver = await new Builder()
-            .forBrowser(browser.id)
-            // .withCapabilities(caps)
-            .build();
-        await driver.quit();
+        driver = await new Builder().forBrowser(browser.id).build();
     } catch (e) {
         return e;
+    } finally {
+        await driver?.quit();
+    }
+}
+
+/**
+ * @param {IBrowser} browser
+ * @returns {Promise<Error>}
+ */
+async function isBotRunning(browser) {
+    let driver;
+    try {
+        driver = await new Builder().forBrowser(browser.id).build();
+        await driver.navigate().to(echoPage.url);
+    } catch (error) {
+        return new Error(`The '${echoPage.name}' bot is not running at '${echoPage.url}'`);
+    } finally {
+        await driver?.quit();
     }
 }
 
@@ -107,6 +124,7 @@ module.exports = {
     browsers,
     logs,
     isBrowserInstalled,
+    isBotRunning,
     getBrowser,
     getFlag,
 };
