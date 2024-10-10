@@ -37,6 +37,7 @@ const config = {
     // See https://nightwatchjs.org/guide/concepts/test-globals.html
     // globals_path: './globals.js',
     globals: {
+        asyncHookTimeout: 60000,
         async before() {
             const valid = await validate();
             if (!valid) {
@@ -46,8 +47,6 @@ const config = {
     },
 
     webdriver: {},
-
-    asyncHookTimeout: 60000,
 
     test_workers: {
         enabled: true,
