@@ -14,8 +14,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { validate } = require('./requirements');
 const { DEFAULT_BROWSER, browsers } = require('./utils');
+const { validate } = require('./requirements');
 
 const config = {
     // An array of folders (excluding subfolders) where your tests are located;

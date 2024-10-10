@@ -3,8 +3,10 @@
  * Licensed under the MIT License.
  */
 
+const path = require('path');
 const dotenv = require('dotenv');
-dotenv.config();
+const ENV_FILE = path.join(__dirname, '.env');
+dotenv.config({ path: ENV_FILE });
 
 module.exports = {
     name: 'EchoBot',
