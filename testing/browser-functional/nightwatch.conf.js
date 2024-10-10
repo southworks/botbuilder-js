@@ -14,10 +14,8 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { Browser } = require('selenium-webdriver');
 const { validate, prepare } = require('./nightwatch/requirements');
-const { DEFAULT_BROWSER } = require('./nightwatch/utils');
-const { spawn } = require('child_process');
+const { DEFAULT_BROWSER, browsers } = require('./nightwatch/utils');
 
 const config = {
     // An array of folders (excluding subfolders) where your tests are located;
@@ -72,9 +70,9 @@ const config = {
             },
         },
 
-        firefox: {
+        [browsers.firefox.key]: {
             desiredCapabilities: {
-                browserName: Browser.FIREFOX,
+                browserName: browsers.firefox.id,
                 alwaysMatch: {
                     acceptInsecureCerts: true,
                     'moz:firefoxOptions': {
@@ -95,9 +93,9 @@ const config = {
             },
         },
 
-        chrome: {
+        [browsers.chrome.key]: {
             desiredCapabilities: {
-                browserName: Browser.CHROME,
+                browserName: browsers.chrome.id,
                 'goog:chromeOptions': {
                     // More info on Chromedriver: https://sites.google.com/a/chromium.org/chromedriver/
                     args: [
@@ -118,9 +116,9 @@ const config = {
             },
         },
 
-        edge: {
+        [browsers.edge.key]: {
             desiredCapabilities: {
-                browserName: Browser.EDGE,
+                browserName: browsers.edge.id,
                 'ms:edgeOptions': {
                     // More info on EdgeDriver: https://docs.microsoft.com/en-us/microsoft-edge/webdriver-chromium/capabilities-edge-options
                     args: [

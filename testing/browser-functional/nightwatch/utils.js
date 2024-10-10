@@ -4,10 +4,63 @@ const { Builder, Browser } = require('selenium-webdriver');
 const DEFAULT_BROWSER = Browser.CHROME;
 
 /**
- * @param {string} browser
+ @typedef IBrowser
+ @type {import('./types').IBrowser}
+ */
+
+/**
+ @typedef IBrowserList
+ @type {import('./types').IBrowserList}
+ */
+
+/**
+ @typedef BrowserKeys
+ @type {import('./types').BrowserKeys}
+ */
+
+/**
+ * @type {IBrowserList}
+ */
+const browsers = {
+    chrome: {
+        key: 'chrome',
+        id: Browser.CHROME,
+        name: 'Chrome',
+        url: 'https://www.google.com/chrome',
+    },
+    firefox: {
+        key: 'firefox',
+        id: Browser.FIREFOX,
+        name: 'Firefox',
+        url: 'https://www.mozilla.org/firefox/new',
+    },
+    edge: {
+        key: 'edge',
+        id: Browser.EDGE,
+        name: 'Edge',
+        url: 'https://www.microsoft.com/edge',
+    },
+};
+
+const logs = {
+    browserInstalledLog(browser) {
+        console.log(`  ✅ Browser '${browser.name}' detected`);
+    },
+    browserNotFoundWarn(err) {
+        console.warn(`  ⚠️  ${err.message} - Using default browser: ${DEFAULT_BROWSER}`);
+    },
+    browserNotFoundError(browser) {
+        console.error(
+            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url}`
+        );
+    },
+};
+
+/**
+ * @param {IBrowser} browser
  * @returns {Promise<Error>}
  */
-async function browserExists(browser) {
+async function isBrowserInstalled(browser) {
     if (!browser) {
         return false;
     }
@@ -18,7 +71,7 @@ async function browserExists(browser) {
         //     args: ['--headless'],
         // });
         const driver = await new Builder()
-            .forBrowser(browser)
+            .forBrowser(browser.id)
             // .withCapabilities(caps)
             .build();
         await driver.quit();
@@ -28,29 +81,11 @@ async function browserExists(browser) {
 }
 
 /**
- * @param {string} id
- * @returns {[{name: string, url: string}, Error]}
+ * @param {BrowserKeys} key
+ * @returns {[IBrowser, Error]}
  */
-function getBrowser(id) {
-    const browser = id ?? '';
-    const browsers = {
-        chrome: {
-            id: browser,
-            name: 'Chrome',
-            url: 'https://www.google.com/chrome',
-        },
-        firefox: {
-            id: browser,
-            name: 'Firefox',
-            url: 'https://www.mozilla.org/firefox/new',
-        },
-        edge: {
-            id: browser,
-            name: 'Edge',
-            url: 'https://www.microsoft.com/edge',
-        },
-    };
-
+function getBrowser(key) {
+    const browser = key ?? '';
     const result = browsers[browser.trim().toLowerCase()];
     if (!result) {
         return ['', new Error(`Browser '${browser}' not found`)];
@@ -67,18 +102,11 @@ function getFlag(flags) {
     return process.argv.find((_, i, arr) => flags.includes(arr[i - 1]?.trim()));
 }
 
-const logs = {
-    browserInstalledLog(browser) {
-        console.log(`  ✅ Browser '${browser.name}' detected`);
-    },
-    browserNotFoundWarn(err) {
-        console.warn(`  ⚠️  ${err.message} - Using default browser: ${DEFAULT_BROWSER}`);
-    },
-    browserNotFoundError(browser) {
-        console.error(
-            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url}`
-        );
-    },
+module.exports = {
+    DEFAULT_BROWSER,
+    browsers,
+    logs,
+    isBrowserInstalled,
+    getBrowser,
+    getFlag,
 };
-
-module.exports = { DEFAULT_BROWSER, browserExists, getBrowser, getFlag, logs };

@@ -1,17 +1,18 @@
-const { DEFAULT_BROWSER, getFlag, getBrowser, logs, browserExists } = require('./utils');
+const { spawn } = require('child_process');
+const { DEFAULT_BROWSER, getFlag, getBrowser, logs, isBrowserInstalled } = require('./utils');
 
 async function validate() {
     const inputs = getFlag(['-e', '--env']).split(',');
 
     for (const input of inputs) {
-        let browser, err;
+        let /** @type {import('./types').IBrowser} */ browser, /** @type {Error} */ err;
         [browser, err] = getBrowser(input);
         if (err) {
             logs.browserNotFoundWarn(err);
             [browser] = getBrowser(DEFAULT_BROWSER);
         }
 
-        err = await browserExists(browser.id);
+        err = await isBrowserInstalled(browser);
         if (err) {
             logs.browserNotFoundError(browser);
             process.exit(1);

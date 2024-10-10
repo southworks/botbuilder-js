@@ -36,12 +36,6 @@ steps:
   inputs:
     versionSpec: 20.x
 
-- script: |
-    mkdir "testing/browser-functional/drivers"
-    cp "%CHROMEWEBDRIVER%/chromedriver.exe" "testing/browser-functional/drivers"
-    cp "%GECKOWEBDRIVER%/geckodriver.exe" "testing/browser-functional/drivers"
-  displayName: use browser drivers
-
 - script: yarn --network-timeout 600000
   displayName: yarn install
 
