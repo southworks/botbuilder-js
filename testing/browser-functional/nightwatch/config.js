@@ -47,6 +47,8 @@ const config = {
 
     webdriver: {},
 
+    asyncHookTimeout: 60000,
+
     test_workers: {
         enabled: true,
     },
