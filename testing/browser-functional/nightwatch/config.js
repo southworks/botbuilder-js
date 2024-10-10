@@ -37,7 +37,7 @@ const config = {
     // See https://nightwatchjs.org/guide/concepts/test-globals.html
     // globals_path: './globals.js',
     globals: {
-        asyncHookTimeout: 60000,
+        asyncHookTimeout: 10 * 60 * 1000, // 10 minutes
         async before() {
             const valid = await validate();
             if (!valid) {
