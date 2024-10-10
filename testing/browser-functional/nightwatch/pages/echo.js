@@ -9,7 +9,6 @@
 module.exports = {
     name: 'EchoBot',
     url: function(){
-        console.log(this)
         return this.api.launchUrl;
     },
     elements: {

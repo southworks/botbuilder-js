@@ -72,7 +72,12 @@ steps:
      echo "# Deploy source code"
      call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
-- script: yarn browser-functional-test
+- script: cd 
+  displayName: run tests
+
+- script: |
+    cd $(System.DefaultWorkingDirectory)/testing/browser-functional
+    rm -rf .env
   displayName: run tests
 
 - task: AzureCLI@1
