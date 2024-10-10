@@ -8,7 +8,10 @@
 
 module.exports = {
     name: 'EchoBot',
-    url: process.env.TestURI ?? "${TestURI}",
+    url: function(){
+        console.log(this)
+        return this.api.launchUrl;
+    },
     elements: {
         webchatContainer: {
             selector: 'div[id=webchat]>div',

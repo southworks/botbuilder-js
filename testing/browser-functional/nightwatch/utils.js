@@ -51,14 +51,14 @@ const logs = {
     },
     browserNotFoundError(browser) {
         console.error(
-            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url}`
+            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url()}`
         );
     },
     echoBotNotRunningError(err) {
         console.error(`  ❌ ${err.message} - Please start the bot by executing 'yarn start:echo' and try again`);
     },
     echoBotRunningLog() {
-        console.info(`  ✅ The '${echoPage.name}' is running at '${echoPage.url}'`);
+        console.info(`  ✅ The '${echoPage.name}' is running at '${process.env.TestURI}'`);
     },
 };
 
@@ -89,9 +89,9 @@ async function isBotRunning(browser) {
     let driver;
     try {
         driver = await new Builder().forBrowser(browser.id).build();
-        await driver.navigate().to(echoPage.url);
+        await driver.navigate().to(process.env.TestURI);
     } catch (error) {
-        return new Error(`The '${echoPage.name}' bot is not running at '${echoPage.url}'`);
+        return new Error(`The '${echoPage.name}' bot is not running at '${process.env.TestURI}'`);
     } finally {
         await driver?.quit();
     }
