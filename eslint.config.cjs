@@ -26,7 +26,7 @@ const compat = new FlatCompat({
 });
 
 module.exports = [{
-    ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/"],
+    ignores: ["**/_ts3.4/", "**/dist/", "**/lib/", "**/node_modules/", '**/tests/resources/'],
 }, ...compat.extends(
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -134,7 +134,6 @@ module.exports = [{
     },
 }, {
     files: ["**/*.test.*", "test/**/*", "tests/**/*"],
-    ignores: ['**/*.lu', '**/*.dialog', '**/tests/resources/'],
     plugins: {
         "only-warn": onlyWarn,
     },
@@ -148,6 +147,7 @@ module.exports = [{
 
     rules: {
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-require-imports": "off",
         "import/no-extraneous-dependencies": "off",
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param": "off",
@@ -199,6 +199,17 @@ module.exports = [{
 
     rules: {
         "@typescript-eslint/no-var-requires": "off",
+    },
+},
+{
+    files: ["**/*.config.cjs"],
+
+    plugins: {
+        "only-warn": onlyWarn,
+    },
+
+    rules: {
+        "@typescript-eslint/no-require-imports": "off",
     },
 },
 {
