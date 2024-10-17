@@ -28,6 +28,7 @@
     }
   },
   "dependencies": {
+    "@eslint/js": "^9.12.0",
     "botbuilder": "4.1.6",
     "botbuilder-ai-luis": "4.1.6",
     "botbuilder-ai-qna": "4.1.6",
@@ -52,7 +53,7 @@
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint .",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha",
     "test:min": "nyc --silent mocha --reporter dot"
