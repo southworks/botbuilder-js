@@ -28,7 +28,8 @@
     }
   },
   "dependencies": {
-    "dependency-graph": "^1.0.0"
+    "dependency-graph": "^1.0.0",
+    "eslint-plugin-only-warn": "^1.1.0"
   },
   "devDependencies": {
     "mocha": "^10.7.3",
