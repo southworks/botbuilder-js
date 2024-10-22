@@ -33,7 +33,6 @@ module.exports = [
     "plugin:@typescript-eslint/recommended",
     "plugin:jsdoc/recommended",
 ), {
-
     plugins: {
         "@typescript-eslint": typescriptEslint,
         import: fixupPluginRules(_import),
@@ -133,7 +132,6 @@ module.exports = [
     },
 }, {
     files: ["**/*.test.*", "test/**/*", "tests/**/*"],
-    ignores: ['**/*.lu', '**/*.dialog', '**/tests/resources/'],
 
     languageOptions: {
         globals: {
@@ -144,6 +142,7 @@ module.exports = [
 
     rules: {
         "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-require-imports": "off",
         "import/no-extraneous-dependencies": "off",
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param": "off",
