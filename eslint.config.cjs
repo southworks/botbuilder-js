@@ -154,6 +154,7 @@ module.exports = [
         "mocha/no-return-from-async": ["error"],
         "mocha/no-sibling-hooks": ["error"],
         "security/detect-non-literal-fs-filename": "off",
+        "@typescript-eslint/no-require-imports": "off"
     },
 }, {
     files: ["src/**/*.ts"],
