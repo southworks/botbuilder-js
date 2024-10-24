@@ -1,5 +1,6 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable-next-line import/no-extraneous-dependencies */
 import { defineConfig } from 'tsup';
+/* eslint-disable-next-line import/no-unresolved */
 import { polyfillNode } from 'esbuild-plugin-polyfill-node';
 import packageJson from './package.json';
 
