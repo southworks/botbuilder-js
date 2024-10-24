@@ -82,7 +82,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         const skillActivity = TurnContext.applyConversationReference(
             clonedActivity,
             TurnContext.getConversationReference(dc.context.activity),
-            true
+            true,
         ) as Activity;
 
         // Store delivery mode and connection name in dialog state for later use.
@@ -161,7 +161,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             const activity = TurnContext.applyConversationReference(
                 { type: ActivityTypes.EndOfConversation },
                 reference,
-                true
+                true,
             );
             activity.channelData = context.activity.channelData;
 
@@ -253,7 +253,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     private async sendToSkill(
         context: TurnContext,
         activity: Activity,
-        skillConversationId: string
+        skillConversationId: string,
     ): Promise<Activity> {
         if (activity.type === ActivityTypes.Invoke) {
             // Force ExpectReplies for invoke activities so we can get the replies right away and send them back to the channel if needed.
@@ -272,13 +272,13 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             skillInfo.skillEndpoint,
             this.dialogOptions.skillHostEndpoint,
             skillConversationId,
-            activity
+            activity,
         );
 
         // Inspect the skill response status
         if (!isSuccessStatusCode(response.status)) {
             throw new Error(
-                `Error invoking the skill id: "${skillInfo.id}" at "${skillInfo.skillEndpoint}" (status is ${response.status}). \r\n ${response.body}`
+                `Error invoking the skill id: "${skillInfo.id}" at "${skillInfo.skillEndpoint}" (status is ${response.status}). \r\n ${response.body}`,
             );
         }
 
@@ -331,7 +331,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     private async interceptOAuthCards(
         context: TurnContext,
         activity: Activity,
-        connectionName: string
+        connectionName: string,
     ): Promise<boolean> {
         if (!connectionName || !('exchangeToken' in context.adapter)) {
             // The adapter may choose not to support token exchange, in which case we fallback to showing skill's OAuthCard to the user.
@@ -339,10 +339,11 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         }
 
         const oAuthCardAttachment: Attachment = (activity.attachments || []).find(
-            (c) => c.contentType === CardFactory.contentTypes.oauthCard
+            (c) => c.contentType === CardFactory.contentTypes.oauthCard,
         );
         if (oAuthCardAttachment) {
-            const tokenExchangeProvider: ExtendedUserTokenProvider = (context.adapter as unknown) as ExtendedUserTokenProvider;
+            const tokenExchangeProvider: ExtendedUserTokenProvider =
+                context.adapter as unknown as ExtendedUserTokenProvider;
             const oAuthCard: OAuthCard = oAuthCardAttachment.content;
 
             const uri = oAuthCard && oAuthCard.tokenExchangeResource && oAuthCard.tokenExchangeResource.uri;
@@ -352,7 +353,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                         context,
                         connectionName,
                         context.activity.from.id,
-                        { uri }
+                        { uri },
                     );
 
                     if (result && result.token) {
@@ -362,7 +363,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                             activity,
                             oAuthCard.tokenExchangeResource.id,
                             oAuthCard.connectionName,
-                            result.token
+                            result.token,
                         );
                     }
                 } catch {
@@ -381,7 +382,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         incomingActivity: Activity,
         id: string,
         connectionName: string,
-        token: string
+        token: string,
     ): Promise<boolean> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(incomingActivity);
         const activity: Activity = TurnContext.applyConversationReference({ ...incomingActivity }, ref) as any;
@@ -397,7 +398,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             skillInfo.skillEndpoint,
             this.dialogOptions.skillHostEndpoint,
             incomingActivity.conversation.id,
-            activity
+            activity,
         );
 
         // Check response status: true if success, false if failure
@@ -422,15 +423,16 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         // Create a conversationId to interact with the skill and send the activity
         let skillConversationId: string;
         try {
-            skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationIdWithOptions(
-                conversationIdFactoryOptions
-            );
+            skillConversationId =
+                await this.dialogOptions.conversationIdFactory.createSkillConversationIdWithOptions(
+                    conversationIdFactoryOptions,
+                );
         } catch (err) {
             if (err.message !== 'Not Implemented') throw err;
             // If the SkillConversationIdFactoryBase implementation doesn't support createSkillConversationIdWithOptions(),
             // use createSkillConversationId() instead.
             skillConversationId = await this.dialogOptions.conversationIdFactory.createSkillConversationId(
-                TurnContext.getConversationReference(activity) as ConversationReference
+                TurnContext.getConversationReference(activity) as ConversationReference,
             );
         }
         return skillConversationId;
