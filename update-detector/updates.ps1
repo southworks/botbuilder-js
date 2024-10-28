@@ -107,25 +107,6 @@ function PackageItem ($Package) {
 
 # Main functionality
 
-function GetOutdatedPackages() {
-    $OutdatedPackages = ((yarn outdated --json)[1] | ConvertFrom-Json).data.body;
-    return  $OutdatedPackages | Group-Object { $_[[Keys]::Package] } | ForEach-Object {
-        $Fields = $_.Group[0];
-        $Name = $Fields[[Keys]::Package];
-        $Current = $Fields[[Keys]::Current];
-        $Wanted = $Fields[[Keys]::Wanted];
-        $Latest = $Fields[[Keys]::Latest];
-        return @{
-            Name    = $Name;
-            Current = $Current;
-            Wanted  = $Wanted;
-            Latest  = $Latest;
-        }
-    } | Where-Object { 
-        # Ignore packages that can't be resolved from npm.
-        return $_.Wanted -ne "exotic";
-    }
-}
 
 function FormatVersion ($Package, $Version, $Current = "", $ShowColor = $false) {
     if ($Current -eq $Version) {
@@ -146,9 +127,10 @@ function CreateTable($packages) {
         "| Package | From | To | Workspace |",
         "|---|---|---|---|"
     );
+
     foreach ($package in $packages) {
         $Package = "[$($package.Name)](https://www.npmjs.com/package/$($package.Name))";
-        $FromItem = $package.Current;
+        $From = "``$($package.Current)``";
 
         $result += "| $($Package) | $($package.Current) | $($package.Wanted) | $($package.Latest) |";
 
@@ -160,7 +142,7 @@ function CreateTable($packages) {
 
         $WorkspacesItem = WorkspacesMarkdown -Packages $PackageVersions -Separator '<br>'
 
-        $UpdatesTable += "| $($PackageItem) | $($FromItem) | $($ToItem) | $($WorkspacesItem) |";
+        $UpdatesTable += "| $($PackageItem) | $($From) | $($ToItem) | $($WorkspacesItem) |";
     }
 
     return $result | Out-String;
@@ -216,21 +198,129 @@ function CreateHash($Content) {
     Join-String -Separator ""
 }
 
+# $Content = "
+# ## Updates
+# | Package | From | To | Workspace |
+# |---|---|---|---|
+# $($UpdatesTable | Out-String)
+# "
+
+# $Hash = CreateHash -Content $Content
+
+# $Content = "
+# <!-- hash:$($Hash) -->
+
+# $($Content)
+# "
+
+
+
+# Set-Content .\update-detector\updates.md $Content
+
+function GetPackageRelatedProjects($Package, $Projects, $Workspaces) {
+    return $Projects | ForEach-Object {
+        $Project = $_ || "botbuilder-js";
+        $Path = $Workspaces."$($Project)".location;
+        $PackageString = Get-Content "$($Path)\package.json";
+        $LineNumber = $PackageString.Split("`n").IndexOf("`"$($Package)`"");
+
+        if (!$_) {
+            return "[$($Project)](https://github.com/microsoft/botbuilder-js/blob/main/package.json#L$($LineNumber))"
+        }
+
+        return "[$($Project)](https://github.com/microsoft/botbuilder-js/blob/main/$($Project)/package.json#L$($LineNumber))"
+    }   
+}
+
+
+function GetOutdatedPackages() {
+    $OutdatedPackages = ((yarn outdated --json)[1] | ConvertFrom-Json).data.body;
+    $Workspaces = (yarn workspaces --json info | ConvertFrom-Json).data | ConvertFrom-Json
+    return  $OutdatedPackages | Group-Object { $_[[Keys]::Package] } | ForEach-Object {
+        $Fields = $_.Group[0];
+        $Name = $Fields[[Keys]::Package];
+        $Current = $Fields[[Keys]::Current];
+        $Wanted = $Fields[[Keys]::Wanted];
+        $Latest = $Fields[[Keys]::Latest];
+        return @{
+            Name            = $Name;
+            Version         = $Current;
+            RelatedProjects = GetPackageRelatedProjects -Package $Name -Projects $Projects -Workspaces $Workspaces;
+            FoundVersions   = $();
+        }
+    } | Where-Object { 
+        # Ignore packages that can't be resolved from npm.
+        return $_.Wanted -ne "exotic";
+    }
+}
+
+
+$OutdatedPackages = GetOutdatedPackages;
+$PackageMarkdownList = GetPackageMarkdownList -Packages $OutdatedPackages;
+Set-Content .\update-detector\updates.md $PackageMarkdownList
+
 $Content = "
-## Updates
-| Package | From | To | Workspace |
-|---|---|---|---|
-$($UpdatesTable | Out-String)
-"
+# Updates (new format)
 
-$Hash = CreateHash -Content $Content
+> [!NOTE]
+> 30 dependencies found that require update:
+> - 🟥 5 major
+> - 🟨 15 minor
+> - 🟩 10 patch
 
-$Content = "
-<!-- hash:$($Hash) -->
+> [!IMPORTANT]  
+> Supported Node versions: `18` and `20`.
 
-$($Content)
-"
+$($PackageMarkdownList)
 
+[@azure/core-auth](https://www.npmjs.com/package/@azure/core-auth) `1.7.2`
+└──  **detected versions in projects** ─ $${\color{orange}\textsf{consolidate}}$$
+&emsp;&emsp;├─ `1.7.2` [`botbuilder-js`]()
+&emsp;&emsp;└─ `8.2.0` [`botbuilder-test-utils`]()
+└── **detected versions** ─ $${\color{orange}\textsf{pick one}}$$
+&emsp;&emsp;└─ `1.7.3` `🟩 patch`
+&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=6`
+&emsp;&emsp;└─ `1.8.1` `🟨 minor`
+&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=18`
+&emsp;&emsp;└─ `8.2.0` `🟥 major` ─ $${\color{red}\textsf{drops node versions}}$$
+&emsp;&emsp;&emsp;├─ **module type:** `ESM`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=20`
+";
 
+function GetPackageMarkdownList($Packages) {
+    return $Packages | ForEach-Object {
+        $Package = $_;
+        $Result = @();
+        $Result += "[$($Package.Name)](https://www.npmjs.com/package/$($Package.Name))";
+        $Result += "└── **current version: ** ``$($Package.Version)``"
 
-Set-Content .\update-detector\updates.md $Content
+        if ($Package.RelatedProjects) {
+            $ConsolidateText = $DetectedProjects.Consolidate ? "─ `$`${\color{orange}\textsf{consolidate}}`$`$" : "";
+            $Result += "└──  **detected versions in projects** $($ConsolidateText)"
+            $Result += $DetectedProjects.Projects | ForEach-Object {
+                $Project = $_;
+                return "                
+                &emsp;&emsp;├─ ``$($Project.Package.Version)`` [``$($Project.Name)``]($($Project.Package.Path))
+                &emsp;&emsp;└─ ``$($Project.Package.Version)`` [``$($Project.Name)``]($($Project.Package.Path))
+                "
+            }
+        }
+
+        $Result += "└── **detected versions** ─ `$`${\color{orange}\textsf{pick one}}`$`$"
+        $Result += $Package.FoundVersions | ForEach-Object {
+            $PackageVersion = $_;
+            $DropsNodeVersionsText = $PackageVersion.DropsNodeVersions ? "─ `$`${\color{red}\textsf{drops node versions}}`$`$" : "";
+            $SupportedNodeVersionsText = $PackageVersion.NodeVersions | ForEach-Object { "``$($_.Trim())``" }
+
+            return "
+            &emsp;&emsp;└─ ``$($PackageVersion.Version)`` ``$($PackageVersion.Impact)`` $($DropsNodeVersionsText)
+            &emsp;&emsp;&emsp;├─ **module type:** ``$($PackageVersion.ModuleType)``
+            &emsp;&emsp;&emsp;└─ **supported node versions:** $($SupportedNodeVersionsText || "any")
+            "
+        }
+
+        return $Result | Out-String;
+    }
+}
