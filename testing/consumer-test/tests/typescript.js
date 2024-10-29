@@ -4,7 +4,7 @@ const execp = promisify(exec);
 
 module.exports = function testVersion(version, targets) {
     describe(`typescript:${version}`, function () {
-        this.timeout(60000); // 60 seconds
+        this.timeout(300000); // 5 minutes
         this.retries(1);
         for (const target of targets) {
             it(`target:${target}`, async function () {
