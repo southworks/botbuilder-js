@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint .",
-    "test": "ts-node run.ts --verbose"
+    "test": "npm-run-all test:gen test:mocha",
+    "test:gen": "ts-node ./generateTests.ts",
+    "test:mocha": "mocha ./tests/generated/*.test.js --parallel"
   },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
@@ -40,6 +42,7 @@
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "@types/minimist": "^1.2.5"   
+    "@types/minimist": "^1.2.5",
+    "mocha": "^10.7.3"
   }
 }
