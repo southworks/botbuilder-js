@@ -28,12 +28,13 @@
     },
     "devDependencies": {
         "@types/mocha": "^7.0.2",
+        "@types/node": "^18.19.47",
         "@types/restify": "8.4.2",
         "mocha": "^7.1.2",
         "nodemon": "^2.0.4",
         "nyc": "^15.0.1",
         "ts-node": "^8.10.1",
         "tslint": "^6.1.2",
-        "typescript": "^4.0.7"
+        "typescript": "^4.9.3"
     }
 }
