@@ -13,7 +13,7 @@ import {
 import { Storage, StoreItems } from 'botbuilder-core';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
-import { TokenCredential, isTokenCredential } from '@azure/core-http';
+import { TokenCredential, isTokenCredential } from '@azure/core-auth';
 
 /**
  * Optional settings for BlobsStorage

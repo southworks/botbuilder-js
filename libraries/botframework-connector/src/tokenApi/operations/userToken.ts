@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, RequestOptionsBase, Serializer, OperationSpec } from '@azure/core-http';
+import { ServiceCallback, RequestOptionsBase, Serializer } from '@azure/core-http';
+import { OperationSpec } from '@azure/core-client';
 import * as Models from '../models';
 import * as Mappers from '../models/userTokenMappers';
 import * as Parameters from '../models/parameters';

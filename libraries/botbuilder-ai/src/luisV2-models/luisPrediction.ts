@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, OperationSpec, Serializer } from '@azure/core-http';
+import { ServiceCallback, Serializer } from '@azure/core-http';
+import { OperationSpec } from '@azure/core-client';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';

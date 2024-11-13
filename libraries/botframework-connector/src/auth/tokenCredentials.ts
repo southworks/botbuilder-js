@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpHeaders, Constants, WebResourceLike, ServiceClientCredentials } from '@azure/core-http';
+import { HttpHeaders, WebResourceLike, ServiceClientCredentials } from '@azure/core-http';
 
-const HeaderConstants = Constants.HeaderConstants;
+const AuthorizationHeader = "Authorization";
 const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
 
 /**
@@ -36,7 +36,7 @@ export class TokenCredentials implements ServiceClientCredentials {
      */
     signRequest(webResource: WebResourceLike) {
         if (!webResource.headers) webResource.headers = new HttpHeaders();
-        webResource.headers.set(HeaderConstants.AUTHORIZATION, `${this.authorizationScheme} ${this.token}`);
+        webResource.headers.set(AuthorizationHeader, `${this.authorizationScheme} ${this.token}`);
         return Promise.resolve(webResource);
     }
 }

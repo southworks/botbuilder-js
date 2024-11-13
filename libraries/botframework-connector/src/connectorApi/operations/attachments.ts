@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase, ServiceCallback, OperationSpec, Serializer } from "@azure/core-http";
+import { RequestOptionsBase, ServiceCallback, Serializer } from "@azure/core-http";
+import { OperationSpec } from "@azure/core-client";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
 import * as Mappers from "../models/attachmentsMappers";

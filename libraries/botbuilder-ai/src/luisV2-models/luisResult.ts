@@ -7,7 +7,8 @@
  */
 
 import { Sentiment } from './luisModels';
-import { HttpResponse, RequestOptionsBase } from '@azure/core-http';
+import { RequestOptionsBase } from '@azure/core-http';
+import { PipelineResponse } from '@azure/core-rest-pipeline';
 
 /**
  * Prediction, based on the input query, containing intent(s) and entities.
@@ -156,7 +157,7 @@ export type PredictionResolveResponse = LuisResult & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
