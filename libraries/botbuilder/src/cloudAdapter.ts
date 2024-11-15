@@ -5,7 +5,7 @@ import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
-import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/core-http';
+import { HttpClient, PipelineRequest, PipelineResponse, createHttpHeaders } from '@azure/core-rest-pipeline';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { Request, Response, ResponseT } from './interfaces';
 import { USER_AGENT } from './botFrameworkAdapter';
@@ -393,13 +393,13 @@ class StreamingConnectorFactory implements ConnectorFactory {
 class StreamingHttpClient implements HttpClient {
     constructor(private readonly requestHandler: StreamingRequestHandler) {}
 
-    async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
+    async sendRequest(httpRequest: PipelineRequest): Promise<PipelineResponse> {
         const streamingRequest = this.createStreamingRequest(httpRequest);
         const receiveResponse = await this.requestHandler.server?.send(streamingRequest);
         return this.createHttpResponse(receiveResponse, httpRequest);
     }
 
-    private createStreamingRequest(httpRequest: WebResource): StreamingRequest {
+    private createStreamingRequest(httpRequest: PipelineRequest): StreamingRequest {
         const verb = httpRequest.method.toString();
         const path = httpRequest.url.slice(httpRequest.url.indexOf('/v3'));
 
@@ -411,14 +411,14 @@ class StreamingHttpClient implements HttpClient {
 
     private async createHttpResponse(
         receiveResponse: IReceiveResponse,
-        httpRequest: WebResource
-    ): Promise<HttpOperationResponse> {
+        httpRequest: PipelineRequest
+    ): Promise<PipelineResponse> {
         const [bodyAsText] =
             (await Promise.all(receiveResponse.streams?.map((stream) => stream.readAsString()) ?? [])) ?? [];
 
         return {
             bodyAsText,
-            headers: new HttpHeaders(),
+            headers: createHttpHeaders(),
             request: httpRequest,
             status: receiveResponse.statusCode,
         };

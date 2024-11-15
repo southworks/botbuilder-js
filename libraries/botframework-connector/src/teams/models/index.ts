@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/core-http';
+import { PipelineResponse, PipelineRequestOptions } from '@azure/core-rest-pipeline';
+import { ServiceClientOptions } from '@azure/core-client';
 import {
     ConversationList,
     TeamDetails,
@@ -34,7 +35,7 @@ export type TeamsFetchChannelListResponse = ConversationList & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -53,7 +54,7 @@ export type TeamsFetchTeamDetailsResponse = TeamDetails & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -65,7 +66,7 @@ export type TeamsFetchTeamDetailsResponse = TeamDetails & {
     };
 };
 
-export interface ConversationsGetConversationPagedMembersOptionalParams extends RequestOptionsBase {
+export interface ConversationsGetConversationPagedMembersOptionalParams extends PipelineRequestOptions {
     /**
      * Suggested page size
      */
@@ -83,7 +84,7 @@ export type TeamsFetchMeetingParticipantResponse = TeamsMeetingParticipant & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -102,7 +103,7 @@ export type TeamsFetchMeetingParticipantResponse = TeamsMeetingParticipant & {
  *
  * @extends RequestOptionsBase
  */
-export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptionsBase {
+export interface TeamsFetchMeetingParticipantOptionalParams extends PipelineRequestOptions {
     /**
      * @member {string} [tenantId]
      */
@@ -116,7 +117,7 @@ export type TeamsMeetingInfoResponse = MeetingInfo & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -135,7 +136,7 @@ export type TeamsMeetingNotificationResponse = MeetingNotificationResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -154,7 +155,7 @@ export type TeamsBatchOperationResponse = BatchOperationResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -173,7 +174,7 @@ export type BatchBatchOperationStateResponse = BatchOperationStateResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -192,7 +193,7 @@ export type BatchBatchFailedEntriesResponse = BatchFailedEntriesResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -211,7 +212,7 @@ export type CancelOperationResponse = {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
