@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompositeMapper } from '@azure/core-http';
+import { CompositeMapper } from '@azure/core-client';
 
 export const IntentModel: CompositeMapper = {
     serializedName: 'IntentModel',

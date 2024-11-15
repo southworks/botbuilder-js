@@ -11,7 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
-const { HttpHeaders } = require('@azure/core-http');
+const { createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
@@ -147,7 +147,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
         const length = client._requestPolicyFactories.length;
         for (let i = 0; i < length; i++) {
             const mockHttp = {
-                headers: new HttpHeaders(),
+                headers: createHttpHeaders(),
             };
 
             const result = client._requestPolicyFactories[i].create(mockNextPolicy);

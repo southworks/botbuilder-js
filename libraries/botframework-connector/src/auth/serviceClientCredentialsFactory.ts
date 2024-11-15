@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ServiceClientCredentials } from '@azure/core-http';
+import { TokenCredential } from '@azure/identity';
 
 // Export underlying type for convenience
-export { ServiceClientCredentials };
+export { TokenCredential };
 
 /**
  * The ServiceClientCredentialsFactory abstract class that allows Bots to provide their own
@@ -33,12 +33,12 @@ export abstract class ServiceClientCredentialsFactory {
      * @param audience The audience.
      * @param loginEndpoint The login url.
      * @param validateAuthority The validate authority value to use.
-     * @returns {Promise<ServiceClientCredentials>} A [ServiceClientCredentials](xref:botframework-connector.ServiceClientCredentials).
+     * @returns {Promise<TokenCredential>} A [ServiceClientCredentials](xref:botframework-connector.ServiceClientCredentials).
      */
     abstract createCredentials(
         appId: string,
         audience: string | undefined,
         loginEndpoint: string,
         validateAuthority: boolean
-    ): Promise<ServiceClientCredentials>;
+    ): Promise<TokenCredential>;
 }

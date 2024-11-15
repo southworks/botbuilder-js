@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { WebResource, HttpOperationResponse, HttpClient } from '@azure/core-http';
+import { HttpClient, PipelineRequest, PipelineResponse } from '@azure/core-rest-pipeline';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 /**
@@ -35,7 +35,7 @@ export class StreamingHttpClient implements HttpClient {
      * @param httpRequest The outgoing request created by the BotframeworkAdapter.
      * @returns The streaming transport compatible response to send back to the client.
      */
-    async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
+    async sendRequest(httpRequest: PipelineRequest): Promise<PipelineResponse> {
         if (!httpRequest) {
             throw new Error('StreamingHttpClient.sendRequest(): missing "httpRequest" parameter');
         }
@@ -59,7 +59,7 @@ export class StreamingHttpClient implements HttpClient {
     /**
      * @private
      */
-    private mapHttpRequestToProtocolRequest(httpRequest: WebResource): StreamingRequest {
+    private mapHttpRequestToProtocolRequest(httpRequest: PipelineRequest): StreamingRequest {
         return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body);
     }
 }

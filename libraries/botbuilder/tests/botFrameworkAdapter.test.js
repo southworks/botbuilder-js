@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
-const { userAgentPolicy, HttpHeaders } = require('@azure/core-http');
+const { userAgentPolicy, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 const {
     ActivityTypes,
@@ -480,7 +480,7 @@ describe('BotFrameworkAdapter', function () {
                 Promise.resolve({
                     request,
                     status: 200,
-                    headers: new HttpHeaders(),
+                    headers: createHttpHeaders(),
                     readableStreamBody: undefined,
                     bodyAsText: '',
                 })
@@ -536,7 +536,7 @@ describe('BotFrameworkAdapter', function () {
             const length = client._requestPolicyFactories.length;
             for (let i = 0; i < length; i++) {
                 const mockHttp = {
-                    headers: new HttpHeaders(),
+                    headers: createHttpHeaders(),
                 };
 
                 const result = client._requestPolicyFactories[i].create(mockNextPolicy);

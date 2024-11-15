@@ -4,7 +4,7 @@
  * license information.
  */
 
-import { RequestOptionsBase, HttpResponse } from '@azure/core-http';
+import { PipelineRequestOptions, PipelineResponse } from '@azure/core-rest-pipeline';
 
 /**
  * Represents an intent prediction.
@@ -194,7 +194,7 @@ export interface PredictionRequest {
 /**
  * Optional Parameters.
  */
-export interface PredictionGetVersionPredictionOptionalParams extends RequestOptionsBase {
+export interface PredictionGetVersionPredictionOptionalParams extends PipelineRequestOptions {
     /**
      * Indicates whether to get extra metadata for the entities predictions or not.
      */
@@ -212,7 +212,7 @@ export interface PredictionGetVersionPredictionOptionalParams extends RequestOpt
 /**
  * Optional Parameters.
  */
-export interface PredictionGetSlotPredictionOptionalParams extends RequestOptionsBase {
+export interface PredictionGetSlotPredictionOptionalParams extends PipelineRequestOptions {
     /**
      * Indicates whether to get extra metadata for the entities predictions or not.
      */
@@ -234,7 +234,7 @@ export type PredictionGetVersionPredictionResponse = PredictionResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */
@@ -254,7 +254,7 @@ export type PredictionGetSlotPredictionResponse = PredictionResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: HttpResponse & {
+    _response: PipelineResponse & {
         /**
          * The response body as text (string format)
          */

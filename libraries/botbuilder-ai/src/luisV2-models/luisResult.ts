@@ -7,8 +7,7 @@
  */
 
 import { Sentiment } from './luisModels';
-import { RequestOptionsBase } from '@azure/core-http';
-import { PipelineResponse } from '@azure/core-rest-pipeline';
+import { PipelineRequestOptions, PipelineResponse } from '@azure/core-rest-pipeline';
 
 /**
  * Prediction, based on the input query, containing intent(s) and entities.
@@ -123,7 +122,7 @@ export interface CompositeChildModel {
 /**
  * Optional Parameters.
  */
-export interface PredictionResolveOptionalParams extends RequestOptionsBase {
+export interface PredictionResolveOptionalParams extends PipelineRequestOptions {
     /**
      * The timezone offset for the location of the request.
      */
