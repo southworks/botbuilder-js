@@ -3,7 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase, ServiceCallback, Serializer } from "@azure/core-http";
+import { RequestOptionsBase, ServiceCallback } from "@azure/core-http";
+import { createSerializer } from "@azure/core-client"
+import { ServiceCallback } from "../../utils/serviceCallback";
 import { OperationSpec } from "@azure/core-client";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
@@ -86,7 +88,7 @@ export class Attachments {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const getAttachmentInfoOperationSpec: OperationSpec = {
   httpMethod: "GET",
   path: "v3/attachments/{attachmentId}",

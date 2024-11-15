@@ -14,7 +14,8 @@
 
 'use strict';
 
-const { ServiceClient, Serializer } = require("@azure/core-http");
+const { ServiceClient } = require("@azure/core-http");
+const { Serializer } = require("@azure/core-client");
 const fs = require('fs');
 const path = require('path');
 

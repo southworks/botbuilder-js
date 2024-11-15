@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpHeaders, WebResourceLike, ServiceClientCredentials } from '@azure/core-http';
+import { HttpHeaders, ServiceClientCredentials } from '@azure/core-http';
+import { WebResourceLike } from '@azure/core-http-compat';
+import { createPipelineRequest } from '@azure/core-rest-pipeline';
 
 const AuthorizationHeader = "Authorization";
 const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';

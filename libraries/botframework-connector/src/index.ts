@@ -16,5 +16,6 @@ export { ConnectorClientOptions } from './connectorApi/models/index';
 export { EmulatorApiClient } from './emulatorApiClient';
 export { SignInUrlResponse, TokenExchangeRequest, TokenStatus } from 'botframework-schema';
 export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';
+export { ServiceCallback } from './utils'
 
 export * as ConversationConstants from './conversationConstants';

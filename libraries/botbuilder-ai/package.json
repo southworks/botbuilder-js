@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@azure/core-http": "^3.0.4",
+    "@azure/core-http-compat": "^2.1.2",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",

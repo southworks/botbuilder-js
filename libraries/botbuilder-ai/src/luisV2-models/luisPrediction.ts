@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, Serializer } from '@azure/core-http';
-import { OperationSpec } from '@azure/core-client';
+import {  HttpOperationResponse } from '@azure/core-http';
+import { OperationSpec, createSerializer } from '@azure/core-client';
+import { ServiceCallback } from 'botframework-connector';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';
@@ -84,7 +85,7 @@ export class LuisPrediction {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const resolveOperationSpec: OperationSpec = {
     httpMethod: 'POST',
     path: 'apps/{appId}',

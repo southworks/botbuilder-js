@@ -4,8 +4,9 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, RequestOptionsBase, Serializer } from '@azure/core-http';
-import { OperationSpec } from '@azure/core-client';
+import { RequestOptionsBase } from '@azure/core-http';
+import { ServiceCallback } from "../../utils/serviceCallback";
+import { createSerializer, OperationSpec } from '@azure/core-client';
 import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
@@ -508,7 +509,7 @@ export class Teams {
 }
 
 // Operation Specifications
-const serializer = new Serializer(Mappers);
+const serializer = createSerializer(Mappers);
 const fetchChannelListOperationSpec: OperationSpec = {
     httpMethod: 'GET',
     path: 'v3/teams/{teamId}/conversations',

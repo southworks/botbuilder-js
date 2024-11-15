@@ -1,6 +1,7 @@
-const { Serializer } = require('@azure/core-http');
+import { createSerializer } from '@azure/core-client';
+
 const Mappers = require('../lib/connectorApi/models/mappers');
-const serializer = new Serializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
+const serializer = createSerializer({ Activity: Mappers.Activity, Entity: Mappers.Entity });
 const assert = require('assert');
 
 describe('serialize', function () {

@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClient, ServiceClientCredentials, getDefaultUserAgentValue } from "@azure/core-http";
+import { ServiceClient, ServiceClientCredentials } from "@azure/core-http";
+import { getDefaultUserAgentValue } from "../utils/userAgent";
 import * as Models from "./models";
 
 const packageName = "botframework-connector";
