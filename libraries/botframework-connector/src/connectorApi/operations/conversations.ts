@@ -6,11 +6,27 @@
 import * as Mappers from "../models/conversationsMappers";
 import * as Models from "../models";
 import * as Parameters from "../models/parameters";
-import { ServiceCallback } from "../../utils/serviceCallback";
-import { RequestOptionsBase, RestResponse } from "@azure/core-http";
+import { ServiceCallback, RequestOptionsBase } from "../../utils";
+import { PipelineResponse } from "@azure/core-rest-pipeline";
 import { createSerializer, OperationSpec } from "@azure/core-client";
 import { ConnectorClientContext } from "../connectorClientContext";
 import { ConversationIdHttpHeaderName } from "../../conversationConstants";
+
+/**
+ * The flattened response to a REST call.
+ * Contains the underlying {@link PipelineResponse} as well as
+ * the merged properties of the `parsedBody`, `parsedHeaders`, etc.
+ */
+interface RestResponse {
+  /**
+   * The underlying HTTP response containing both raw and deserialized response data.
+   */
+  _response: PipelineResponse;
+  /**
+   * The flattened properties described by the `OperationSpec`, deserialized from headers and the HTTP body.
+   */
+  [key: string]: any;
+}
 
 /** Class representing a Conversations. */
 export class Conversations {

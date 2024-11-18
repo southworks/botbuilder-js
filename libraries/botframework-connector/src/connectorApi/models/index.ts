@@ -4,7 +4,9 @@
  */
 
 
-import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "@azure/core-http";
+import { ServiceClientOptions } from "@azure/core-http";
+import { PipelineResponse } from "@azure/core-rest-pipeline";
+import { RequestOptionsBase } from "../../utils";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
@@ -65,7 +67,7 @@ export type AttachmentsGetAttachmentInfoResponse = AttachmentInfo & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -101,7 +103,7 @@ export type AttachmentsGetAttachmentResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse;
+  _response: PipelineResponse;
 };
 
 /**
@@ -111,7 +113,7 @@ export type ConversationsGetConversationsResponse = ConversationsResult & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -131,7 +133,7 @@ export type ConversationsCreateConversationResponse = ConversationResourceRespon
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -151,7 +153,7 @@ export type ConversationsSendToConversationResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -171,7 +173,7 @@ export type ConversationsSendConversationHistoryResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -191,7 +193,7 @@ export type ConversationsUpdateActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -211,7 +213,7 @@ export type ConversationsReplyToActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -231,7 +233,7 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -251,7 +253,7 @@ export type ConversationsGetConversationMemberResponse = ChannelAccount & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -271,7 +273,7 @@ export type ConversationsGetConversationPagedMembersResponse = PagedMembersResul
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -291,7 +293,7 @@ export type ConversationsGetActivityMembersResponse = Array<ChannelAccount> & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */
@@ -311,7 +313,7 @@ export type ConversationsUploadAttachmentResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: HttpResponse & {
+  _response: PipelineResponse & {
     /**
      * The response body as text (string format)
      */

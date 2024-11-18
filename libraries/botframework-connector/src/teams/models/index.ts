@@ -15,6 +15,7 @@ import {
     BatchOperationStateResponse,
     BatchFailedEntriesResponse,
 } from 'botframework-schema';
+import { RequestOptionsBase } from '../../utils';
 
 /**
  * @interface
@@ -103,7 +104,7 @@ export type TeamsFetchMeetingParticipantResponse = TeamsMeetingParticipant & {
  *
  * @extends RequestOptionsBase
  */
-export interface TeamsFetchMeetingParticipantOptionalParams extends PipelineRequestOptions {
+export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptionsBase {
     /**
      * @member {string} [tenantId]
      */

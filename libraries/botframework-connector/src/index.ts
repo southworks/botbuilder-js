@@ -9,6 +9,7 @@
 export * from './auth';
 export * from './teams';
 export * from './tokenApi/models';
+export * from './utils'
 
 export { BotFrameworkClient } from './skills';
 export { ConnectorClient } from './connectorApi/connectorClient';
@@ -16,6 +17,5 @@ export { ConnectorClientOptions } from './connectorApi/models/index';
 export { EmulatorApiClient } from './emulatorApiClient';
 export { SignInUrlResponse, TokenExchangeRequest, TokenStatus } from 'botframework-schema';
 export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';
-export { ServiceCallback } from './utils'
 
 export * as ConversationConstants from './conversationConstants';

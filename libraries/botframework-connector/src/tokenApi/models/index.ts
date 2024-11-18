@@ -3,7 +3,10 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "@azure/core-http";
+import { ServiceClientOptions, HttpResponse } from "@azure/core-http";
+import { HttpHeadersLike } from "@azure/core-http-compat"
+import { PipelineResponse } from "@azure/core-rest-pipeline";
+import { RequestOptionsBase } from "../../utils";
 import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**
