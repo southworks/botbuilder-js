@@ -3,8 +3,6 @@
  * Licensed under the MIT License. See License.txt in the project root for
  * license information.
  */
-
-//import { ServiceClient, ServiceClientCredentials, ServiceClientOptions } from '@azure/core-http';
 import { ServiceClientOptions, ServiceClient } from '@azure/core-client';
 import { TokenCredential } from '@azure/identity';
 /**

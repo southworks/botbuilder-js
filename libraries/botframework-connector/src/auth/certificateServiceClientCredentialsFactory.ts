@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { TokenCredential } from '@azure/identity';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
 import { CertificateAppCredentials } from './certificateAppCredentials';
@@ -125,7 +125,7 @@ export class CertificateServiceClientCredentialsFactory extends ServiceClientCre
     /**
      * @inheritdoc
      */
-    async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
+    async createCredentials(appId: string, audience: string): Promise<TokenCredential> {
         ok(
             await this.isValidAppId(appId),
             'CertificateServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'

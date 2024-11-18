@@ -4,7 +4,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { TokenCredential } from '@azure/identity';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
@@ -102,7 +102,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         audience: string,
         loginEndpoint: string,
         validateAuthority: boolean
-    ): Promise<ServiceClientCredentials> {
+    ): Promise<TokenCredential> {
         if (await this.isAuthenticationDisabled()) {
             return MicrosoftAppCredentials.Empty;
         }

@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials } from '@azure/core-http';
+import { TokenCredential } from '@azure/identity';
 import * as Models from './models';
 import * as Mappers from './models/mappers';
 import * as operations from './operations';
@@ -19,7 +19,7 @@ class TeamsConnectorClient extends TeamsConnectorClientContext {
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
-    constructor(credentials: ServiceClientCredentials, options?: Models.TeamsConnectorClientOptions) {
+    constructor(credentials: TokenCredential, options?: Models.TeamsConnectorClientOptions) {
         super(credentials, options);
         this.teams = new operations.Teams(this);
     }

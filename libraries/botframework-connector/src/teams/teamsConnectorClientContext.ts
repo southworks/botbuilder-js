@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials, ServiceClient } from '@azure/core-http';
+import { ServiceClient } from '@azure/core-client';
+import { TokenCredential } from '@azure/identity';
 import { TeamsConnectorClientOptions } from './models';
 
 /**
@@ -13,23 +14,23 @@ import { TeamsConnectorClientOptions } from './models';
  * The Connector service uses industry-standard REST and JSON over HTTPS.
  */
 export class TeamsConnectorClientContext extends ServiceClient {
-    credentials: ServiceClientCredentials;
+    credentials: TokenCredential;
+    endpoint: string;
 
     /**
      * Initializes a new instance of the TeamsConnectorClientContext class.
-     *
+     * @param endpoint Subscription endpoint
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
-    constructor(credentials: ServiceClientCredentials, options?: TeamsConnectorClientOptions) {
+    constructor(credentials: TokenCredential, options?: TeamsConnectorClientOptions) {
         if (!options) {
             options = {};
         }
 
-        super(credentials, options);
+        super(options);
 
-        this.baseUri = options.baseUri || this.baseUri || 'https://api.botframework.com';
-        this.requestContentType = 'application/json; charset=utf-8';
+        this.endpoint = options.endpoint || this.endpoint || 'https://api.botframework.com';
         this.credentials = credentials;
     }
 }

@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClient, ServiceClientCredentials } from "@azure/core-http";
+import { ServiceClient, ServiceClientOptions } from "@azure/core-client";
+import { TokenCredential } from '@azure/identity'
 import { getDefaultUserAgentValue } from "../utils/userAgent";
 import * as Models from "./models";
 
@@ -11,7 +12,8 @@ const packageName = "botframework-Token";
 const packageVersion = "4.0.0";
 
 export class TokenApiClientContext extends ServiceClient {
-  credentials: ServiceClientCredentials;
+  credentials: TokenCredential;
+  endpoint: string;
 
   // Protects against JSON.stringify leaking secrets
   private toJSON(): unknown {
@@ -21,9 +23,10 @@ export class TokenApiClientContext extends ServiceClient {
   /**
    * Initializes a new instance of the TokenApiClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
+   * @param endpoint Subscription endpoint
    * @param [options] The parameter options
    */
-  constructor(credentials: ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
+  constructor(credentials: TokenCredential, options?: ServiceClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -32,12 +35,12 @@ export class TokenApiClientContext extends ServiceClient {
       options = {};
     }
     const defaultUserAgent = getDefaultUserAgentValue();
-    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
+//    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
 
-    super(credentials, options);
+    super(options);
 
-    this.baseUri = options.baseUri || this.baseUri || "https://token.botframework.com";
-    this.requestContentType = "application/json; charset=utf-8";
+    this.endpoint = options.endpoint || this.endpoint || "https://token.botframework.com";
+//    this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
   }

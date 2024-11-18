@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpHeaders, ServiceClientCredentials } from '@azure/core-http';
+import { createHttpHeaders } from '@azure/core-rest-pipeline';
+import { TokenCredential } from '@azure/identity';
 import { WebResourceLike } from '@azure/core-http-compat';
-import { createPipelineRequest } from '@azure/core-rest-pipeline';
 
 const AuthorizationHeader = "Authorization";
 const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
@@ -11,7 +11,7 @@ const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
 /**
  * A credentials object that uses a token string and a authorzation scheme to authenticate.
  */
-export class TokenCredentials implements ServiceClientCredentials {
+export class TokenCredentials implements TokenCredential {
     token: string;
     authorizationScheme: string = DEFAULT_AUTHORIZATION_SCHEME;
 
@@ -37,7 +37,7 @@ export class TokenCredentials implements ServiceClientCredentials {
      * @returns {Promise<WebResourceLike>} The signed request object.
      */
     signRequest(webResource: WebResourceLike) {
-        if (!webResource.headers) webResource.headers = new HttpHeaders();
+        if (!webResource.headers) webResource.headers = createHttpHeaders();
         webResource.headers.set(AuthorizationHeader, `${this.authorizationScheme} ${this.token}`);
         return Promise.resolve(webResource);
     }

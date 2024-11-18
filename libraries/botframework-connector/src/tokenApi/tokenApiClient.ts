@@ -3,7 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials } from "@azure/core-http";
+import { TokenCredential } from "@azure/identity";
+import { ServiceClientOptions } from "@azure/core-client";
 import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
@@ -19,7 +20,7 @@ class TokenApiClient extends TokenApiClientContext {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param [options] The parameter options
    */
-  constructor(credentials: ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
+  constructor(credentials: TokenCredential, options?: ServiceClientOptions) {
     super(credentials, options);
     this.botSignIn = new operations.BotSignIn(this);
     this.userToken = new operations.UserToken(this);

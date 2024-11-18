@@ -7,7 +7,7 @@
  */
 
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { TokenCredential } from '@azure/identity';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
@@ -55,7 +55,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
     /**
      * @inheritdoc
      */
-    async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
+    async createCredentials(appId: string, audience: string): Promise<TokenCredential> {
         ok(
             await this.isValidAppId(appId),
             'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'

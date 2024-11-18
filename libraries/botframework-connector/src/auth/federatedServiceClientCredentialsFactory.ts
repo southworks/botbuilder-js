@@ -5,7 +5,7 @@
 // Licensed under the MIT License.
 
 import { ok } from 'assert';
-import type { ServiceClientCredentials } from '@azure/core-http';
+import type { TokenCredential } from '@azure/identity';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { FederatedAppCredentials } from './federatedAppCredentials';
 
@@ -55,7 +55,7 @@ export class FederatedServiceClientCredentialsFactory extends ServiceClientCrede
     /**
      * @inheritdoc
      */
-    async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
+    async createCredentials(appId: string, audience: string): Promise<TokenCredential> {
         ok(
             await this.isValidAppId(appId),
             'FederatedServiceClientCredentialsFactory.createCredentials(): Invalid App ID.'
