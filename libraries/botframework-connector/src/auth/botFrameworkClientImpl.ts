@@ -8,9 +8,9 @@ import type { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
-import { WebResource } from '@azure/core-http';
 import { ok } from 'assert';
 import axios from 'axios';
+import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
 
 const botFrameworkClientFetchImpl = (connectorClientOptions: ConnectorClientOptions): typeof fetch => {
     const { http: httpAgent, https: httpsAgent } = connectorClientOptions?.agentSettings ?? {
@@ -140,17 +140,24 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             }
             activity.recipient.role = RoleTypes.Skill;
 
-            const webRequest = new WebResource(toUrl, 'POST', JSON.stringify(activity), undefined, {
+            const headers = createHttpHeaders({
                 Accept: 'application/json',
                 [ConversationIdHttpHeaderName]: conversationId,
                 'Content-Type': 'application/json',
                 'User-Agent': USER_AGENT,
             });
+
+            const webRequest = createPipelineRequest({
+                url: toUrl,
+                method: 'POST',
+                body: JSON.stringify(activity),
+                headers
+            });
             const request = await credentials.signRequest(webRequest);
 
             const config: RequestInit = {
-                body: request.body,
-                headers: request.headers.rawHeaders(),
+                body: request.body.toString(),
+                headers: request.headers.toJSON({ preserveCase: true }),
             };
             const response = await this.botFrameworkClientFetch(request.url, config);
 

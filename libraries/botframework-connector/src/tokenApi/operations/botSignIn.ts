@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback } from "../../utils/serviceCallback";
-import { createSerializer, OperationSpec } from "@azure/core-client";
+import { createSerializer, OperationSpec, RawResponseCallback } from "@azure/core-client";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";
@@ -33,21 +32,30 @@ export class BotSignIn {
    * @param state
    * @param callback The callback
    */
-  getSignInUrl(state: string, callback: ServiceCallback<string>): void;
+  getSignInUrl(state: string, callback: RawResponseCallback): void;
   /**
    * @param state
    * @param options The optional parameters
    * @param callback The callback
    */
-  getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: ServiceCallback<string>): void;
-  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams | ServiceCallback<string>, callback?: ServiceCallback<string>): Promise<Models.BotSignInGetSignInUrlResponse> {
+  getSignInUrl(state: string, options: Models.BotSignInGetSignInUrlOptionalParams, callback: RawResponseCallback): void;
+  getSignInUrl(state: string, options?: Models.BotSignInGetSignInUrlOptionalParams | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.BotSignInGetSignInUrlResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         state,
         options
       },
-      getSignInUrlOperationSpec,
-      callback) as Promise<Models.BotSignInGetSignInUrlResponse>;
+      getSignInUrlOperationSpec
+    ) as Promise<Models.BotSignInGetSignInUrlResponse>;
   }
 
   /**
@@ -60,21 +68,30 @@ export class BotSignIn {
    * @param state
    * @param callback The callback
    */
-  getSignInResource(state: string, callback: ServiceCallback<SignInUrlResponse>): void;
+  getSignInResource(state: string, callback: RawResponseCallback): void;
   /**
    * @param state
    * @param options The optional parameters
    * @param callback The callback
    */
-  getSignInResource(state: string, options: Models.BotSignInGetSignInResourceOptionalParams, callback: ServiceCallback<SignInUrlResponse>): void;
-  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams | ServiceCallback<SignInUrlResponse>, callback?: ServiceCallback<SignInUrlResponse>): Promise<Models.BotSignInGetSignInResourceResponse> {
+  getSignInResource(state: string, options: Models.BotSignInGetSignInResourceOptionalParams, callback: RawResponseCallback): void;
+  getSignInResource(state: string, options?: Models.BotSignInGetSignInResourceOptionalParams | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.BotSignInGetSignInResourceResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         state,
         options
       },
-      getSignInResourceOperationSpec,
-      callback) as Promise<Models.BotSignInGetSignInResourceResponse>;
+      getSignInResourceOperationSpec
+    ) as Promise<Models.BotSignInGetSignInResourceResponse>;
   }
 }
 

@@ -6,10 +6,10 @@
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 import { MsalAppCredentials } from './msalAppCredentials';
-import { TokenCredential } from '@azure/identity';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
+import { ServiceClientCredentials } from '../utils';
 
 /**
  * An implementation of ServiceClientCredentialsFactory that generates MsalAppCredentials
@@ -50,7 +50,7 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
         audience: string,
         loginEndpoint: string,
         _validateAuthority: boolean
-    ): Promise<TokenCredential> {
+    ): Promise<ServiceClientCredentials> {
         if (await this.isAuthenticationDisabled()) {
             return MsalAppCredentials.Empty;
         }

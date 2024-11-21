@@ -4,15 +4,14 @@
  */
 
 import { ServiceClient, ServiceClientOptions } from "@azure/core-client";
-import { getDefaultUserAgentValue } from "../utils/userAgent";
+import { getDefaultUserAgentValue, ServiceClientCredentials } from "../utils";
 import * as Models from "./models";
-import { TokenCredential } from "@azure/identity";
 
 const packageName = "botframework-connector";
 const packageVersion = "4.0.0";
 
 export class ConnectorClientContext extends ServiceClient {
-  credentials: TokenCredential;
+  credentials: ServiceClientCredentials;
   endpoint: string;
 
   /**
@@ -21,7 +20,7 @@ export class ConnectorClientContext extends ServiceClient {
    * @param endpoint Subscription endpoint
    * @param [options] The parameter options
    */
-  constructor(credentials: TokenCredential, options?: ServiceClientOptions) {
+  constructor(credentials: ServiceClientCredentials, options?: ServiceClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -30,9 +29,11 @@ export class ConnectorClientContext extends ServiceClient {
       // NOTE: autogen creates a {} which is invalid, it needs to be cast
       options = {} as ServiceClientOptions;
     }
-    // TODO  This is to workaround fact that AddUserAgent() was removed.  
+
     const defaultUserAgent = getDefaultUserAgentValue();
-//    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
+    options.userAgentOptions = {
+      userAgentPrefix: `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgentOptions?.userAgentPrefix || ''}`
+    };
 
     super(options);
 

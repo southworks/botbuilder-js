@@ -4,13 +4,13 @@
  * license information.
  */
 import { ServiceClientOptions, ServiceClient } from '@azure/core-client';
-import { TokenCredential } from '@azure/identity';
+import { ServiceClientCredentials } from 'botframework-connector';
 /**
  * Client for LUIS context
  */
 export class LUISRuntimeClientContext extends ServiceClient {
     endpoint: string;
-    credentials: TokenCredential;
+    credentials: ServiceClientCredentials;
 
     /**
      * Initializes a new instance of the LUISRuntimeClientContext class.
@@ -20,7 +20,7 @@ export class LUISRuntimeClientContext extends ServiceClient {
      * https://westus.api.cognitive.microsoft.com).
      * @param [options] The parameter options
      */
-    constructor(credentials: TokenCredential, endpoint: string, options?: ServiceClientOptions) {
+    constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
         if (endpoint == undefined) {
             throw new Error("'endpoint' cannot be null.");
         }

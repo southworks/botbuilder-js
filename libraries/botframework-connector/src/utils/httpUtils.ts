@@ -2,21 +2,19 @@ import { AbortSignalLike } from "@azure/abort-controller";
 import { HttpClient, HttpMethods, PipelineOptions, PipelinePolicy, PipelineRequest, PipelineResponse, TransferProgressEvent, RestError } from "@azure/core-rest-pipeline";
 import { TracingContext } from "@azure/core-tracing";
 import { WebResourceLike, CompatResponse } from '@azure/core-http-compat';
+import * as os from "os";
+import { OperationOptions, SerializerOptions } from "@azure/core-client";
 
 /**
  * Describes the base structure of the options object that will be used in every operation.
  */
-export interface RequestOptionsBase {
+export interface RequestOptionsBase extends OperationOptions {
     /**
      * will be applied before the request is sent.
      */
     customHeaders?: {
         [key: string]: string;
     };
-    /**
-     * Signal of an abort controller. Can be used to abort both sending a network request and waiting for a response.
-     */
-    abortSignal?: AbortSignalLike;
     /**
      * The number of milliseconds a request can take before automatically being terminated.
      * If the request is terminated, an `AbortError` is thrown.
@@ -46,13 +44,13 @@ export interface RequestOptionsBase {
     /**
      * Options to override XML parsing/building behavior.
      */
-    serializerOptions?: SerializerOptions;
+    serializerOptions?: SerializerOption;
 }
 
 /**
  * Options to govern behavior of xml parser and builder.
  */
-interface SerializerOptions {
+interface SerializerOption extends SerializerOptions {
     /**
      * indicates the name of the root element in the resulting XML when building XML.
      */
@@ -66,27 +64,6 @@ interface SerializerOptions {
      */
     xmlCharKey?: string;
 }
-
-/**
- * Service callback that is returned for REST requests initiated by the service client.
- */
-export interface ServiceCallback<TResult> {
-    /**
-     * A method that will be invoked as a callback to a service function.
-     * @param err - The error occurred if any, while executing the request; otherwise null.
-     * @param result - The deserialized response body if an error did not occur.
-     * @param request - The raw/actual request sent to the server if an error did not occur.
-     * @param response - The raw/actual response from the server if an error did not occur.
-     */
-    (
-        err: Error | RestError | null,
-        result?: TResult,
-        request?: WebResourceLike,
-        response?: CompatResponse
-    ): void;
-}
-
-import * as os from "os";
 
 export type TelemetryInfo = { key?: string; value?: string };
 

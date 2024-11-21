@@ -9,9 +9,8 @@ import type { ServiceClientCredentialsFactory } from './serviceClientCredentials
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
-    packageInfo.version
-} ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version
+    } ${getDefaultUserAgentValue()} `;
 
 /**
  * @internal
@@ -61,7 +60,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
 
         const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
 
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
+        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgentOptions;
         const setUserAgent = userAgentPolicy({
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });

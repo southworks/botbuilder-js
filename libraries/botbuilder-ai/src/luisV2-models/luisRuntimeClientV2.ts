@@ -7,11 +7,11 @@
  */
 
 import { ServiceClientOptions } from '@azure/core-client';
-import { TokenCredential} from '@azure/identity'
 import * as Models from './luisResult';
 import * as Mappers from './luisMappers';
 import { LuisPrediction } from './luisPrediction';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
+import { ServiceClientCredentials } from 'botframework-connector';
 
 /**
  * Represents the LUIS client for V2 of the runtime.
@@ -30,7 +30,7 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
      * https://westus.api.cognitive.microsoft.com).
      * @param [options] The parameter options
      */
-    constructor(credentials: TokenCredential, endpoint: string, options?: ServiceClientOptions) {
+    constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
         super(credentials, endpoint, options);
         this.prediction = new LuisPrediction(this);
         super.baseUri = '{Endpoint}/luis/v2.0';

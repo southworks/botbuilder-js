@@ -4,13 +4,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import type { TokenCredential } from '@azure/identity';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
 import { MicrosoftGovernmentAppCredentials } from './microsoftGovernmentAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { stringExt } from 'botbuilder-stdlib';
+import { ServiceClientCredentials } from '../utils';
 
 /**
  * A simple implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) interface.
@@ -102,7 +102,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         audience: string,
         loginEndpoint: string,
         validateAuthority: boolean
-    ): Promise<TokenCredential> {
+    ): Promise<ServiceClientCredentials> {
         if (await this.isAuthenticationDisabled()) {
             return MicrosoftAppCredentials.Empty;
         }

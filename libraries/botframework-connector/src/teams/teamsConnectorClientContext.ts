@@ -4,8 +4,9 @@
  */
 
 import { ServiceClient } from '@azure/core-client';
-import { TokenCredential } from '@azure/identity';
+import { ServiceClientCredentials } from '../utils';
 import { TeamsConnectorClientOptions } from './models';
+import { ExtendedServiceClient } from '@azure/core-http-compat';
 
 /**
  * The Bot Connector REST API extension for Microsoft Teams allows your
@@ -13,8 +14,8 @@ import { TeamsConnectorClientOptions } from './models';
  * configured in the [Bot Framework Developer Portal](https://dev.botframework.com).
  * The Connector service uses industry-standard REST and JSON over HTTPS.
  */
-export class TeamsConnectorClientContext extends ServiceClient {
-    credentials: TokenCredential;
+export class TeamsConnectorClientContext extends ExtendedServiceClient {
+    credentials: ServiceClientCredentials;
     endpoint: string;
 
     /**
@@ -23,7 +24,7 @@ export class TeamsConnectorClientContext extends ServiceClient {
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
-    constructor(credentials: TokenCredential, options?: TeamsConnectorClientOptions) {
+    constructor(credentials: ServiceClientCredentials, options?: TeamsConnectorClientOptions) {
         if (!options) {
             options = {};
         }

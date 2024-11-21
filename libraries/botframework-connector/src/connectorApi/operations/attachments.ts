@@ -3,8 +3,8 @@
  * Licensed under the MIT License.
  */
 import { createSerializer } from "@azure/core-client"
-import { RequestOptionsBase, ServiceCallback } from "../../utils";
-import { OperationSpec } from "@azure/core-client";
+import { RequestOptionsBase } from "../../utils";
+import { OperationSpec, RawResponseCallback } from "@azure/core-client";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
 import * as Mappers from "../models/attachmentsMappers";
@@ -34,21 +34,30 @@ export class Attachments {
    * @param attachmentId attachment id
    * @param callback The callback
    */
-  getAttachmentInfo(attachmentId: string, callback: ServiceCallback<Models.AttachmentInfo>): void;
+  getAttachmentInfo(attachmentId: string, callback: RawResponseCallback): void;
   /**
    * @param attachmentId attachment id
    * @param options The optional parameters
    * @param callback The callback
    */
-  getAttachmentInfo(attachmentId: string, options: RequestOptionsBase, callback: ServiceCallback<Models.AttachmentInfo>): void;
-  getAttachmentInfo(attachmentId: string, options?: RequestOptionsBase | ServiceCallback<Models.AttachmentInfo>, callback?: ServiceCallback<Models.AttachmentInfo>): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
+  getAttachmentInfo(attachmentId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  getAttachmentInfo(attachmentId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.AttachmentsGetAttachmentInfoResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         attachmentId,
         options
       },
-      getAttachmentInfoOperationSpec,
-      callback) as Promise<Models.AttachmentsGetAttachmentInfoResponse>;
+      getAttachmentInfoOperationSpec
+    ) as Promise<Models.AttachmentsGetAttachmentInfoResponse>;
   }
 
   /**
@@ -65,23 +74,32 @@ export class Attachments {
    * @param viewId View id from attachmentInfo
    * @param callback The callback
    */
-  getAttachment(attachmentId: string, viewId: string, callback: ServiceCallback<void>): void;
+  getAttachment(attachmentId: string, viewId: string, callback: RawResponseCallback): void;
   /**
    * @param attachmentId attachment id
    * @param viewId View id from attachmentInfo
    * @param options The optional parameters
    * @param callback The callback
    */
-  getAttachment(attachmentId: string, viewId: string, options: RequestOptionsBase, callback: ServiceCallback<void>): void;
-  getAttachment(attachmentId: string, viewId: string, options?: RequestOptionsBase | ServiceCallback<void>, callback?: ServiceCallback<void>): Promise<Models.AttachmentsGetAttachmentResponse> {
+  getAttachment(attachmentId: string, viewId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  getAttachment(attachmentId: string, viewId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.AttachmentsGetAttachmentResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         attachmentId,
         viewId,
         options
       },
-      getAttachmentOperationSpec,
-      callback) as Promise<Models.AttachmentsGetAttachmentResponse>;
+      getAttachmentOperationSpec
+    ) as Promise<Models.AttachmentsGetAttachmentResponse>;
   }
 }
 

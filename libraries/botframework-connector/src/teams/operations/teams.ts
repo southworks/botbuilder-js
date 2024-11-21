@@ -4,8 +4,8 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase, ServiceCallback } from "../../utils";
-import { createSerializer, OperationSpec } from '@azure/core-client';
+import { RequestOptionsBase } from "../../utils";
+import { createSerializer, OperationSpec, RawResponseCallback } from '@azure/core-client';
 import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
@@ -56,7 +56,7 @@ export class Teams {
      * @param teamId Team Id.
      * @param callback The callback.
      */
-    fetchChannelList(teamId: string, callback: ServiceCallback<ConversationList>): void;
+    fetchChannelList(teamId: string, callback: RawResponseCallback): void;
     /**
      * Fetches channel list for a given team.
      *
@@ -67,7 +67,7 @@ export class Teams {
     fetchChannelList(
         teamId: string,
         options: RequestOptionsBase,
-        callback: ServiceCallback<ConversationList>
+        callback: RawResponseCallback
     ): void;
     /**
      * Fetches channel list for a given team.
@@ -79,16 +79,24 @@ export class Teams {
      */
     fetchChannelList(
         teamId: string,
-        options?: RequestOptionsBase | ServiceCallback<ConversationList>,
-        callback?: ServiceCallback<ConversationList>
+        options?: RequestOptionsBase | RawResponseCallback,
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsFetchChannelListResponse> {
+        if (typeof options === 'function') {
+            const onResponse = options;
+            options = {
+                onResponse
+            }
+        } else {
+            options.onResponse = callback;
+        }
+
         return this.client.sendOperationRequest(
             {
                 teamId,
                 options,
             },
-            fetchChannelListOperationSpec,
-            callback
+            fetchChannelListOperationSpec
         ) as Promise<Models.TeamsFetchChannelListResponse>;
     }
 
@@ -109,7 +117,7 @@ export class Teams {
      * @param teamId Team Id.
      * @param callback The callback.
      */
-    fetchTeamDetails(teamId: string, callback: ServiceCallback<TeamDetails>): void;
+    fetchTeamDetails(teamId: string, callback: RawResponseCallback): void;
     /**
      * Fetches details related to a team.
      *
@@ -120,7 +128,7 @@ export class Teams {
     fetchTeamDetails(
         teamId: string,
         options: RequestOptionsBase,
-        callback: ServiceCallback<TeamDetails>
+        callback: RawResponseCallback
     ): void;
     /**
      * Fetches details related to a team.
@@ -132,16 +140,24 @@ export class Teams {
      */
     fetchTeamDetails(
         teamId: string,
-        options?: RequestOptionsBase | ServiceCallback<TeamDetails>,
-        callback?: ServiceCallback<TeamDetails>
+        options?: RequestOptionsBase | RawResponseCallback,
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsFetchTeamDetailsResponse> {
+        if (typeof options === 'function') {
+            const onResponse = options;
+            options = {
+                onResponse
+            }
+        } else {
+            options.onResponse = callback;
+        }
+
         return this.client.sendOperationRequest(
             {
                 teamId,
                 options,
             },
-            fetchTeamDetailsOperationSpec,
-            callback
+            fetchTeamDetailsOperationSpec
         ) as Promise<Models.TeamsFetchTeamDetailsResponse>;
     }
 
@@ -167,7 +183,7 @@ export class Teams {
     fetchMeetingParticipant(
         meetingId: string,
         participantId: string,
-        callback: ServiceCallback<TeamsMeetingParticipant>
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id
@@ -179,7 +195,7 @@ export class Teams {
         meetingId: string,
         participantId: string,
         options: Models.TeamsFetchMeetingParticipantOptionalParams,
-        callback: ServiceCallback<TeamsMeetingParticipant>
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -191,17 +207,25 @@ export class Teams {
     fetchMeetingParticipant(
         meetingId: string,
         participantId: string,
-        options?: Models.TeamsFetchMeetingParticipantOptionalParams | ServiceCallback<TeamsMeetingParticipant>,
-        callback?: ServiceCallback<TeamsMeetingParticipant>
+        options?: Models.TeamsFetchMeetingParticipantOptionalParams | RawResponseCallback,
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsFetchMeetingParticipantResponse> {
+        if (typeof options === 'function') {
+            const onResponse = options;
+            options = {
+                onResponse
+            }
+        } else {
+            options.onResponse = callback;
+        }
+
         return this.client.sendOperationRequest(
             {
                 meetingId,
                 participantId,
                 options,
             },
-            fetchMeetingParticipantOperationSpec,
-            callback
+            fetchMeetingParticipantOperationSpec
         ) as Promise<Models.TeamsFetchMeetingParticipantResponse>;
     }
 
@@ -215,7 +239,7 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options?: RequestOptionsBase | ServiceCallback<TeamDetails>
+        options?: RequestOptionsBase | RawResponseCallback
     ): Promise<Models.TeamsMeetingInfoResponse>;
     /**
      * @param meetingId Meeting Id, encoded as a BASE64 string.
@@ -223,7 +247,7 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        callback: ServiceCallback<TeamsMeetingInfo>
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id, encoded as a BASE64 string.
@@ -232,8 +256,8 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options: RequestOptionsBase | ServiceCallback<TeamDetails>,
-        callback: ServiceCallback<TeamsMeetingInfo>
+        options: RequestOptionsBase | RawResponseCallback,
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -243,16 +267,24 @@ export class Teams {
      */
     fetchMeetingInfo(
         meetingId: string,
-        options?: RequestOptionsBase | ServiceCallback<TeamDetails>,
-        callback?: ServiceCallback<TeamsMeetingInfo>
+        options?: RequestOptionsBase | RawResponseCallback,
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsMeetingInfoResponse> {
+        if (typeof options === 'function') {
+            const onResponse = options;
+            options = {
+                onResponse
+            }
+        } else {
+            options.onResponse = callback;
+        }
+
         return this.client.sendOperationRequest(
             {
                 meetingId,
                 options,
             },
-            fetchMeetingInfoOperationSpec,
-            callback
+            fetchMeetingInfoOperationSpec
         ) as Promise<Models.TeamsMeetingInfoResponse>;
     }
 
@@ -276,7 +308,7 @@ export class Teams {
     sendMeetingNotification(
         meetingId: string,
         notification: MeetingNotification,
-        callback: ServiceCallback<MeetingNotificationResponse>
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -288,7 +320,7 @@ export class Teams {
         meetingId: string,
         notification: MeetingNotification,
         options: RequestOptionsBase,
-        callback: ServiceCallback<MeetingNotificationResponse>
+        callback: RawResponseCallback
     ): void;
     /**
      * @param meetingId Meeting Id.
@@ -301,16 +333,17 @@ export class Teams {
         meetingId: string,
         notification: MeetingNotification,
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<MeetingNotificationResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsMeetingNotificationResponse> {
+        options.onResponse = callback;
+
         return this.client.sendOperationRequest(
             {
                 meetingId,
                 notification,
                 options
             },
-            sendMeetingNotificationOperationSpec,
-            callback
+            sendMeetingNotificationOperationSpec
         ) as Promise<Models.TeamsMeetingNotificationResponse>;
     }
 
@@ -330,20 +363,22 @@ export class Teams {
         tenantId: string,
         members: TeamsMember[],
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchOperationResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
             members,
             tenantId
         }
+
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
             },
-            sendMessageToListOfUsersOperationSpec,
-            callback
+            sendMessageToListOfUsersOperationSpec
         ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
     }
 
@@ -360,19 +395,21 @@ export class Teams {
         activity: Activity,
         tenantId: string,
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchOperationResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
             tenantId
         }
+
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
             },
-            sendMessageToAllUsersInTenantOperationSpec,
-            callback
+            sendMessageToAllUsersInTenantOperationSpec
         ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
     }
 
@@ -391,20 +428,22 @@ export class Teams {
         tenantId: string,
         teamId: string,
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchOperationResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
             tenantId,
             teamId
         }
+
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
             },
-            sendMessageToAllUsersInTeamOperationSpec,
-            callback
+            sendMessageToAllUsersInTeamOperationSpec
         ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
     }
 
@@ -423,20 +462,22 @@ export class Teams {
         tenantId: string,
         members: TeamsMember[],
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchOperationResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.TeamsBatchOperationResponse> {
         const content = {
             activity,
             tenantId,
             members
         }
+
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 content,
                 options
             },
-            sendMessageToListOfChannelsOperationSpec,
-            callback
+            sendMessageToListOfChannelsOperationSpec
         ) as Promise<Models.TeamsBatchOperationResponse>, this.retryCount);
     }
 
@@ -451,15 +492,16 @@ export class Teams {
     getOperationState(
         operationId: string,
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchOperationStateResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.BatchBatchOperationStateResponse> {
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
                 options
             },
-            getOperationStateSpec,
-            callback
+            getOperationStateSpec
         ) as Promise<Models.BatchBatchOperationStateResponse>, this.retryCount);
     }
 
@@ -474,15 +516,16 @@ export class Teams {
     getOperationFailedEntries(
         operationId: string,
         options?: RequestOptionsBase,
-        callback?: ServiceCallback<BatchFailedEntriesResponse>
+        callback?: RawResponseCallback
     ): Promise<Models.BatchBatchFailedEntriesResponse> {
+        options.onResponse = callback;
+
         return retryAction(() => this.client.sendOperationRequest(
             {
                 operationId,
                 options
             },
-            getPagedFailedEntriesSpec,
-            callback
+            getPagedFailedEntriesSpec
         ) as Promise<Models.BatchBatchFailedEntriesResponse>, this.retryCount);
     }
 

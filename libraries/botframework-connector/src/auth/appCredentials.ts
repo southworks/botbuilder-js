@@ -7,7 +7,7 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { ServiceClientCredentials, WebResource } from '@azure/core-http';
+import { ServiceClientCredentials } from '../utils';
 import { PipelineRequest } from '@azure/core-rest-pipeline';
 import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';

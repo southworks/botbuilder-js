@@ -1,1 +1,2 @@
-export * from './httpUtils'
+export * from './httpUtils';
+export * from './serviceClientCredential';

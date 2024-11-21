@@ -7,10 +7,10 @@
  */
 
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
-import type { TokenCredential } from '@azure/identity';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
+import { ServiceClientCredentials } from '../utils';
 
 /**
  * A Managed Identity implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.
@@ -55,7 +55,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
     /**
      * @inheritdoc
      */
-    async createCredentials(appId: string, audience: string): Promise<TokenCredential> {
+    async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
         ok(
             await this.isValidAppId(appId),
             'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'

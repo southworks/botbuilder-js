@@ -6,9 +6,9 @@
 import * as Mappers from "../models/conversationsMappers";
 import * as Models from "../models";
 import * as Parameters from "../models/parameters";
-import { ServiceCallback, RequestOptionsBase } from "../../utils";
+import { RequestOptionsBase } from "../../utils";
 import { PipelineResponse } from "@azure/core-rest-pipeline";
-import { createSerializer, OperationSpec } from "@azure/core-client";
+import { createSerializer, OperationSpec, RawResponseCallback } from "@azure/core-client";
 import { ConnectorClientContext } from "../connectorClientContext";
 import { ConversationIdHttpHeaderName } from "../../conversationConstants";
 
@@ -60,19 +60,29 @@ export class Conversations {
   /**
    * @param callback The callback
    */
-  getConversations(callback: ServiceCallback<Models.ConversationsResult>): void;
+  getConversations(callback: RawResponseCallback): void;
   /**
    * @param options The optional parameters
    * @param callback The callback
    */
-  getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: ServiceCallback<Models.ConversationsResult>): void;
-  getConversations(options?: Models.ConversationsGetConversationsOptionalParams | ServiceCallback<Models.ConversationsResult>, callback?: ServiceCallback<Models.ConversationsResult>): Promise<Models.ConversationsGetConversationsResponse> {
+  getConversations(options: Models.ConversationsGetConversationsOptionalParams, callback: RawResponseCallback): void;
+  getConversations(options?: Models.ConversationsGetConversationsOptionalParams | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsGetConversationsResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        continuationToken: null,
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         options
       },
-      getConversationsOperationSpec,
-      callback) as Promise<Models.ConversationsGetConversationsResponse>;
+      getConversationsOperationSpec
+    ) as Promise<Models.ConversationsGetConversationsResponse>;
   }
 
   /**
@@ -107,21 +117,30 @@ export class Conversations {
    * @param parameters Parameters to create the conversation from
    * @param callback The callback
    */
-  createConversation(parameters: Models.ConversationParameters, callback: ServiceCallback<Models.ConversationResourceResponse>): void;
+  createConversation(parameters: Models.ConversationParameters, callback: RawResponseCallback): void;
   /**
    * @param parameters Parameters to create the conversation from
    * @param options The optional parameters
    * @param callback The callback
    */
-  createConversation(parameters: Models.ConversationParameters, options: RequestOptionsBase, callback: ServiceCallback<Models.ConversationResourceResponse>): void;
-  createConversation(parameters: Models.ConversationParameters, options?: RequestOptionsBase | ServiceCallback<Models.ConversationResourceResponse>, callback?: ServiceCallback<Models.ConversationResourceResponse>): Promise<Models.ConversationsCreateConversationResponse> {
+  createConversation(parameters: Models.ConversationParameters, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  createConversation(parameters: Models.ConversationParameters, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsCreateConversationResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         parameters,
         options
       },
-      createConversationOperationSpec,
-      callback) as Promise<Models.ConversationsCreateConversationResponse>;
+      createConversationOperationSpec
+    ) as Promise<Models.ConversationsCreateConversationResponse>;
   }
 
   /**
@@ -149,23 +168,32 @@ export class Conversations {
    * @param activity Activity to send
    * @param callback The callback
    */
-  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, callback: ServiceCallback<Models.ResourceResponse>): void;
+  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param activity Activity to send
    * @param options The optional parameters
    * @param callback The callback
    */
-  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: ServiceCallback<Models.ResourceResponse>): void;
-  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | ServiceCallback<Models.ResourceResponse>, callback?: ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendToConversationResponse> {
+  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  sendToConversation(conversationId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsSendToConversationResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         activity,
         options
       },
-      sendToConversationOperationSpec,
-      callback) as Promise<Models.ConversationsSendToConversationResponse>;
+      sendToConversationOperationSpec
+    ) as Promise<Models.ConversationsSendToConversationResponse>;
   }
 
   /**
@@ -186,23 +214,32 @@ export class Conversations {
    * @param history Historic activities
    * @param callback The callback
    */
-  sendConversationHistory(conversationId: string, history: Models.Transcript, callback: ServiceCallback<Models.ResourceResponse>): void;
+  sendConversationHistory(conversationId: string, history: Models.Transcript, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param history Historic activities
    * @param options The optional parameters
    * @param callback The callback
    */
-  sendConversationHistory(conversationId: string, history: Models.Transcript, options: RequestOptionsBase, callback: ServiceCallback<Models.ResourceResponse>): void;
-  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: RequestOptionsBase | ServiceCallback<Models.ResourceResponse>, callback?: ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsSendConversationHistoryResponse> {
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  sendConversationHistory(conversationId: string, history: Models.Transcript, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsSendConversationHistoryResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         history,
         options
       },
-      sendConversationHistoryOperationSpec,
-      callback) as Promise<Models.ConversationsSendConversationHistoryResponse>;
+      sendConversationHistoryOperationSpec
+    ) as Promise<Models.ConversationsSendConversationHistoryResponse>;
   }
 
   /**
@@ -226,7 +263,7 @@ export class Conversations {
    * @param activity replacement Activity
    * @param callback The callback
    */
-  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, callback: ServiceCallback<Models.ResourceResponse>): void;
+  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param activityId activityId to update
@@ -234,8 +271,17 @@ export class Conversations {
    * @param options The optional parameters
    * @param callback The callback
    */
-  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: ServiceCallback<Models.ResourceResponse>): void;
-  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | ServiceCallback<Models.ResourceResponse>, callback?: ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUpdateActivityResponse> {
+  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  updateActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsUpdateActivityResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -243,8 +289,8 @@ export class Conversations {
         activity,
         options
       },
-      updateActivityOperationSpec,
-      callback) as Promise<Models.ConversationsUpdateActivityResponse>;
+      updateActivityOperationSpec
+    ) as Promise<Models.ConversationsUpdateActivityResponse>;
   }
 
   /**
@@ -274,7 +320,7 @@ export class Conversations {
    * @param activity Activity to send
    * @param callback The callback
    */
-  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, callback: ServiceCallback<Models.ResourceResponse>): void;
+  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param activityId activityId the reply is to (OPTIONAL)
@@ -282,8 +328,17 @@ export class Conversations {
    * @param options The optional parameters
    * @param callback The callback
    */
-  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: ServiceCallback<Models.ResourceResponse>): void;
-  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | ServiceCallback<Models.ResourceResponse>, callback?: ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsReplyToActivityResponse> {
+  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  replyToActivity(conversationId: string, activityId: string, activity: Partial<Models.Activity>, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsReplyToActivityResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
@@ -291,8 +346,8 @@ export class Conversations {
         activity,
         options
       },
-      replyToActivityOperationSpec,
-      callback) as Promise<Models.ConversationsReplyToActivityResponse>;
+      replyToActivityOperationSpec
+    ) as Promise<Models.ConversationsReplyToActivityResponse>;
   }
 
   /**
@@ -312,23 +367,32 @@ export class Conversations {
    * @param activityId activityId to delete
    * @param callback The callback
    */
-  deleteActivity(conversationId: string, activityId: string, callback: ServiceCallback<void>): void;
+  deleteActivity(conversationId: string, activityId: string, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param activityId activityId to delete
    * @param options The optional parameters
    * @param callback The callback
    */
-  deleteActivity(conversationId: string, activityId: string, options: RequestOptionsBase, callback: ServiceCallback<void>): void;
-  deleteActivity(conversationId: string, activityId: string, options?: RequestOptionsBase | ServiceCallback<void>, callback?: ServiceCallback<void>): Promise<RestResponse> {
+  deleteActivity(conversationId: string, activityId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  deleteActivity(conversationId: string, activityId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<RestResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         activityId,
         options
       },
-      deleteActivityOperationSpec,
-      callback);
+      deleteActivityOperationSpec
+    );
   }
 
   /**
@@ -346,21 +410,30 @@ export class Conversations {
    * @param conversationId Conversation ID
    * @param callback The callback
    */
-  getConversationMembers(conversationId: string, callback: ServiceCallback<Models.ChannelAccount[]>): void;
+  getConversationMembers(conversationId: string, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param options The optional parameters
    * @param callback The callback
    */
-  getConversationMembers(conversationId: string, options: RequestOptionsBase, callback: ServiceCallback<Models.ChannelAccount[]>): void;
-  getConversationMembers(conversationId: string, options?: RequestOptionsBase | ServiceCallback<Models.ChannelAccount[]>, callback?: ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMembersResponse> {
+  getConversationMembers(conversationId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  getConversationMembers(conversationId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsGetConversationMembersResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         options
       },
-      getConversationMembersOperationSpec,
-      callback) as Promise<Models.ConversationsGetConversationMembersResponse>;
+      getConversationMembersOperationSpec
+    ) as Promise<Models.ConversationsGetConversationMembersResponse>;
   }
 
   /**
@@ -369,15 +442,24 @@ export class Conversations {
    * @param options The optional parameters
    * @param callback The callback
    */
-  getConversationMember(conversationId: string, memberId: string, options?: RequestOptionsBase | ServiceCallback<Models.ChannelAccount[]>, callback?: ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetConversationMemberResponse> {
+  getConversationMember(conversationId: string, memberId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsGetConversationMemberResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         memberId,
         options
       },
-      getConversationMemberOperationSpec,
-      callback) as Promise<Models.ConversationsGetConversationMemberResponse>;
+      getConversationMemberOperationSpec
+    ) as Promise<Models.ConversationsGetConversationMemberResponse>;
   }
 
   /**
@@ -406,21 +488,32 @@ export class Conversations {
    * @param conversationId Conversation ID
    * @param callback The callback
    */
-  getConversationPagedMembers(conversationId: string, callback: ServiceCallback<Models.PagedMembersResult>): void;
+  getConversationPagedMembers(conversationId: string, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param options The optional parameters
    * @param callback The callback
    */
-  getConversationPagedMembers(conversationId: string, options: Models.ConversationsGetConversationPagedMembersOptionalParams, callback: ServiceCallback<Models.PagedMembersResult>): void;
-  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams | ServiceCallback<Models.PagedMembersResult>, callback?: ServiceCallback<Models.PagedMembersResult>): Promise<Models.ConversationsGetConversationPagedMembersResponse> {
+  getConversationPagedMembers(conversationId: string, options: Models.ConversationsGetConversationPagedMembersOptionalParams, callback: RawResponseCallback): void;
+  getConversationPagedMembers(conversationId: string, options?: Models.ConversationsGetConversationPagedMembersOptionalParams | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsGetConversationPagedMembersResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        pageSize: 0,
+        continuationToken: null,
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         options
       },
-      getConversationPagedMembersOperationSpec,
-      callback) as Promise<Models.ConversationsGetConversationPagedMembersResponse>;
+      getConversationPagedMembersOperationSpec
+    ) as Promise<Models.ConversationsGetConversationPagedMembersResponse>;
   }
 
   /**
@@ -441,23 +534,32 @@ export class Conversations {
    * @param memberId ID of the member to delete from this conversation
    * @param callback The callback
    */
-  deleteConversationMember(conversationId: string, memberId: string, callback: ServiceCallback<void>): void;
+  deleteConversationMember(conversationId: string, memberId: string, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param memberId ID of the member to delete from this conversation
    * @param options The optional parameters
    * @param callback The callback
    */
-  deleteConversationMember(conversationId: string, memberId: string, options: RequestOptionsBase, callback: ServiceCallback<void>): void;
-  deleteConversationMember(conversationId: string, memberId: string, options?: RequestOptionsBase | ServiceCallback<void>, callback?: ServiceCallback<void>): Promise<RestResponse> {
+  deleteConversationMember(conversationId: string, memberId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  deleteConversationMember(conversationId: string, memberId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<RestResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         memberId,
         options
       },
-      deleteConversationMemberOperationSpec,
-      callback);
+      deleteConversationMemberOperationSpec
+    );
   }
 
   /**
@@ -477,23 +579,32 @@ export class Conversations {
    * @param activityId Activity ID
    * @param callback The callback
    */
-  getActivityMembers(conversationId: string, activityId: string, callback: ServiceCallback<Models.ChannelAccount[]>): void;
+  getActivityMembers(conversationId: string, activityId: string, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param activityId Activity ID
    * @param options The optional parameters
    * @param callback The callback
    */
-  getActivityMembers(conversationId: string, activityId: string, options: RequestOptionsBase, callback: ServiceCallback<Models.ChannelAccount[]>): void;
-  getActivityMembers(conversationId: string, activityId: string, options?: RequestOptionsBase | ServiceCallback<Models.ChannelAccount[]>, callback?: ServiceCallback<Models.ChannelAccount[]>): Promise<Models.ConversationsGetActivityMembersResponse> {
+  getActivityMembers(conversationId: string, activityId: string, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  getActivityMembers(conversationId: string, activityId: string, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsGetActivityMembersResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         activityId,
         options
       },
-      getActivityMembersOperationSpec,
-      callback) as Promise<Models.ConversationsGetActivityMembersResponse>;
+      getActivityMembersOperationSpec
+    ) as Promise<Models.ConversationsGetActivityMembersResponse>;
   }
 
   /**
@@ -516,23 +627,32 @@ export class Conversations {
    * @param attachmentUpload Attachment data
    * @param callback The callback
    */
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, callback: ServiceCallback<Models.ResourceResponse>): void;
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, callback: RawResponseCallback): void;
   /**
    * @param conversationId Conversation ID
    * @param attachmentUpload Attachment data
    * @param options The optional parameters
    * @param callback The callback
    */
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options: RequestOptionsBase, callback: ServiceCallback<Models.ResourceResponse>): void;
-  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: RequestOptionsBase | ServiceCallback<Models.ResourceResponse>, callback?: ServiceCallback<Models.ResourceResponse>): Promise<Models.ConversationsUploadAttachmentResponse> {
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options: RequestOptionsBase, callback: RawResponseCallback): void;
+  uploadAttachment(conversationId: string, attachmentUpload: Models.AttachmentData, options?: RequestOptionsBase | RawResponseCallback, callback?: RawResponseCallback): Promise<Models.ConversationsUploadAttachmentResponse> {
+    if (typeof options === 'function') {
+      const onResponse = options;
+      options = {
+        onResponse
+      }
+    } else {
+      options.onResponse = callback;
+    }
+
     return this.client.sendOperationRequest(
       {
         conversationId,
         attachmentUpload,
         options
       },
-      uploadAttachmentOperationSpec,
-      callback) as Promise<Models.ConversationsUploadAttachmentResponse>;
+      uploadAttachmentOperationSpec
+    ) as Promise<Models.ConversationsUploadAttachmentResponse>;
   }
 }
 

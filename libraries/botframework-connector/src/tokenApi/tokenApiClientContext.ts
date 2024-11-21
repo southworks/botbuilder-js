@@ -4,15 +4,14 @@
  */
 
 import { ServiceClient, ServiceClientOptions } from "@azure/core-client";
-import { TokenCredential } from '@azure/identity'
-import { getDefaultUserAgentValue } from "../utils/userAgent";
+import { getDefaultUserAgentValue, ServiceClientCredentials } from "../utils";
 import * as Models from "./models";
 
 const packageName = "botframework-Token";
 const packageVersion = "4.0.0";
 
 export class TokenApiClientContext extends ServiceClient {
-  credentials: TokenCredential;
+  credentials: ServiceClientCredentials;
   endpoint: string;
 
   // Protects against JSON.stringify leaking secrets
@@ -26,7 +25,7 @@ export class TokenApiClientContext extends ServiceClient {
    * @param endpoint Subscription endpoint
    * @param [options] The parameter options
    */
-  constructor(credentials: TokenCredential, options?: ServiceClientOptions) {
+  constructor(credentials: ServiceClientCredentials, options?: ServiceClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -35,12 +34,13 @@ export class TokenApiClientContext extends ServiceClient {
       options = {};
     }
     const defaultUserAgent = getDefaultUserAgentValue();
-//    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
+    options.userAgentOptions = {
+      userAgentPrefix: `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgentOptions?.userAgentPrefix || ''}`
+    };
 
     super(options);
 
     this.endpoint = options.endpoint || this.endpoint || "https://token.botframework.com";
-//    this.requestContentType = "application/json; charset=utf-8";
     this.credentials = credentials;
 
   }

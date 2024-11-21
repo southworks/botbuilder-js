@@ -4,8 +4,8 @@
  */
 
 
-import { ServiceClientOptions } from "@azure/core-http";
-import { PipelineResponse } from "@azure/core-rest-pipeline";
+import { ServiceClientOptions } from "@azure/core-client";
+import { PipelineResponse, ProxySettings } from "@azure/core-rest-pipeline";
 import { RequestOptionsBase } from "../../utils";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
