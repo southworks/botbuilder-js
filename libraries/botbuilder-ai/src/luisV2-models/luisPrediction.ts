@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import {  HttpOperationResponse } from '@azure/core-http';
 import { OperationSpec, createSerializer } from '@azure/core-client';
 import { ServiceCallback } from 'botframework-connector';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
