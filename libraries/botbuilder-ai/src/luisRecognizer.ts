@@ -689,7 +689,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             return new LuisRecognizerV2(this.application, userOptions);
         } else {
             if (!this.options) {
-                this.options = {};
+                this.options = { url: '' };
             }
             const merge = Object.assign(this.options, userOptions);
 

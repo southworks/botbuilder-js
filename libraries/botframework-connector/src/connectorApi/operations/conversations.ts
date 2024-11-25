@@ -73,7 +73,7 @@ export class Conversations {
         continuationToken: null,
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -130,7 +130,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -182,7 +182,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -228,7 +228,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -278,7 +278,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -335,7 +335,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -381,7 +381,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -423,7 +423,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -448,7 +448,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -503,7 +503,7 @@ export class Conversations {
         continuationToken: null,
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -548,7 +548,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -593,7 +593,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -641,7 +641,7 @@ export class Conversations {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 

@@ -1675,7 +1675,7 @@ export class BotFrameworkAdapter
      */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
-        const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
+        const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgentOptions: { userAgentPrefix: USER_AGENT } });
 
         return client;
     }
@@ -1771,10 +1771,10 @@ export class BotFrameworkAdapter
                 ? contextOrServiceUrl.activity.serviceUrl
                 : contextOrServiceUrl
             : this.settings.oAuthEndpoint
-            ? this.settings.oAuthEndpoint
-            : JwtTokenValidation.isGovernment(this.settings.channelService)
-            ? US_GOV_OAUTH_ENDPOINT
-            : OAUTH_ENDPOINT;
+                ? this.settings.oAuthEndpoint
+                : JwtTokenValidation.isGovernment(this.settings.channelService)
+                    ? US_GOV_OAUTH_ENDPOINT
+                    : OAUTH_ENDPOINT;
     }
 
     /**
@@ -1853,8 +1853,7 @@ export class BotFrameworkAdapter
         if (request.verb.toLocaleUpperCase() !== POST) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
             response.setBody(
-                `Invalid verb received for ${request.verb.toLocaleLowerCase()}. Only GET and POST are accepted. Verb: ${
-                    request.verb
+                `Invalid verb received for ${request.verb.toLocaleLowerCase()}. Only GET and POST are accepted. Verb: ${request.verb
                 }`
             );
 
@@ -2171,9 +2170,8 @@ function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
 
         let message = '';
         AuthenticationError.isStatusCodeError(err)
-            ? (message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${
-                  err.message
-              }\r\n${connectionHeader}\r\n`)
+            ? (message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${err.message
+                }\r\n${connectionHeader}\r\n`)
             : (message = AuthenticationError.determineStatusCodeAndBuildMessage(err));
 
         socket.write(message);

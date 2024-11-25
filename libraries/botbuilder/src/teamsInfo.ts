@@ -254,6 +254,7 @@ export class TeamsInfo {
     ): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
+            url: "",
             continuationToken: continuationToken,
             pageSize: pageSize,
         };
@@ -322,6 +323,7 @@ export class TeamsInfo {
         }
 
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
+            url: "",
             continuationToken: continuationToken,
             pageSize: pageSize,
         };

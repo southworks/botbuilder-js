@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { RequestOptionsBase } from 'botframework-connector';
 import { Sentiment } from './luisModels';
 import { PipelineRequestOptions, PipelineResponse } from '@azure/core-rest-pipeline';
 
@@ -122,7 +123,7 @@ export interface CompositeChildModel {
 /**
  * Optional Parameters.
  */
-export interface PredictionResolveOptionalParams extends PipelineRequestOptions {
+export interface PredictionResolveOptionalParams extends RequestOptionsBase {
     /**
      * The timezone offset for the location of the request.
      */

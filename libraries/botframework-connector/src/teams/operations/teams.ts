@@ -87,7 +87,7 @@ export class Teams {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -148,7 +148,7 @@ export class Teams {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -215,7 +215,7 @@ export class Teams {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -275,7 +275,7 @@ export class Teams {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 

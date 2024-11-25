@@ -33,7 +33,7 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
     constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
         super(credentials, endpoint, options);
         this.prediction = new LuisPrediction(this);
-        super.baseUri = '{Endpoint}/luis/v2.0';
+        //super.baseUri = '{Endpoint}/luis/v2.0';
     }
 }
 

@@ -11,6 +11,7 @@ import { ServiceClientCredentials } from 'botframework-connector';
 export class LUISRuntimeClientContext extends ServiceClient {
     endpoint: string;
     credentials: ServiceClientCredentials;
+    baseUri: string;
 
     /**
      * Initializes a new instance of the LUISRuntimeClientContext class.
@@ -34,7 +35,7 @@ export class LUISRuntimeClientContext extends ServiceClient {
 
         super(options);
 
-        //this.baseUri = '{Endpoint}/luis/v3.0-preview';
+        this.baseUri = '{Endpoint}/luis/v3.0-preview';
         //this.requestContentType = 'application/json; charset=utf-8';
         this.endpoint = endpoint;
         this.credentials = credentials;

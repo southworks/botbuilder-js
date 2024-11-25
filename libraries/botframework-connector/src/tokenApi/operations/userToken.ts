@@ -64,7 +64,7 @@ export class UserToken {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -131,7 +131,7 @@ export class UserToken {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -177,7 +177,7 @@ export class UserToken {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -224,7 +224,7 @@ export class UserToken {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 
@@ -295,7 +295,7 @@ export class UserToken {
             options = {
                 onResponse
             }
-        } else {
+        } else if (options) {
             options.onResponse = callback;
         }
 

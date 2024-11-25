@@ -47,7 +47,7 @@ export class Attachments {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -88,7 +88,7 @@ export class Attachments {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 

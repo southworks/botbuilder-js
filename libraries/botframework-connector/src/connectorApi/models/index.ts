@@ -10,6 +10,7 @@ import { RequestOptionsBase } from "../../utils";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
+import { RequestPolicyFactory } from "@azure/core-http-compat";
 export * from "botframework-schema";
 
 /**
@@ -26,6 +27,17 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
    * HTTP and HTTPS agents which will be used for every HTTP request (Node.js only).
    */
   agentSettings?: AgentSettings;
+  /**
+     * The string to be set to the telemetry header while sending the request, or a function that
+     * takes in the default user-agent string and returns the user-agent string that will be used.
+     */
+  userAgent?: string | ((defaultUserAgent: string) => string);
+  /**
+     * An array of factories which get called to create the RequestPolicy pipeline used to send a HTTP
+     * request on the wire, or a function that takes in the defaultRequestPolicyFactories and returns
+     * the requestPolicyFactories that will be used.
+     */
+  requestPolicyFactories?: RequestPolicyFactory[] | ((defaultRequestPolicyFactories: RequestPolicyFactory[]) => void | RequestPolicyFactory[]);
 }
 
 /**

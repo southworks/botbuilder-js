@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '../utils/httpUtils';
+import { getDefaultUserAgentValue, userAgentPolicy } from '../utils';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { RequestPolicyFactory } from "@azure/core-http-compat";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');

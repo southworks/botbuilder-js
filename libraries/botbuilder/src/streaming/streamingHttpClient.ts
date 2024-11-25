@@ -60,6 +60,6 @@ export class StreamingHttpClient implements HttpClient {
      * @private
      */
     private mapHttpRequestToProtocolRequest(httpRequest: PipelineRequest): StreamingRequest {
-        return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body);
+        return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body as any);
     }
 }

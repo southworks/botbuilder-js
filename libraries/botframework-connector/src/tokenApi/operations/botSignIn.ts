@@ -45,7 +45,7 @@ export class BotSignIn {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
@@ -81,7 +81,7 @@ export class BotSignIn {
       options = {
         onResponse
       }
-    } else {
+    } else if (options) {
       options.onResponse = callback;
     }
 
