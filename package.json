@@ -7,7 +7,8 @@
       "libraries/*",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
-      "tools"
+      "tools",
+      "libraries/botbuilder-vendors/src/**"
     ],
     "generators": [
       "generators/generator-botbuilder/generators/app/templates/*"
@@ -20,6 +21,7 @@
     }
   },
   "scripts": {
+    "postinstall": "yarn workspace botbuilder-vendors install",
     "browser-functional-test": "yarn workspace browser-functional-tests test",
     "build": "wsrun -e -m -t build",
     "build-docs": "wsrun -e -m build-docs",
@@ -51,7 +53,6 @@
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "resolutions": {
-    "@microsoft/recognizers-text-number": "~1.3.1",
     "@types/ramda": "0.26.0",
     "lodash.pick": "file:overrides/lodash.pick",
     "**/nightwatch/ejs": "^3.1.10",
