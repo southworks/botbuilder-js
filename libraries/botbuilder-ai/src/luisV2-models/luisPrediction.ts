@@ -37,7 +37,7 @@ export class LuisPrediction {
     resolve(
         appId: string,
         query: string,
-        options?: PredictionResolveOptionalParams
+        options?: PredictionResolveOptionalParams,
     ): Promise<PredictionResolveResponse>;
     /**
      * @param appId The LUIS application ID (Guid).
