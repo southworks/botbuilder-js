@@ -155,6 +155,13 @@ export abstract class AppCredentials implements ServiceClientCredentials {
             return new TokenCredentials(await this.getToken()).signRequest(webResource);
         }
 
+        // const credentials = `${this.userName}:${this.password}`;
+        // const encodedString = Buffer.from(credentials).toString("base64");
+        // const encodedCredentials = `Basic ${encodeString()}`;
+
+
+        // webResource.headers.set("Authorization", encodedCredentials);
+
         return webResource;
     }
 

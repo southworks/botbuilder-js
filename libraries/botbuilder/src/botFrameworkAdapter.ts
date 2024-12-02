@@ -9,8 +9,8 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { RequestPolicyFactory, userAgentPolicy } from '@azure/core-http';
-import { HttpClient } from '@azure/core-rest-pipeline';
+import { RequestPolicyFactory } from '@azure/core-http-compat';
+import { createEmptyPipeline, HttpClient, PipelinePolicy, PipelineRequest, PipelineResponse, SendRequest } from '@azure/core-rest-pipeline';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
@@ -65,6 +65,7 @@ import {
     TokenApiModels,
     TokenExchangeRequest,
     TokenStatus,
+    userAgentPolicy,
 } from 'botframework-connector';
 
 import {
@@ -1528,48 +1529,42 @@ export class BotFrameworkAdapter
             options.httpClient = httpClient;
         }
 
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
+        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgentOptions;
         const setUserAgent = userAgentPolicy({
-            value: `${USER_AGENT}${userAgent ?? ''}`,
+            value: 'core-http/3.0.4 Node/v18.18.2 OS/(x64-Windows_NT-10.0.26100)',
         });
 
-        const acceptHeader: RequestPolicyFactory = {
-            create: (nextPolicy) => ({
-                sendRequest: (httpRequest) => {
-                    if (!httpRequest.headers.contains('accept')) {
-                        httpRequest.headers.set('accept', '*/*');
-                    }
-                    return nextPolicy.sendRequest(httpRequest);
-                },
-            }),
-        };
-
-        // Resolve any user request policy factories, then include our user agent via a factory policy
-        options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
-            let defaultFactories = [];
-
-            if (requestPolicyFactories) {
-                if (typeof requestPolicyFactories === 'function') {
-                    const newDefaultFactories = requestPolicyFactories(defaultRequestPolicyFactories);
-                    if (newDefaultFactories) {
-                        defaultFactories = newDefaultFactories;
-                    }
-                } else if (requestPolicyFactories) {
-                    defaultFactories = [...requestPolicyFactories];
+        const acceptHeader: PipelinePolicy = {
+            name: "acceptHeaderPolicy",
+            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
+                if (!request.headers.has("accept")) {
+                    request.headers.set("accept", "*/*");
                 }
-
-                // If the user has supplied custom factories, allow them to optionally set user agent
-                // before we do.
-                defaultFactories = [...defaultFactories, acceptHeader, setUserAgent];
-            } else {
-                // In the case that there are no user supplied factories, inject our user agent as
-                // the first policy to ensure none of the default policies override it.
-                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
-            }
-
-            return defaultFactories;
+                return next(request);
+            },
         };
 
+        const authorizationHeader: PipelinePolicy = {
+            name: "authorizationHeaderPolicy",
+            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
+                const authHeader = "Bearer";
+                request.headers.set("Authorization", `Bearer ${authHeader}`);
+                return next(request);
+            },
+        };
+
+        // Create the pipeline with the provided options
+        const pipeline = createEmptyPipeline();
+
+        // Add custom policies
+        pipeline.addPolicy(acceptHeader, { afterPhase: "Serialize" });
+        pipeline.addPolicy(setUserAgent, { afterPhase: "Serialize" });
+        pipeline.addPolicy(authorizationHeader, { afterPhase: "Serialize" });
+
+        // Attach the pipeline to the options
+        options.requestPolicyFactories = pipeline;
+
+        options.pipeline = pipeline;
         return options;
     }
 

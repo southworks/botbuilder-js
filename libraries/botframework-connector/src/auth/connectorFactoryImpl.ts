@@ -7,6 +7,7 @@ import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { RequestPolicyFactory } from "@azure/core-http-compat";
+import { PipelinePolicy, PipelineRequest, PipelineResponse, SendRequest, createEmptyPipeline } from "@azure/core-rest-pipeline";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
@@ -66,42 +67,35 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });
 
-        const acceptHeader: RequestPolicyFactory = {
-            create: (nextPolicy) => ({
-                sendRequest: (httpRequest) => {
-                    if (!httpRequest.headers.contains('accept')) {
-                        httpRequest.headers.set('accept', '*/*');
-                    }
-                    return nextPolicy.sendRequest(httpRequest);
-                },
-            }),
-        };
-
-        // Resolve any user request policy factories, then include our user agent via a factory policy
-        options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
-            let defaultFactories = [];
-
-            if (requestPolicyFactories) {
-                if (typeof requestPolicyFactories === 'function') {
-                    const newDefaultFactories = requestPolicyFactories(defaultRequestPolicyFactories);
-                    if (newDefaultFactories) {
-                        defaultFactories = newDefaultFactories;
-                    }
-                } else if (requestPolicyFactories) {
-                    defaultFactories = [...requestPolicyFactories];
+        const acceptHeader: PipelinePolicy = {
+            name: "acceptHeaderPolicy",
+            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
+                if (!request.headers.has("accept")) {
+                    request.headers.set("accept", "*/*");
                 }
-
-                // If the user has supplied custom factories, allow them to optionally set user agent
-                // before we do.
-                defaultFactories = [...defaultFactories, setUserAgent, acceptHeader];
-            } else {
-                // In the case that there are no user supplied factories, inject our user agent as
-                // the first policy to ensure none of the default policies override it.
-                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
-            }
-
-            return defaultFactories;
+                return next(request);
+            },
         };
+
+        const authorizationHeader: PipelinePolicy = {
+            name: "authorizationHeaderPolicy",
+            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
+                const authHeader = "Bearer";
+                request.headers.set("Authorization", `Bearer ${authHeader}`);
+                return next(request);
+            },
+        };
+
+        // Create the pipeline with the provided options
+        const pipeline = createEmptyPipeline();
+
+        // Add custom policies
+        pipeline.addPolicy(acceptHeader, { afterPhase: "Serialize" });
+        pipeline.addPolicy(setUserAgent, { afterPhase: "Serialize" });
+        pipeline.addPolicy(authorizationHeader, { afterPhase: "Serialize" });
+
+        // Attach the pipeline to the options
+        options.requestPolicyFactories = pipeline;
 
         return options;
     }

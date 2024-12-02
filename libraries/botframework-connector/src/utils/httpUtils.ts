@@ -1,9 +1,8 @@
-import { PipelineOptions, PipelineResponse, TransferProgressEvent, createHttpHeaders } from "@azure/core-rest-pipeline";
+import { PipelineOptions, PipelineRequest, PipelineResponse, TransferProgressEvent, createHttpHeaders, PipelinePolicy, SendRequest } from "@azure/core-rest-pipeline";
 import { TracingContext } from "@azure/core-tracing";
-import { RequestPolicyFactory, RequestPolicy, RequestPolicyOptionsLike, HttpPipelineLogLevel, WebResourceLike, toHttpHeadersLike, CompatResponse } from '@azure/core-http-compat';
+import { RequestPolicy, RequestPolicyFactory, RequestPolicyOptionsLike, HttpPipelineLogLevel, WebResourceLike, toHttpHeadersLike, CompatResponse } from '@azure/core-http-compat';
 import * as os from "os";
 import { OperationOptions, SerializerOptions } from "@azure/core-client";
-import { RequestPolicyOptions } from "@azure/core-http";
 
 /**
  * Describes the base structure of the options object that will be used in every operation.
@@ -142,23 +141,32 @@ export interface HttpOperationResponse extends PipelineResponse {
 }
 
 /**
+ * A compatible interface for core-http request policies
+ */
+// export interface RequestPolicy {
+//     sendRequest(httpRequest: PipelineRequest): Promise<HttpOperationResponses>;
+// }
+
+/**
  * Returns a policy that adds the user agent header to outgoing requests based on the given {@link TelemetryInfo}.
  * @param userAgentData - Telemetry information.
- * @returns A new {@link UserAgentPolicy}.
+ * @returns A new {@link PipelinePolicy}.
  */
-export function userAgentPolicy(userAgentData?: TelemetryInfo): RequestPolicyFactory {
-    const key: string =
-        !userAgentData || userAgentData.key === undefined || userAgentData.key === null
-            ? "User-Agent"
-            : userAgentData.key;
-    const value: string =
-        !userAgentData || userAgentData.value === undefined || userAgentData.value === null
-            ? getDefaultUserAgentValue()
-            : userAgentData.value;
+export function userAgentPolicy(userAgentData?: TelemetryInfo): PipelinePolicy {
+    const headerKey: string =
+        userAgentData?.key ?? "User-Agent";
+    const headerValue: string =
+        userAgentData?.value ?? getDefaultUserAgentValue();
 
     return {
-        create: (nextPolicy: RequestPolicy, options: RequestPolicyOptionsLike) => {
-            return new UserAgentPolicy(nextPolicy, options, key, value);
+        name: "userAgentPolicy",
+        async sendRequest(request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> {
+            // Set the User-Agent header if it is not already set
+            if (!request.headers.has(headerKey)) {
+                request.headers.set(headerKey, headerValue);
+            }
+            // Forward the request to the next policy in the pipeline
+            return next(request);
         },
     };
 }
@@ -235,6 +243,53 @@ export class UserAgentPolicy extends BaseRequestPolicy {
 
         if (!request.headers.get(this.headerKey) && this.headerValue) {
             request.headers.set(this.headerKey, this.headerValue);
+        }
+    }
+}
+
+/**
+ * A Logger that can be added to a HttpPipeline. This enables each RequestPolicy to log messages
+ * that can be used for debugging purposes.
+ */
+export interface HttpPipelineLogger {
+    /**
+     * The log level threshold for what logs will be logged.
+     */
+    minimumLogLevel: HttpPipelineLogLevel;
+
+    /**
+     * Log the provided message.
+     * @param logLevel - The HttpLogDetailLevel associated with this message.
+     * @param message - The message to log.
+     */
+    log(logLevel: HttpPipelineLogLevel, message: string): void;
+}
+
+export class RequestPolicyOptions {
+    constructor(private _logger?: HttpPipelineLogger) { }
+
+    /**
+     * Get whether or not a log with the provided log level should be logged.
+     * @param logLevel - The log level of the log that will be logged.
+     * @returns Whether or not a log with the provided log level should be logged.
+     */
+    public shouldLog(logLevel: HttpPipelineLogLevel): boolean {
+        return (
+            !!this._logger &&
+            logLevel !== HttpPipelineLogLevel.OFF &&
+            logLevel <= this._logger.minimumLogLevel
+        );
+    }
+
+    /**
+     * Attempt to log the provided message to the provided logger. If no logger was provided or if
+     * the log level does not meet the logger's threshold, then nothing will be logged.
+     * @param logLevel - The log level of this log.
+     * @param message - The message of this log.
+     */
+    public log(logLevel: HttpPipelineLogLevel, message: string): void {
+        if (this._logger && this.shouldLog(logLevel)) {
+            this._logger.log(logLevel, message);
         }
     }
 }

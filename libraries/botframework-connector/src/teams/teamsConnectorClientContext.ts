@@ -3,10 +3,10 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClient } from '@azure/core-client';
 import { ServiceClientCredentials } from '../utils';
 import { TeamsConnectorClientOptions } from './models';
 import { ExtendedServiceClient } from '@azure/core-http-compat';
+import { createPipelineFromOptions, Pipeline } from '@azure/core-rest-pipeline';
 
 /**
  * The Bot Connector REST API extension for Microsoft Teams allows your
@@ -17,6 +17,7 @@ import { ExtendedServiceClient } from '@azure/core-http-compat';
 export class TeamsConnectorClientContext extends ExtendedServiceClient {
     credentials: ServiceClientCredentials;
     endpoint: string;
+    _requestPolicyFactories: Pipeline;
 
     /**
      * Initializes a new instance of the TeamsConnectorClientContext class.
@@ -29,9 +30,42 @@ export class TeamsConnectorClientContext extends ExtendedServiceClient {
             options = {};
         }
 
+        // options.pipeline = this.createPipeline(credentials, options);
+        const pipeline = createPipelineFromOptions(options);
+
+        const policies = options?.requestPolicyFactories?.getOrderedPolicies() ?? [];
+        const pipelinePolicies = pipeline.getOrderedPolicies();
+        for (const policy of policies) {
+            const exist = pipelinePolicies.find(pipelinePolicy => pipelinePolicy.name == policy.name)
+            if (!exist) {
+                pipeline.addPolicy(policy)
+            }
+        }
+
+        options.pipeline = pipeline;
+
         super(options);
 
         this.endpoint = options.endpoint || this.endpoint || 'https://api.botframework.com';
         this.credentials = credentials;
+        this._requestPolicyFactories = options.pipeline
+    }
+
+    /**
+     * Create a custom pipeline to add policies
+     */
+    createPipeline(credentials: ServiceClientCredentials, options: TeamsConnectorClientOptions): Pipeline {
+        const pipeline = createPipelineFromOptions(options);
+
+        const policies = options?.requestPolicyFactories?.getOrderedPolicies() ?? [];
+        const pipelinePolicies = pipeline.getOrderedPolicies();
+        for (const policy of policies) {
+            const exist = pipelinePolicies.find(pipelinePolicy => pipelinePolicy.name == policy.name)
+            if (!exist) {
+                pipeline.addPolicy(policy)
+            }
+        }
+
+        return pipeline;
     }
 }

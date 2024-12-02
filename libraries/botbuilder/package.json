@@ -28,7 +28,6 @@
   },
   "dependencies": {
     "@azure/core-client": "^1.9.2",
-    "@azure/core-http": "^3.0.4",
     "@azure/core-http-compat": "^2.1.2",
     "@azure/core-rest-pipeline": "^1.17.0",
     "@azure/identity": "^4.5.0",

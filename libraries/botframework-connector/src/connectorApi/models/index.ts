@@ -5,8 +5,8 @@
 
 
 import { ServiceClientOptions } from "@azure/core-client";
-import { PipelineResponse, ProxySettings } from "@azure/core-rest-pipeline";
-import { RequestOptionsBase } from "../../utils";
+import { PipelineResponse, ProxySettings, Pipeline } from "@azure/core-rest-pipeline";
+import { HttpPipelineLogger, RequestOptionsBase } from "../../utils";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
@@ -37,7 +37,15 @@ export interface ConnectorClientOptions extends ServiceClientOptions {
      * request on the wire, or a function that takes in the defaultRequestPolicyFactories and returns
      * the requestPolicyFactories that will be used.
      */
-  requestPolicyFactories?: RequestPolicyFactory[] | ((defaultRequestPolicyFactories: RequestPolicyFactory[]) => void | RequestPolicyFactory[]);
+  requestPolicyFactories?: Pipeline;
+  /**
+     * The HttpPipelineLogger that can be used to debug RequestPolicies within the HTTP pipeline.
+     */
+  httpPipelineLogger?: HttpPipelineLogger;
+  /**
+     * Proxy settings which will be used for every HTTP request (Node.js only).
+     */
+  proxySettings?: ProxySettings;
 }
 
 /**

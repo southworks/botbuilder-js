@@ -531,8 +531,8 @@ export class TeamsInfo {
         if (!operationId) {
             throw new Error('operationId is required.');
         }
-
-        return await this.getTeamsConnectorClient(context).teams.cancelOperation(operationId);
+        const e = await this.getTeamsConnectorClient(context).teams.cancelOperation(operationId);
+        return e;
     }
 
     /**

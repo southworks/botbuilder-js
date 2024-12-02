@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { PipelineResponse, PipelineRequestOptions } from '@azure/core-rest-pipeline';
+import { PipelineResponse, PipelineRequestOptions, Pipeline, ProxySettings } from '@azure/core-rest-pipeline';
 import { ServiceClientOptions } from '@azure/core-client';
 import {
     ConversationList,
@@ -15,7 +15,8 @@ import {
     BatchOperationStateResponse,
     BatchFailedEntriesResponse,
 } from 'botframework-schema';
-import { RequestOptionsBase } from '../../utils';
+import { HttpPipelineLogger, RequestOptionsBase } from '../../utils';
+import { AgentSettings } from '../../connectorApi/models';
 
 /**
  * @interface
@@ -27,6 +28,29 @@ export interface TeamsConnectorClientOptions extends ServiceClientOptions {
      * @member {string} [baseUri]
      */
     baseUri?: string;
+    /**
+   * HTTP and HTTPS agents which will be used for every HTTP request (Node.js only).
+   */
+    agentSettings?: AgentSettings;
+    /**
+       * The string to be set to the telemetry header while sending the request, or a function that
+       * takes in the default user-agent string and returns the user-agent string that will be used.
+       */
+    userAgent?: string | ((defaultUserAgent: string) => string);
+    /**
+       * An array of factories which get called to create the RequestPolicy pipeline used to send a HTTP
+       * request on the wire, or a function that takes in the defaultRequestPolicyFactories and returns
+       * the requestPolicyFactories that will be used.
+       */
+    requestPolicyFactories?: Pipeline;
+    /**
+       * The HttpPipelineLogger that can be used to debug RequestPolicies within the HTTP pipeline.
+       */
+    httpPipelineLogger?: HttpPipelineLogger;
+    /**
+       * Proxy settings which will be used for every HTTP request (Node.js only).
+       */
+    proxySettings?: ProxySettings;
 }
 
 /**
