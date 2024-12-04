@@ -3,10 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions } from "@azure/core-client";
 import { HttpHeadersLike } from "@azure/core-http-compat"
 import { PipelineResponse } from "@azure/core-rest-pipeline";
-import { RequestOptionsBase } from "../../utils";
+import { RequestOptionsBase, ServiceClientOptions } from "../../utils";
 import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**
@@ -70,12 +69,7 @@ export interface AadResourceUrls {
  * An interface representing TokenApiClientOptions.
  * @extends ServiceClientOptions
  */
-export interface TokenApiClientOptions extends ServiceClientOptions {
-  /**
-   * @member {string} [baseUri]
-   */
-  baseUri?: string;
-}
+export interface TokenApiClientOptions extends ServiceClientOptions {}
 
 /**
  * @interface

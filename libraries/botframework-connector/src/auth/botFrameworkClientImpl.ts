@@ -8,9 +8,11 @@ import type { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
+import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
+import { toWebResourceLike } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
 import { ok } from 'assert';
 import axios from 'axios';
-import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
+import { createAuthHeader } from './tokenCredentials';
 
 const botFrameworkClientFetchImpl = (connectorClientOptions: ConnectorClientOptions): typeof fetch => {
     const { http: httpAgent, https: httpsAgent } = connectorClientOptions?.agentSettings ?? {
@@ -52,7 +54,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
         private readonly botFrameworkClientFetch?: ReturnType<typeof botFrameworkClientFetchImpl>,
-        private readonly connectorClientOptions?: ConnectorClientOptions
+        private readonly connectorClientOptions?: ConnectorClientOptions,
     ) {
         this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
 
@@ -82,7 +84,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         toUrl: string,
         serviceUrl: string,
         conversationId: string,
-        activity: Activity
+        activity: Activity,
     ): Promise<InvokeResponse<T>> {
         z.object({
             fromBotId: z.string().optional(),
@@ -104,7 +106,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             fromBotId,
             toBotId,
             this.loginEndpoint,
-            true
+            true,
         );
 
         // Capture current activity settings before changing them.
@@ -140,24 +142,23 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             }
             activity.recipient.role = RoleTypes.Skill;
 
-            const headers = createHttpHeaders({
-                Accept: 'application/json',
-                [ConversationIdHttpHeaderName]: conversationId,
-                'Content-Type': 'application/json',
-                'User-Agent': USER_AGENT,
-            });
-
-            const webRequest = createPipelineRequest({
+            const pipeline = createPipelineRequest({
                 url: toUrl,
                 method: 'POST',
                 body: JSON.stringify(activity),
-                headers
+                headers: createHttpHeaders({
+                    Accept: 'application/json',
+                    [ConversationIdHttpHeaderName]: conversationId,
+                    'Content-Type': 'application/json',
+                    'User-Agent': USER_AGENT,
+                }),
             });
+            const webRequest = toWebResourceLike(pipeline);
             const request = await credentials.signRequest(webRequest);
 
             const config: RequestInit = {
-                body: request.body.toString(),
-                headers: request.headers.toJSON({ preserveCase: true }),
+                body: request.body,
+                headers: request.headers.rawHeaders(),
             };
             const response = await this.botFrameworkClientFetch(request.url, config);
 

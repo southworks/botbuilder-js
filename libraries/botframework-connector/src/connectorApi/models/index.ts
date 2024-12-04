@@ -3,14 +3,13 @@
  * Licensed under the MIT License.
  */
 
-
-import { ServiceClientOptions } from "@azure/core-client";
-import { PipelineResponse, ProxySettings, Pipeline } from "@azure/core-rest-pipeline";
-import { HttpPipelineLogger, RequestOptionsBase } from "../../utils";
+import { ProxySettings } from "@azure/core-rest-pipeline";
+import { OperationOptions } from "@azure/core-client";
+import { RequestPolicyFactory, RequestPolicy as HttpClient, ExtendedServiceClientOptions, CompatResponse as HttpResponse } from "@azure/core-http-compat";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
-import { RequestPolicyFactory } from "@azure/core-http-compat";
+import { ServiceClientOptions } from "../../utils";
 export * from "botframework-schema";
 
 /**
@@ -18,34 +17,9 @@ export * from "botframework-schema";
  */
 export interface ConnectorClientOptions extends ServiceClientOptions {
   /**
-   * (Optional) baseUri will be set automatically within BotFrameworkAdapter, 
-   * but is required if using the ConnectorClient outside of the adapter.
-   */
-  baseUri?: string;
-
-  /**
    * HTTP and HTTPS agents which will be used for every HTTP request (Node.js only).
    */
   agentSettings?: AgentSettings;
-  /**
-     * The string to be set to the telemetry header while sending the request, or a function that
-     * takes in the default user-agent string and returns the user-agent string that will be used.
-     */
-  userAgent?: string | ((defaultUserAgent: string) => string);
-  /**
-     * An array of factories which get called to create the RequestPolicy pipeline used to send a HTTP
-     * request on the wire, or a function that takes in the defaultRequestPolicyFactories and returns
-     * the requestPolicyFactories that will be used.
-     */
-  requestPolicyFactories?: Pipeline;
-  /**
-     * The HttpPipelineLogger that can be used to debug RequestPolicies within the HTTP pipeline.
-     */
-  httpPipelineLogger?: HttpPipelineLogger;
-  /**
-     * Proxy settings which will be used for every HTTP request (Node.js only).
-     */
-  proxySettings?: ProxySettings;
 }
 
 /**
@@ -59,7 +33,7 @@ export interface AgentSettings {
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationsOptionalParams extends RequestOptionsBase {
+export interface ConversationsGetConversationsOptionalParams extends OperationOptions {
   /**
    * skip or continuation token
    */
@@ -69,7 +43,7 @@ export interface ConversationsGetConversationsOptionalParams extends RequestOpti
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationPagedMembersOptionalParams extends RequestOptionsBase {
+export interface ConversationsGetConversationPagedMembersOptionalParams extends OperationOptions {
   /**
    * Suggested page size
    */
@@ -87,7 +61,7 @@ export type AttachmentsGetAttachmentInfoResponse = AttachmentInfo & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -123,7 +97,7 @@ export type AttachmentsGetAttachmentResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse;
+  _response: HttpResponse;
 };
 
 /**
@@ -133,7 +107,7 @@ export type ConversationsGetConversationsResponse = ConversationsResult & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -153,7 +127,7 @@ export type ConversationsCreateConversationResponse = ConversationResourceRespon
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -173,7 +147,7 @@ export type ConversationsSendToConversationResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -193,7 +167,7 @@ export type ConversationsSendConversationHistoryResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -213,7 +187,7 @@ export type ConversationsUpdateActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -233,7 +207,7 @@ export type ConversationsReplyToActivityResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -253,7 +227,7 @@ export type ConversationsGetConversationMembersResponse = Array<ChannelAccount> 
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -273,7 +247,7 @@ export type ConversationsGetConversationMemberResponse = ChannelAccount & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -293,7 +267,7 @@ export type ConversationsGetConversationPagedMembersResponse = PagedMembersResul
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -313,7 +287,7 @@ export type ConversationsGetActivityMembersResponse = Array<ChannelAccount> & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -333,7 +307,7 @@ export type ConversationsUploadAttachmentResponse = ResourceResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */

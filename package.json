@@ -14,7 +14,8 @@
       "generators/generator-botbuilder/generators/app/templates/*"
     ],
     "nohoist": [
-      "**/@types/selenium-webdriver"
+      "**/@types/selenium-webdriver",
+      "botframework-connector/@azure/core-http-compat"
     ],
     "nohoistComments": {
       "**/@types/selenium-webdriver": "This package is excluded from the root @types folder as it requires ES2015+, whereas some BotBuilder libraries support ES5+."

@@ -10,7 +10,6 @@ import * as operations from './operations';
 import { ConnectorClientContext } from './connectorClientContext';
 
 class ConnectorClient extends ConnectorClientContext {
-
     // Operation groups
     attachments: operations.Attachments;
     conversations: operations.Conversations;

@@ -33,7 +33,7 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
         ok(tokenProviderFactory, 'ManagedIdentityAppCredentials.constructor(): missing tokenProviderFactory.');
 
         this.tokenProviderFactory = tokenProviderFactory;
-        this.appId = appId;
+        super.appId = appId;
         this.authenticator = new ManagedIdentityAuthenticator(this.appId, this.oAuthScope, this.tokenProviderFactory);
     }
 

@@ -7,8 +7,8 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
+import { WebResourceLike as WebResource } from '@azure/core-http-compat';
 import { ServiceClientCredentials } from '../utils';
-import { PipelineRequest } from '@azure/core-rest-pipeline';
 import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticatorResult } from './authenticatorResult';
@@ -150,17 +150,10 @@ export abstract class AppCredentials implements ServiceClientCredentials {
      * @param webResource The WebResource HTTP request.
      * @returns A Promise representing the asynchronous operation.
      */
-    async signRequest(webResource: PipelineRequest): Promise<PipelineRequest> {
+    async signRequest(webResource: WebResource): Promise<WebResource> {
         if (this.shouldSetToken()) {
             return new TokenCredentials(await this.getToken()).signRequest(webResource);
         }
-
-        // const credentials = `${this.userName}:${this.password}`;
-        // const encodedString = Buffer.from(credentials).toString("base64");
-        // const encodedCredentials = `Basic ${encodeString()}`;
-
-
-        // webResource.headers.set("Authorization", encodedCredentials);
 
         return webResource;
     }

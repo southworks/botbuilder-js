@@ -1,10 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { createHttpHeaders, PipelineRequest } from '@azure/core-rest-pipeline';
+import { WebResourceLike } from '@azure/core-http-compat';
+import { HttpHeaders } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
 
-const AuthorizationHeader = "Authorization";
+const AUTHORIZATION_HEADER = 'Authorization';
 const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
+
+export function createAuthHeader(token: string, scheme: string = DEFAULT_AUTHORIZATION_SCHEME) {
+    return {
+        name: AUTHORIZATION_HEADER,
+        value: `${scheme} ${token}`,
+    };
+}
 
 /**
  * A credentials object that uses a token string and a authorzation scheme to authenticate.
@@ -31,12 +39,12 @@ export class TokenCredentials {
     /**
      * Signs a request with the Authentication header.
      *
-     * @param {PipelineRequest} webResource The Request to be signed.
-     * @returns {Promise<PipelineRequest>} The signed request object.
+     * @param {WebResourceLike} webResource The WebResourceLike to be signed.
+     * @returns {Promise<WebResourceLike>} The signed request object.
      */
-    signRequest(webResource: PipelineRequest) {
-        if (!webResource.headers) webResource.headers = createHttpHeaders();
-        webResource.headers.set(AuthorizationHeader, `${this.authorizationScheme} ${this.token}`);
+    signRequest(webResource: WebResourceLike): Promise<WebResourceLike> {
+        if (!webResource.headers) webResource.headers = new HttpHeaders();
+        webResource.headers.set(AUTHORIZATION_HEADER, `${this.authorizationScheme} ${this.token}`);
         return Promise.resolve(webResource);
     }
 }

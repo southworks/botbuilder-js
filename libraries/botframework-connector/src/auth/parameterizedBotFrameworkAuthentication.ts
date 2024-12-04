@@ -23,7 +23,6 @@ import { UserTokenClientImpl } from './userTokenClientImpl';
 import type { UserTokenClient } from './userTokenClient';
 import { VerifyOptions } from 'jsonwebtoken';
 import { AseChannelValidation } from './aseChannelValidation';
-import { ProxySettings } from '@azure/core-rest-pipeline';
 
 function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
@@ -34,13 +33,6 @@ function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
         claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim) ??
         undefined
     );
-}
-
-export interface ConnectorClientOption extends ConnectorClientOptions {
-    /**
-     * Options to configure a proxy for outgoing requests (Node.js only).
-     */
-    proxySettings?: ProxySettings
 }
 
 /**
@@ -74,7 +66,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly authConfiguration: AuthenticationConfiguration,
         private readonly botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        private readonly connectorClientOptions: ConnectorClientOption = {}
+        private readonly connectorClientOptions: ConnectorClientOptions = {}
     ) {
         super();
     }

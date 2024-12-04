@@ -1,18 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, userAgentPolicy } from '../utils';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
-import { RequestPolicyFactory } from "@azure/core-http-compat";
-import { PipelinePolicy, PipelineRequest, PipelineResponse, SendRequest, createEmptyPipeline } from "@azure/core-rest-pipeline";
+import { RequestPolicyFactory } from '@azure/core-http-compat';
+import { userAgentPolicy, PipelinePolicy } from '@azure/core-rest-pipeline';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version
-    } ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version} `;
 
 /**
  * @internal
@@ -33,7 +31,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         private readonly loginEndpoint: string,
         private readonly validateAuthority: boolean,
         private readonly credentialFactory: ServiceClientCredentialsFactory,
-        private readonly connectorClientOptions: ConnectorClientOptions = {}
+        private readonly connectorClientOptions: ConnectorClientOptions = {},
     ) {
         super();
     }
@@ -49,54 +47,29 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             this.appId,
             audience ?? this.toChannelFromBotOAuthScope,
             this.loginEndpoint,
-            this.validateAuthority
+            this.validateAuthority,
         );
 
-        // A new connector client for making calls against this serviceUrl using credentials derived from the current appId and the specified audience.
-        const options = this.getClientOptions(serviceUrl);
-        return new ConnectorClient(credentials, options);
-    }
-
-    private getClientOptions(serviceUrl: string): ConnectorClientOptions {
-        const { requestPolicyFactories, ...clientOptions } = this.connectorClientOptions;
-
-        const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
-
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgentOptions;
-        const setUserAgent = userAgentPolicy({
-            value: `${USER_AGENT}${userAgent ?? ''}`,
-        });
-
-        const acceptHeader: PipelinePolicy = {
-            name: "acceptHeaderPolicy",
-            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
-                if (!request.headers.has("accept")) {
-                    request.headers.set("accept", "*/*");
+        const userAgent =
+            typeof this.connectorClientOptions.userAgent === 'function'
+                ? this.connectorClientOptions.userAgent(USER_AGENT)
+                : this.connectorClientOptions.userAgent;
+        const options: ConnectorClientOptions = {
+            ...this.connectorClientOptions,
+            baseUri: serviceUrl,
+            userAgent: `${USER_AGENT} ${userAgent ?? ''}`,
+        };
+        const client = new ConnectorClient(credentials, options);
+        client.pipeline.addPolicy({
+            name: 'acceptHeaderPolicy',
+            sendRequest(request, next) {
+                if (!request.headers.has('accept')) {
+                    request.headers.set('accept', '*/*');
                 }
                 return next(request);
             },
-        };
+        });
 
-        const authorizationHeader: PipelinePolicy = {
-            name: "authorizationHeaderPolicy",
-            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
-                const authHeader = "Bearer";
-                request.headers.set("Authorization", `Bearer ${authHeader}`);
-                return next(request);
-            },
-        };
-
-        // Create the pipeline with the provided options
-        const pipeline = createEmptyPipeline();
-
-        // Add custom policies
-        pipeline.addPolicy(acceptHeader, { afterPhase: "Serialize" });
-        pipeline.addPolicy(setUserAgent, { afterPhase: "Serialize" });
-        pipeline.addPolicy(authorizationHeader, { afterPhase: "Serialize" });
-
-        // Attach the pipeline to the options
-        options.requestPolicyFactories = pipeline;
-
-        return options;
+        return client;
     }
 }

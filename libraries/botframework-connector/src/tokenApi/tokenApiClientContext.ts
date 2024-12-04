@@ -3,45 +3,24 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClient, ServiceClientOptions } from "@azure/core-client";
-import { getDefaultUserAgentValue, ServiceClientCredentials } from "../utils";
-import * as Models from "./models";
+import { ServiceClientContext } from '../serviceClientContext';
+import { ServiceClientCredentials } from '../utils';
+import { TokenApiClientOptions } from './models';
 
-const packageName = "botframework-Token";
-const packageVersion = "4.0.0";
+const packageName = 'botframework-token';
+const packageVersion = '4.0.0';
 
-export class TokenApiClientContext extends ServiceClient {
-  credentials: ServiceClientCredentials;
-  endpoint: string;
-
-  // Protects against JSON.stringify leaking secrets
-  private toJSON(): unknown {
-    return { name: this.constructor.name };
-  }
-
-  /**
-   * Initializes a new instance of the TokenApiClientContext class.
-   * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param endpoint Subscription endpoint
-   * @param [options] The parameter options
-   */
-  constructor(credentials: ServiceClientCredentials, options?: ServiceClientOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
+export class TokenApiClientContext extends ServiceClientContext {
+    /**
+     * Initializes a new instance of the TokenApiClientContext class.
+     * @param credentials Subscription credentials which uniquely identify client subscription.
+     * @param [options] The parameter options
+     */
+    constructor(credentials: ServiceClientCredentials, options?: TokenApiClientOptions) {
+        super(credentials, {
+            ...options,
+            baseUri: options?.baseUri || 'https://token.botframework.com',
+            userAgent: `${packageName}/${packageVersion} ${options?.userAgent || ''}`,
+        });
     }
-
-    if (!options) {
-      options = {};
-    }
-    const defaultUserAgent = getDefaultUserAgentValue();
-    options.userAgentOptions = {
-      userAgentPrefix: `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgentOptions?.userAgentPrefix || ''}`
-    };
-
-    super(options);
-
-    this.endpoint = options.endpoint || this.endpoint || "https://token.botframework.com";
-    this.credentials = credentials;
-
-  }
 }

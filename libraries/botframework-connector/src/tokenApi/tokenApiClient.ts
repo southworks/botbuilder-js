@@ -3,12 +3,11 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions } from "@azure/core-client";
 import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 import { TokenApiClientContext } from "./tokenApiClientContext";
-import { ServiceClientCredentials } from "../utils";
+import { ServiceClientCredentials, ServiceClientOptions} from "../utils";
 
 class TokenApiClient extends TokenApiClientContext {
   // Operation groups
