@@ -5,8 +5,6 @@ import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
-import { RequestPolicyFactory } from '@azure/core-http-compat';
-import { userAgentPolicy, PipelinePolicy } from '@azure/core-rest-pipeline';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
@@ -59,6 +57,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             baseUri: serviceUrl,
             userAgent: `${USER_AGENT} ${userAgent ?? ''}`,
         };
+
         const client = new ConnectorClient(credentials, options);
         client.pipeline.addPolicy({
             name: 'acceptHeaderPolicy',

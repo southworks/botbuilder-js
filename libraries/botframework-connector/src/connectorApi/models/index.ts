@@ -3,13 +3,11 @@
  * Licensed under the MIT License.
  */
 
-import { ProxySettings } from "@azure/core-rest-pipeline";
-import { OperationOptions } from "@azure/core-client";
-import { RequestPolicyFactory, RequestPolicy as HttpClient, ExtendedServiceClientOptions, CompatResponse as HttpResponse } from "@azure/core-http-compat";
+import { CompatResponse as HttpResponse } from "@azure/core-http-compat";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
-import { ServiceClientOptions } from "../../utils";
+import { RequestOptionsBase, ServiceClientOptions } from "../../utils";
 export * from "botframework-schema";
 
 /**
@@ -33,7 +31,7 @@ export interface AgentSettings {
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationsOptionalParams extends OperationOptions {
+export interface ConversationsGetConversationsOptionalParams extends RequestOptionsBase {
   /**
    * skip or continuation token
    */
@@ -43,7 +41,7 @@ export interface ConversationsGetConversationsOptionalParams extends OperationOp
 /**
  * Optional Parameters.
  */
-export interface ConversationsGetConversationPagedMembersOptionalParams extends OperationOptions {
+export interface ConversationsGetConversationPagedMembersOptionalParams extends RequestOptionsBase {
   /**
    * Suggested page size
    */

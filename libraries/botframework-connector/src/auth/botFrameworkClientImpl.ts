@@ -12,7 +12,6 @@ import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipel
 import { toWebResourceLike } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
 import { ok } from 'assert';
 import axios from 'axios';
-import { createAuthHeader } from './tokenCredentials';
 
 const botFrameworkClientFetchImpl = (connectorClientOptions: ConnectorClientOptions): typeof fetch => {
     const { http: httpAgent, https: httpsAgent } = connectorClientOptions?.agentSettings ?? {

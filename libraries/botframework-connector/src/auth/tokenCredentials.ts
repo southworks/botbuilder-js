@@ -3,21 +3,15 @@
 
 import { WebResourceLike } from '@azure/core-http-compat';
 import { HttpHeaders } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+import { ServiceClientCredentials } from '../utils';
 
 const AUTHORIZATION_HEADER = 'Authorization';
 const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
 
-export function createAuthHeader(token: string, scheme: string = DEFAULT_AUTHORIZATION_SCHEME) {
-    return {
-        name: AUTHORIZATION_HEADER,
-        value: `${scheme} ${token}`,
-    };
-}
-
 /**
  * A credentials object that uses a token string and a authorzation scheme to authenticate.
  */
-export class TokenCredentials {
+export class TokenCredentials implements ServiceClientCredentials {
     token: string;
     authorizationScheme: string = DEFAULT_AUTHORIZATION_SCHEME;
 

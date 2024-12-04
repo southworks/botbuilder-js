@@ -5,21 +5,7 @@
 
 import { CompositeMapper } from '@azure/core-client';
 
-function createMapperWithAdditionalProperties(baseMapper: CompositeMapper): CompositeMapper {
-  return {
-    ...baseMapper,
-    type: {
-      ...baseMapper.type,
-      additionalProperties: {
-        type: {
-          name: "Object",
-        },
-      },
-    },
-  };
-}
-
-export const AttachmentView: CompositeMapper = createMapperWithAdditionalProperties({
+export const AttachmentView: CompositeMapper = {
   serializedName: "AttachmentView",
   type: {
     name: "Composite",
@@ -39,7 +25,7 @@ export const AttachmentView: CompositeMapper = createMapperWithAdditionalPropert
       }
     }
   }
-});
+};
 
 export const AttachmentInfo: CompositeMapper = {
   serializedName: "AttachmentInfo",
@@ -413,12 +399,7 @@ export const Entity: CompositeMapper = {
           className: "ChannelAccount",
         },
       },
-    },
-    additionalProperties: {
-      type: {
-        name: "Object",
-      },
-    },
+    }
   },
 };
 
