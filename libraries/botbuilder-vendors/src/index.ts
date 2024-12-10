@@ -111,15 +111,14 @@ export const command = (argv: string[]) => async () => {
 summary
 -------
 action    : ${action}
-vendors   : ${globalVendors.length}
-workspaces: ${workspaces.length}'
+vendors   : ${globalVendors.length} packages
+workspaces: ${workspaces.length} packages
 -------
         `);
         for (const { pkg, absPath } of workspaces) {
             console.log(`
 ${pkg.name}           
--------
-                `);
+-------`);
             const location = pkg.localDependencies!.__location;
             if (!location) {
                 throw new Error(
@@ -174,7 +173,7 @@ ${pkg.name}
 
             if (isInstall) {
                 // console.log(`Adding packages to ${pkg.name}...`);
-                console.log(`vendors     : ${vendors.length}`);
+                console.log(`vendors     : ${vendors.length} packages`);
                 for (let i = 0; i < vendors.length; i++) {
                     const vendor = vendors[i];
                     const source = path.join(vendor.dir, vendor.main);
@@ -185,19 +184,20 @@ ${pkg.name}
                         await fs.mkdir(vendorDir, { recursive: true });
                     }
 
-                    const prefix = i === vendors.length - 1 ? "└" : "├";
-                    console.log(` ${prefix} [copied] ${vendor.name}@${vendor.version}`);
+                    const prefix = i === vendors.length - 1 ? '└' : '├';
+                    console.log(`  ${prefix} ${vendor.name}@${vendor.version}`);
                     await fs.copyFile(source, destination);
                 }
 
-                console.log(`dependencies: ${dependencies.length}`);
+                console.log(`dependencies: ${dependencies.length} packages`);
                 for (let i = 0; i < dependencies.length; i++) {
-                    const {name, version} = dependencies[i];
-                    const prefix = i === dependencies.length - 1 ? "└" : "├";
-                    console.log(` ${prefix} [added] ${name}@${version}`);
+                    const { name, version } = dependencies[i];
+                    const prefix = i === dependencies.length - 1 ? '└' : '├';
+                    console.log(`  ${prefix} ${name}@${version}`);
                     execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: dir });
                 }
             }
+            console.log('\n');
         }
 
         return success();
