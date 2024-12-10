@@ -80,9 +80,10 @@ async function getConnectedPackages(pkg: Vendor, vendors: Vendor[]) {
 export const command = (argv: string[]) => async () => {
     try {
         const flags = minimist(argv);
-        const isEmpty = flags._[0] === undefined;
-        const isInstall = flags._[0] === 'install';
-        const isBuild = flags._[0] === 'build';
+        const action = flags._[0];
+        const isEmpty = action === undefined;
+        const isInstall = action === 'install';
+        const isBuild = action === 'build';
 
         if (isEmpty) {
             return failure('Please provide a command (install or build)', 21);
@@ -106,7 +107,19 @@ export const command = (argv: string[]) => async () => {
             return;
         }
 
+        console.log(`
+summary
+-------
+action    : ${action}
+vendors   : ${globalVendors.length}
+workspaces: ${workspaces.length}'
+-------
+        `);
         for (const { pkg, absPath } of workspaces) {
+            console.log(`
+${pkg.name}           
+-------
+                `);
             const location = pkg.localDependencies!.__location;
             if (!location) {
                 throw new Error(
@@ -153,13 +166,17 @@ export const command = (argv: string[]) => async () => {
                 if (files.length > 0) {
                     // console.log(`  - Found ${count} references.`);
                     // TODO: add a list of vendors updated in each file.
-                    console.log(`  - found ${count} import/require statements under the '${tsconfig.compilerOptions.outDir}' folder.`);
+                    console.log(
+                        `  - found ${count} import/require statements under the '${tsconfig.compilerOptions.outDir}' folder.`,
+                    );
                 }
             }
 
             if (isInstall) {
-                console.log(`Adding packages to ${pkg.name}...`);
-                for (const vendor of vendors) {
+                // console.log(`Adding packages to ${pkg.name}...`);
+                console.log(`vendors     : ${vendors.length}`);
+                for (let i = 0; i < vendors.length; i++) {
+                    const vendor = vendors[i];
                     const source = path.join(vendor.dir, vendor.main);
                     const vendorDir = path.join(dir, location, path.basename(vendor.dir));
                     const destination = path.join(vendorDir, vendor.main);
@@ -168,12 +185,16 @@ export const command = (argv: string[]) => async () => {
                         await fs.mkdir(vendorDir, { recursive: true });
                     }
 
-                    console.log(`  - ${vendor.name}@${vendor.version} (VENDOR)`);
+                    const prefix = i === vendors.length - 1 ? "└" : "├";
+                    console.log(` ${prefix} [copied] ${vendor.name}@${vendor.version}`);
                     await fs.copyFile(source, destination);
                 }
 
-                for (const { name, version } of dependencies) {
-                    console.log(`  - [added in package.json] ${name}@${version} (VENDOR DEPENDENCY)`);
+                console.log(`dependencies: ${dependencies.length}`);
+                for (let i = 0; i < dependencies.length; i++) {
+                    const {name, version} = dependencies[i];
+                    const prefix = i === dependencies.length - 1 ? "└" : "├";
+                    console.log(` ${prefix} [added] ${name}@${version}`);
                     execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: dir });
                 }
             }
