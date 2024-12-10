@@ -98,7 +98,7 @@ export const command = (argv: string[]) => async () => {
         // TODO: get folder where the script is running and execute the stuff there.
         const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces?.packages, {
             hasLocalDependencies: true,
-            ignorePath: ['/libraries/botbuilder-vendors/**/*'],
+            ignorePath: ['**/libraries/botbuilder-vendors/**/*'],
         });
 
         const globalVendors = await collectVendors(repoRoot);
