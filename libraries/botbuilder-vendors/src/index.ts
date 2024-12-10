@@ -79,8 +79,14 @@ async function getConnectedPackages(pkg: Vendor, vendors: Vendor[]) {
 
 export const command = (argv: string[]) => async () => {
     try {
-        // Parse process.argv for all configuration options
-        const flags = minimist(argv, { boolean: ['install', 'build'], default: { install: true } });
+        const flags = minimist(argv);
+        const isEmpty = flags._[0] === undefined;
+        const isInstall = flags._[0] === 'install';
+        const isBuild = flags._[0] === 'build';
+
+        if (isEmpty) {
+            return failure('Please provide a command (install or build)', 21);
+        }
 
         const repoRoot = await gitRoot();
         const packageFile = await readJsonFile<Package>(path.join(repoRoot, 'package.json'));
@@ -88,6 +94,7 @@ export const command = (argv: string[]) => async () => {
             return failure('package.json not found', 20);
         }
 
+        // TODO: get folder where the script is running and execute the stuff there.
         const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces?.packages, {
             hasLocalDependencies: true,
             ignorePath: ['/libraries/botbuilder-vendors/**/*'],
@@ -115,10 +122,18 @@ export const command = (argv: string[]) => async () => {
                 continue;
             }
 
-            if (flags.build) {
+            if (isBuild) {
                 const tsconfig = await readJsonFile<any>(path.join(dir, 'tsconfig.json'));
                 const outDir = path.resolve(dir, tsconfig.compilerOptions.outDir);
                 const files = await glob(`**/*.js`, { cwd: outDir });
+                if (files.length > 0) {
+                    console.log(
+                        // `[build] Updating import/require statements under the '${tsconfig.compilerOptions.outDir}' folder in '${pkg.name}'...`,
+                        `[build] ${pkg.name}`,
+                    );
+                }
+
+                let count = 0;
                 for (const file of files) {
                     const filePath = path.join(outDir, file);
                     const content = await fs.readFile(filePath, 'utf8');
@@ -129,13 +144,20 @@ export const command = (argv: string[]) => async () => {
                         if (!content.includes(definition)) {
                             continue;
                         }
+                        count++;
                         const newContent = content.replace(definition, `require("${relative}")`);
                         await fs.writeFile(filePath, newContent, 'utf8');
                     }
                 }
+
+                if (files.length > 0) {
+                    // console.log(`  - Found ${count} references.`);
+                    // TODO: add a list of vendors updated in each file.
+                    console.log(`  - found ${count} import/require statements under the '${tsconfig.compilerOptions.outDir}' folder.`);
+                }
             }
 
-            if (flags.install) {
+            if (isInstall) {
                 console.log(`Adding packages to ${pkg.name}...`);
                 for (const vendor of vendors) {
                     const source = path.join(vendor.dir, vendor.main);

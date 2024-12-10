@@ -54,7 +54,7 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint .",
-    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum && yarn workspace botbuilder-vendors build",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:mocha": "nyc mocha --recursive --require source-map-support/register tests",
     "test:compat": "api-extractor run --verbose"
