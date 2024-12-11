@@ -5,12 +5,13 @@
   "workspaces": {
     "packages": [
       "libraries/*",
+      "libraries/botbuilder-vendors/vendors/**",
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
-      "tools",
-      "libraries/botbuilder-vendors/vendors/**"
+      "tools"
     ],
     "generators": [
+      "generators/generator-botbuilder",
       "generators/generator-botbuilder/generators/app/templates/*"
     ],
     "nohoist": [
