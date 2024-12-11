@@ -12,7 +12,8 @@
   },
   "scripts": {
     "postinstall": "ts-node src/index.ts install",
-    "postbuild": "ts-node src/index.ts build"
+    "postbuild": "ts-node src/index.ts build",
+    "lint": "eslint ."
   },
   "dependencies": {
     "fast-glob": "^3.3.2",

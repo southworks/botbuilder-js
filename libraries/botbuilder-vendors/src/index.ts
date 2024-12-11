@@ -35,7 +35,7 @@ const colors = {
 const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
 
 async function collectVendors(gitRoot: string) {
-    const dir = path.resolve(gitRoot, 'libraries/botbuilder-vendors/src');
+    const dir = path.resolve(gitRoot, 'libraries/botbuilder-vendors/vendors');
     const packages = await glob('**/package.json', { cwd: dir });
 
     if (packages.length === 0) {

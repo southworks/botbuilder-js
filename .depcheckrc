@@ -1,2 +1,15 @@
-ignores: ["filenamify", "mocha", "rimraf", "sinon", "uuid", "@microsoft/recognizers-text*"]
+ignores: [
+    // Ignore all @microsoft/recognizers-text packages and their dependencies
+    "@microsoft/recognizers-text*",
+    "bignumber.js",
+    "grapheme-splitter",
+    "lodash",
+    "xregexp",
+    // Rest
+    "filenamify",
+    "mocha",
+    "rimraf",
+    "sinon",
+    "uuid",
+]
 ignorePatterns: [".eslintrc.json", "lib"]
