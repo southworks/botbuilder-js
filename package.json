@@ -8,7 +8,7 @@
       "testing/*",
       "testing/browser-functional/browser-echo-bot",
       "tools",
-      "libraries/botbuilder-vendors/src/**"
+      "libraries/botbuilder-vendors/vendors/**"
     ],
     "generators": [
       "generators/generator-botbuilder/generators/app/templates/*"
