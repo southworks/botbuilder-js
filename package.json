@@ -21,6 +21,8 @@
     }
   },
   "scripts": {
+    "postinstall": "yarn workspace botbuilder-vendors postinstall",
+    "postbuild": "yarn workspace botbuilder-vendors postbuild",
     "browser-functional-test": "yarn workspace browser-functional-tests test",
     "build": "wsrun -e -m -t build",
     "build-docs": "wsrun -e -m build-docs",
