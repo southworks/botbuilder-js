@@ -3,8 +3,8 @@
 var recognizersText = require('../recognizers-text');
 var recognizersTextNumber = require('../recognizers-number');
 var recognizersTextNumberWithUnit = require('../recognizers-number-with-unit');
-var isEqual = require("lodash/isequal");
-var toNumber = require("lodash/tonumber");
+var isEqual = require("lodash/isEqual");
+var toNumber = require("lodash/toNumber");
 
 var DateTimeModelResult = class extends recognizersText.ModelResult {
 };

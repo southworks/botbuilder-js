@@ -2,9 +2,9 @@
 
 var recognizersText = require('../recognizers-text');
 var bignumber = require('bignumber.js/bignumber');
-var trimEnd = require("lodash/trimend");
-var sortBy = require("lodash/sortby");
-var escapeRegExp = require("lodash/escaperegexp");
+var trimEnd = require("lodash/trimEnd");
+var sortBy = require("lodash/sortBy");
+var escapeRegExp = require("lodash/escapeRegExp");
 
 // recognizers/recognizers-number/src/number/constants.ts
 var Constants = class {

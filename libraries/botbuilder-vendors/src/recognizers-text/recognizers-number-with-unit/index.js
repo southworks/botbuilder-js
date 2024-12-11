@@ -3,7 +3,7 @@
 var recognizersText = require('../recognizers-text');
 var recognizersTextNumber = require('../recognizers-number');
 var max = require("lodash/max");
-var escapeRegExp = require("lodash/escaperegexp");
+var escapeRegExp = require("lodash/escapeRegExp");
 var last = require("lodash/last");
 
 var CompositeEntityType = /* @__PURE__ */ ((CompositeEntityType2) => {

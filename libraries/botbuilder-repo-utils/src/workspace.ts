@@ -62,10 +62,6 @@ export async function collectWorkspacePackages(
                 return;
             }
 
-            if(filters.ignorePath?.length){
-                console.log(relWorkspacePath, filters.ignorePath)
-            }
-
             if (
                 filters.ignorePath?.length &&
                 filters.ignorePath.some((ignorePath) => minimatch(relWorkspacePath, ignorePath))
