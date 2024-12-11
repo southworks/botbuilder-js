@@ -11,8 +11,8 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "scripts": {
-    "postinstall": "ts-node src/index.ts install",
-    "postbuild": "ts-node src/index.ts build"
+    "install": "ts-node src/index.ts install",
+    "build": "ts-node src/index.ts build"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",
