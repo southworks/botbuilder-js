@@ -56,7 +56,7 @@ const logs = {
     },
     browserNotFoundError(browser) {
         console.error(
-            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url()}`
+            `  ❌ Browser '${browser.name}' binary not found - Please visit the following URL to download and install the required browser: ${browser.url}`
         );
     },
     echoBotNotRunningError(err) {
