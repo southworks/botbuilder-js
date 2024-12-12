@@ -27,16 +27,13 @@
     }
   },
   "dependencies": {
-    "bignumber.js": "^7.2.1",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",
     "eslint-plugin-only-warn": "^1.1.0",
     "globalize": "^1.7.0",
-    "grapheme-splitter": "^1.0.2",
     "lodash": "^4.17.21",
     "uuid": "^10.0.0",
-    "xregexp": "^4.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
