@@ -5,11 +5,6 @@ ignores: [
     "sinon",
     "uuid",
     "botbuilder-dialogs-adaptive-testing",
-    # Ignore all @microsoft/recognizers-text packages and their dependencies
-    "@microsoft/recognizers-text*", 
-    "bignumber.js",
-    "grapheme-splitter",
-    "lodash",
-    "xregexp",
+    "@microsoft/recognizers-text*"
 ]
 ignorePatterns: [".eslintrc.json", "lib"]

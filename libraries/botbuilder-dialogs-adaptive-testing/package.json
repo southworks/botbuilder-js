@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
+    "bignumber.js": "^7.2.1",
     "bitwise": "^2.2.1",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
@@ -33,16 +34,18 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "eslint-plugin-only-warn": "^1.1.0",
+    "grapheme-splitter": "^1.0.2",
+    "lodash": "^4.17.21",
     "murmurhash-js": "^1.0.0",
     "nock": "^13.5.5",
     "url-parse": "^1.5.10",
+    "xregexp": "^4.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "botbuilder": "4.1.6"
   },
   "localDependencies": {
-    "__location": "vendors",
     "@microsoft/recognizers-text-suite": "1.1.4"
   },
   "author": "Microsoft",

@@ -22,8 +22,6 @@
     }
   },
   "scripts": {
-    "postinstall": "yarn workspace botbuilder-vendors postinstall",
-    "postbuild": "yarn workspace botbuilder-vendors postbuild",
     "browser-functional-test": "yarn workspace browser-functional-tests test",
     "build": "wsrun -e -m -t build",
     "build-docs": "wsrun -e -m build-docs",
@@ -52,7 +50,9 @@
     "test:runtime": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test:min",
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
-    "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
+    "update-version": "yarn workspace botbuilder-repo-utils update-versions",
+    "update-versions": "node -e \"console.log('test')\"",
+    "postupdate-versions": "yarn workspace botbuilder-vendors postinstall && yarn workspace botbuilder-vendors postbuild"
   },
   "resolutions": {
     "@types/ramda": "0.26.0",

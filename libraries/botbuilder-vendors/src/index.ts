@@ -1,17 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import glob from 'fast-glob';
+import { execSync } from 'child_process';
 import path from 'path';
 import { existsSync } from 'fs';
-import fs from 'fs/promises';
+import { mkdir, readFile, writeFile, copyFile } from 'fs/promises';
+import glob from 'fast-glob';
+import minimist from 'minimist';
 import { Package } from 'botbuilder-repo-utils/src/package';
 import { collectWorkspacePackages } from 'botbuilder-repo-utils/src/workspace';
 import { failure, run, success } from 'botbuilder-repo-utils/src/run';
 import { gitRoot } from 'botbuilder-repo-utils/src/git';
 import { readJsonFile } from 'botbuilder-repo-utils/src/file';
-import { execSync } from 'child_process';
-import minimist from 'minimist';
+
+const VENDORS_DIR = 'libraries/botbuilder-vendors/vendors';
+const IS_GITHUB_ACTIONS = process.env.GITHUB_ACTIONS === 'true';
 
 interface Vendor extends Package {
     dir: string;
@@ -27,35 +30,157 @@ const colors = {
     dim: '\x1b[2m',
     red: '\x1b[31m',
     green: '\x1b[32m',
+    yellow: '\x1b[33m',
     blue: '\x1b[34m',
     magenta: '\x1b[35m',
     cyan: '\x1b[36m',
 };
 
-const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+const actions = {
+    install: 'install',
+    build: 'build',
+};
 
-async function collectVendors(gitRoot: string) {
-    const dir = path.resolve(gitRoot, 'libraries/botbuilder-vendors/vendors');
+function plural(n: number, text: string, plural: string = 's') {
+    return `${text}${n === 1 ? '' : plural}`;
+}
+
+function padLeft(text: string) {
+    return text
+        .split('\n')
+        .map((line) => line.trim())
+        .join('\n');
+}
+
+const logs = {
+    summary({ action, vendors, workspaces }: any) {
+        console.log(
+            padLeft(`
+                Connecting vendors to workspaces...
+                
+                ${colors.blue}summary${colors.reset}
+                ----------------------
+                action    : ${colors.magenta}${action}${colors.reset}
+                vendors   : ${colors.magenta}${vendors} ${plural(vendors, 'package')}${colors.reset}
+                workspaces: ${colors.magenta}${workspaces} ${plural(workspaces, 'package')}${colors.reset}
+            `),
+        );
+    },
+    package: {
+        header({ name }: any) {
+            console.log(`${colors.blue}${name} ${colors.cyan}[workspace]${colors.reset}`);
+        },
+        footer() {
+            console.log(`└─ ${colors.dim}done${colors.reset}\r\n`);
+        },
+        require: {
+            header({ files }: any) {
+                const tags = files > 0 ? [`${colors.green}[replaced]`] : [`${colors.red}[not found]`];
+                console.log(
+                    `├─ require statements: ${colors.magenta}${files} ${plural(files, 'file')} ${tags.join('')}${colors.reset}`,
+                );
+            },
+            file: {
+                header({ isLast, dir, file, references }: any) {
+                    const prefix = isLast ? '└─' : '├─';
+                    console.log(
+                        `│   ${prefix} ${colors.cyan}${dir}/${file}: ${colors.magenta}${references} ${plural(references, 'reference')}${colors.reset}`,
+                    );
+                },
+                reference({ isLast, line, from, to }: any) {
+                    const prefix = isLast ? '└─' : '├─';
+                    console.log(
+                        `│  │  ${prefix} ${colors.dim}line:${line} | ${colors.red}${from}${colors.reset} ${colors.dim}-> ${colors.green}${to}${colors.reset}`,
+                    );
+                },
+            },
+        },
+        vendors: {
+            header({ vendors }: any) {
+                const tags = vendors > 0 ? [`${colors.green}[linked]`] : [];
+                console.log(
+                    `├─ vendors: ${colors.magenta}${vendors} ${plural(vendors, 'package')} ${tags.join('')}${colors.reset}`,
+                );
+            },
+            vendor({ isLast, name, version }: any) {
+                const prefix = isLast ? '└─' : '├─';
+                console.log(`│  ${prefix} ${colors.dim}${name}@${colors.cyan}${version}${colors.reset}`);
+            },
+        },
+        dependencies: {
+            header({ dependencies }: any) {
+                console.log(
+                    `├─ dependencies: ${colors.magenta}${dependencies} ${plural(dependencies, 'package')} ${colors.green}[added]${colors.reset}`,
+                );
+            },
+            dependency({ isLast, name, version }: any) {
+                const prefix = isLast ? '└─' : '├─';
+                console.log(`│  ${prefix} ${colors.dim}${name}@${colors.cyan}${version}${colors.reset}`);
+            },
+        },
+        unknown: {
+            vendors: {
+                header({ vendors }: any) {
+                    console.log(
+                        `├─ unknown vendors: ${colors.magenta}${vendors.length} ${plural(vendors.length, 'package')} ${colors.red}[not found]${colors.reset}`,
+                    );
+                    for (let i = 0; i < vendors.length; i++) {
+                        const { name, version } = vendors[i];
+                        logs.package.unknown.vendors.vendor({ isLast: i === vendors.length - 1, name, version });
+                    }
+                },
+                vendor({ isLast, name, version }: any) {
+                    const prefix = isLast ? '└─' : '├─';
+                    console.log(`│  ${prefix} ${colors.dim}${name}@${colors.cyan}${version}${colors.reset}`);
+                },
+            },
+        },
+    },
+};
+
+const failures = {
+    validAction() {
+        return new Error(`Please provide a valid action: ${Object.values(actions).join(' or ')}`);
+    },
+    packageJsonNotFound(pkgPath: string) {
+        return new Error(`Unable to find package.json file at ${pkgPath}`);
+    },
+    packageJsonNotFoundWithWorkspaces(pkgPath: string) {
+        return new Error(`Unable to find package.json file with workspaces at ${pkgPath}`);
+    },
+};
+
+async function collectVendors(gitRoot: string): Promise<Vendor[]> {
+    const dir = path.resolve(gitRoot, VENDORS_DIR);
     const packages = await glob('**/package.json', { cwd: dir });
 
     if (packages.length === 0) {
-        throw new Error(`No vendors found in '${dir}'`);
+        throw new Error(`Unable to find vendor packages under '${dir}' folder`);
     }
 
-    const p = packages.map(async (file) => {
-        const pkg = (await readJsonFile(path.join(dir, file))) as Package;
+    const promises = packages.map(async (file) => {
+        const pkgPath = path.join(dir, file);
+        const pkg = await readJsonFile<Package>(pkgPath);
+        if (!pkg) {
+            throw new Error(`Unable to load ${pkgPath}. Please provide a valid package.json.`);
+        }
+
         return {
             ...pkg,
-            dir: path.join(dir, path.dirname(file)),
-        } as Vendor;
+            dir: path.dirname(pkgPath),
+        };
     });
-    return Promise.all(p);
+    return Promise.all(promises);
 }
 
-async function getConnectedPackages(pkg: Vendor, vendors: Vendor[]) {
-    const result: { vendors: Vendor[]; dependencies: Dependency[] } = { vendors: [], dependencies: [] };
+async function getConnectedVendors(pkg: Package, vendors: Vendor[]) {
+    const result: { vendors: Vendor[]; dependencies: Dependency[]; unknown: Dependency[] } = {
+        vendors: [],
+        dependencies: [],
+        unknown: [],
+    };
 
-    async function inner(pkg: Vendor, memo: Set<string> = new Set()) {
+    async function inner(pkg: Package, memo: Set<string> = new Set()) {
         const localDependencies = Object.keys(pkg.localDependencies || {});
         for (const name of localDependencies) {
             if (memo.has(name)) {
@@ -63,6 +188,7 @@ async function getConnectedPackages(pkg: Vendor, vendors: Vendor[]) {
             }
             const vendor = vendors.find((vendor) => vendor.name === name);
             if (!vendor) {
+                result.unknown.push({ name, version: pkg.localDependencies![name] });
                 continue;
             }
             memo.add(vendor.name);
@@ -89,151 +215,145 @@ async function getConnectedPackages(pkg: Vendor, vendors: Vendor[]) {
     return result;
 }
 
+async function build({ dir, vendors, location }: any) {
+    logs.package.vendors.header({ vendors: vendors.length });
+
+    if (vendors.length === 0) {
+        return;
+    }
+
+    const tsconfig = await readJsonFile<any>(path.join(dir, 'tsconfig.json'));
+    const configDir = tsconfig.compilerOptions.outDir;
+    const outDir = path.resolve(dir, configDir);
+    const files = await glob(`**/*.js`, { cwd: outDir });
+
+    const references: Record<string, any> = {};
+    for (const file of files) {
+        const filePath = path.join(outDir, file);
+        const content = await readFile(filePath, 'utf8');
+        for (const vendor of vendors) {
+            const vendorDir = path.join(dir, location, path.basename(vendor.dir));
+            const relative = path.relative(path.dirname(filePath), vendorDir).split(path.sep).join('/');
+            const from = `require("${vendor.name}")`;
+            const to = `require("${relative}")`;
+            if (!content.includes(from)) {
+                continue;
+            }
+            const line = content.split('\n').findIndex((line) => line.includes(from)) + 1;
+            references[file] ??= [];
+            references[file].push({ from, to, line });
+            const newContent = content.replace(from, to);
+            await writeFile(filePath, newContent, 'utf8');
+        }
+    }
+
+    const entries = Object.entries(references);
+    logs.package.require.header({ files: entries.length });
+    for (let i = 0; i < entries.length; i++) {
+        const [file, refs] = entries[i];
+        logs.package.require.file.header({
+            isLast: i === entries.length - 1,
+            dir: outDir,
+            file,
+            references: refs.length,
+        });
+        for (let j = 0; j < refs.length; j++) {
+            const ref = refs[j];
+            logs.package.require.file.reference({
+                isLast: i === entries.length - 1,
+                line: ref.line,
+                from: ref.from,
+                to: ref.to,
+            });
+        }
+    }
+}
+
+async function install({ vendors, dependencies, dir, location }: any) {
+    logs.package.vendors.header({ vendors: vendors.length });
+    for (let i = 0; i < vendors.length; i++) {
+        const vendor = vendors[i];
+        const source = path.join(vendor.dir, vendor.main);
+        const vendorDir = path.join(dir, location, path.basename(vendor.dir));
+        const destination = path.join(vendorDir, vendor.main);
+
+        if (!existsSync(vendorDir)) {
+            await mkdir(vendorDir, { recursive: true });
+        }
+
+        logs.package.vendors.vendor({ isLast: i === vendors.length - 1, name: vendor.name, version: vendor.version });
+        await copyFile(source, destination);
+    }
+
+    logs.package.dependencies.header({ dependencies: dependencies.length });
+    for (let i = 0; i < dependencies.length; i++) {
+        const { name, version } = dependencies[i];
+        logs.package.dependencies.dependency({ isLast: i === dependencies.length - 1, name, version });
+        if (IS_GITHUB_ACTIONS) {
+            // Only modify package.json if running in GitHub Actions.
+            execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: dir });
+        }
+    }
+}
+
 export const command = (argv: string[]) => async () => {
     try {
         const flags = minimist(argv);
         const action = flags._[0];
-        const isEmpty = action === undefined;
-        const isInstall = action === 'install';
-        const isBuild = action === 'build';
-
-        if (isEmpty) {
-            return failure('Please provide a command (install or build)', 21);
+        if (!action) {
+            throw failures.validAction();
         }
 
-        const repoRoot = await gitRoot();
-        const packageFile = await readJsonFile<Package>(path.join(repoRoot, 'package.json'));
-        if (!packageFile) {
-            return failure('package.json not found', 20);
+        const rootDir = await gitRoot();
+        const globalVendors = await collectVendors(rootDir);
+
+        const pkgPath = path.join(rootDir, 'package.json');
+        if (!existsSync(pkgPath)) {
+            throw failures.packageJsonNotFound(pkgPath);
         }
 
-        // TODO: get folder where the script is running and execute the stuff there.
-        const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces?.packages, {
+        const pkg = await readJsonFile<Package>(pkgPath);
+        if (!pkg?.workspaces?.packages) {
+            throw failures.packageJsonNotFoundWithWorkspaces(pkgPath);
+        }
+
+        const workspaces = await collectWorkspacePackages(rootDir, pkg.workspaces.packages, {
             hasLocalDependencies: true,
-            ignorePath: ['**/libraries/botbuilder-vendors/**/*'],
+            ignorePath: [`**/${VENDORS_DIR}/**/*`],
         });
 
-        const globalVendors = await collectVendors(repoRoot);
+        logs.summary({ action, vendors: globalVendors.length, workspaces: workspaces.length });
 
-        if (globalVendors.length === 0) {
-            return;
-        }
-
-        console.log(`
-Connecting vendors to workspaces...
-
-${colors.blue}summary${colors.reset}
-----------------------
-action    : ${colors.magenta}${action}${colors.reset}
-vendors   : ${colors.magenta}${globalVendors.length} packages${colors.reset}
-workspaces: ${colors.magenta}${workspaces.length} packages${colors.reset}
-`);
         for (const { pkg, absPath } of workspaces) {
-            console.log(`${colors.blue}${pkg.name} ${colors.green}[workspace]${colors.reset}`);
-            const location = pkg.localDependencies!.__location;
-            if (!location) {
-                throw new Error(
-                    `localDependencies.__location property not found in ${pkg.name} library. Please provide a directory to copy the files to.`,
-                );
-            }
+            logs.package.header({ name: pkg.name });
 
             const dir = path.dirname(absPath);
+            const location = pkg.localDependencies!.__directory ?? 'vendors';
+            delete pkg.localDependencies!.__directory;
 
-            const { vendors, dependencies } = await getConnectedPackages(pkg as any, globalVendors);
+            const { vendors, dependencies, unknown } = await getConnectedVendors(pkg, globalVendors);
 
-            if (vendors.length == 0) {
-                continue;
+            if (unknown.length > 0) {
+                logs.package.unknown.vendors.header({ vendors: unknown });
             }
 
-            if (isBuild) {
-                const tsconfig = await readJsonFile<any>(path.join(dir, 'tsconfig.json'));
-                const configDir = tsconfig.compilerOptions.outDir;
-                const outDir = path.resolve(dir, configDir);
-                const files = await glob(`**/*.js`, { cwd: outDir });
-
-                const references: Record<string, any> = {};
-                for (const file of files) {
-                    const filePath = path.join(outDir, file);
-                    const content = await fs.readFile(filePath, 'utf8');
-                    for (const vendor of vendors) {
-                        const vendorDir = path.join(dir, location, path.basename(vendor.dir));
-                        const relative = path.relative(path.dirname(filePath), vendorDir).split(path.sep).join('/');
-                        const from = `require("${vendor.name}")`;
-                        const to = `require("${relative}")`;
-                        if (!content.includes(from)) {
-                            continue;
-                        }
-                        const line = content.split('\n').findIndex((line) => line.includes(from)) + 1;
-                        references[file] ??= [];
-                        references[file].push({ from, to, line });
-                        const newContent = content.replace(from, to);
-                        // await fs.writeFile(filePath, newContent, 'utf8');
-                    }
-                }
-
-                if (files.length > 0) {
-                    const entries = Object.entries(references);
-                    console.log(`└─ require statements: ${colors.magenta}${entries.length} files${colors.reset}`);
-                    for (let i = 0; i < entries.length; i++) {
-                        const [file, refs] = entries[i];
-                        const prefix = i === entries.length - 1 ? '└─' : '├─';
-                        console.log(
-                            `   ${prefix} ${colors.cyan}${configDir}/${file}: ${colors.magenta}${refs.length} reference${refs.length === 1 ? '' : 's'}${colors.reset}`,
-                        );
-                        for (let j = 0; j < refs.length; j++) {
-                            const ref = refs[j];
-                            const prefix = j === refs.length - 1 ? '└─' : '├─';
-                            const prefix2 = i === entries.length - 1 ? ' ' : '│';
-                            console.log(
-                                `   ${prefix2}  ${prefix} ${colors.dim}line:${ref.line} | ${colors.red}${ref.from}${colors.reset} ${colors.dim}-> ${colors.green}${ref.to}${colors.reset}`,
-                            );
-                        }
-                    }
-                }
+            if (action === actions.build) {
+                await build({ dir, vendors, location });
             }
 
-            if (isInstall) {
-                console.log(
-                    `├─ vendors: ${colors.magenta}${vendors.length} packages ${colors.green}[linked]${colors.reset}`,
-                );
-                for (let i = 0; i < vendors.length; i++) {
-                    const vendor = vendors[i];
-                    const source = path.join(vendor.dir, vendor.main);
-                    const vendorDir = path.join(dir, location, path.basename(vendor.dir));
-                    const destination = path.join(vendorDir, vendor.main);
-
-                    if (!existsSync(vendorDir)) {
-                        await fs.mkdir(vendorDir, { recursive: true });
-                    }
-
-                    const prefix = i === vendors.length - 1 ? '└─' : '├─';
-                    console.log(
-                        `│  ${prefix} ${colors.dim}${vendor.name}@${colors.cyan}${vendor.version}${colors.reset}`,
-                    );
-                    await fs.copyFile(source, destination);
-                }
-
-                if (isGitHubActions) {
-                    console.log(
-                        `└─ dependencies: ${colors.magenta}${dependencies.length} packages ${colors.green}[added]${colors.reset}`,
-                    );
-                    for (let i = 0; i < dependencies.length; i++) {
-                        const { name, version } = dependencies[i];
-                        const prefix = i === dependencies.length - 1 ? '└─' : '├─';
-                        console.log(`   ${prefix} ${colors.dim}${name}@${colors.cyan}${version}${colors.reset}`);
-                        execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: dir });
-                    }
-                }
+            if (action === actions.install) {
+                await install({ vendors, dependencies, dir, location });
             }
-            console.log('');
+
+            logs.package.footer();
         }
 
         return success();
     } catch (err: any) {
-        return failure(err instanceof Error ? err.message : err, 22);
+        return failure(err instanceof Error ? err.message : err);
     }
 };
 
 if (require.main === module) {
-    run(command(process.argv.slice(2)) as any);
+    run(command(process.argv.slice(2)));
 }
