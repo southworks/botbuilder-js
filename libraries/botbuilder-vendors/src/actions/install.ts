@@ -7,7 +7,16 @@ import { existsSync } from 'fs';
 import { copyFile, mkdir } from 'fs/promises';
 import { logger } from '../utils';
 
-export async function install({ vendors, dependencies, dir, location }: any) {
+/**
+ * Install vendor packages and dependencies.
+ *
+ * @param param0 Installation parameters.
+ * @param param0.vendors List of vendor packages.
+ * @param param0.dependencies List of dependencies.
+ * @param param0.pkgDir Directory of the package.
+ * @param param0.directory Directory to install vendor packages.
+ */
+export async function install({ vendors, dependencies, pkgDir, directory }: any) {
     for (let i = 0; i < vendors.length; i++) {
         const vendor = vendors[i];
 
@@ -22,7 +31,7 @@ export async function install({ vendors, dependencies, dir, location }: any) {
         }
 
         const source = path.join(vendor.dir, vendor.main);
-        const vendorDir = path.join(dir, location, path.basename(vendor.dir));
+        const vendorDir = path.join(pkgDir, directory, path.basename(vendor.dir));
         const destination = path.join(vendorDir, vendor.main);
 
         if (!existsSync(vendorDir)) {
@@ -39,7 +48,7 @@ export async function install({ vendors, dependencies, dir, location }: any) {
         logger.package.dependencies.dependency({ isLast: i === dependencies.length - 1, name, version });
         if (process.env.GITHUB_ACTIONS === 'true') {
             // Only modify package.json if running in GitHub Actions, preventing changes to local files and pushing them back to the repository.
-            execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: dir });
+            execSync(`npm pkg set dependencies["${name}"]="${version}"`, { cwd: pkgDir });
         }
     }
 }

@@ -7,15 +7,23 @@ import { readJsonFile } from 'botbuilder-repo-utils/src/file';
 import { glob } from 'fast-glob';
 import { logger } from '../utils';
 
-export async function build({ dir, vendors, location }: any) {
+/**
+ * Connect vendor packages to the workspace compiled code.
+ *
+ * @param param0 Connection parameters.
+ * @param param0.pkgDir Directory of the package.
+ * @param param0.vendors List of vendor packages.
+ * @param param0.directory Directory to install vendor packages.
+ */
+export async function build({ pkgDir, vendors, directory }: any) {
     if (vendors.length === 0) {
         logger.package.compilation.header({ files: 0 });
         return;
     }
 
-    const tsconfig = await readJsonFile<any>(path.join(dir, 'tsconfig.json'));
+    const tsconfig = await readJsonFile<any>(path.join(pkgDir, 'tsconfig.json'));
     const configDir = tsconfig.compilerOptions.outDir;
-    const outDir = path.resolve(dir, configDir);
+    const outDir = path.resolve(pkgDir, configDir);
     const files = await glob(`**/*.js`, { cwd: outDir });
 
     // Find and replace all vendor references in the compiled files
@@ -26,7 +34,7 @@ export async function build({ dir, vendors, location }: any) {
         const content = await readFile(filePath, 'utf8');
 
         for (const vendor of vendors) {
-            const vendorDir = path.join(dir, location, path.basename(vendor.dir));
+            const vendorDir = path.join(pkgDir, directory, path.basename(vendor.dir));
             const relative = path.relative(path.dirname(filePath), vendorDir).split(path.sep).join('/');
             const from = `require("${vendor.name}")`;
             const to = `require("${relative}")`;

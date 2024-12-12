@@ -11,6 +11,12 @@ export interface Vendor extends Package {
     dir: string;
 }
 
+/**
+ * Find all vendor packages in a directory.
+ *
+ * @param dir Directory to search.
+ * @returns List of vendor packages.
+ */
 export async function findAll(dir: string): Promise<Vendor[]> {
     const packages = await glob('**/package.json', { cwd: dir });
 
@@ -33,6 +39,13 @@ export async function findAll(dir: string): Promise<Vendor[]> {
     return Promise.all(promises);
 }
 
+/**
+ * Find all connected vendor packages.
+ *
+ * @param pkg Package to search.
+ * @param vendors List of vendor packages.
+ * @returns List of connected vendor packages, dependencies, and unknown packages.
+ */
 export async function findByPackage(pkg: Package, vendors: Vendor[]) {
     const result: { vendors: Vendor[]; dependencies: Dependency[]; unknown: Dependency[] } = {
         vendors: [],

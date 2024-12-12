@@ -46,8 +46,8 @@ export const command = (argv: string[]) => async () => {
         for (const { pkg, absPath } of workspaces) {
             logger.package.header({ name: pkg.name });
 
-            const dir = path.dirname(absPath);
-            const location = pkg.localDependencies!.__directory ?? 'vendors';
+            const pkgDir = path.dirname(absPath);
+            const directory = pkg.localDependencies!.__directory ?? 'vendors';
             delete pkg.localDependencies!.__directory;
 
             const { vendors, dependencies, unknown } = await findByPackage(pkg, allVendors);
@@ -55,8 +55,8 @@ export const command = (argv: string[]) => async () => {
 
             logger.package.vendors.header({ vendors: newVendors.length });
 
-            await install({ vendors: newVendors, dependencies, dir, location });
-            await build({ dir, vendors, location });
+            await install({ vendors: newVendors, dependencies, pkgDir, directory });
+            await build({ pkgDir, vendors, directory });
 
             logger.package.footer();
         }
