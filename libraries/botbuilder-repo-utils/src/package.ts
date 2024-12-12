@@ -21,3 +21,8 @@ export interface Package {
 
     scripts?: Record<string, string>;
 }
+
+export interface Dependency {
+    name: string;
+    version: string;
+}

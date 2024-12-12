@@ -52,7 +52,7 @@
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
     "update-version": "yarn workspace botbuilder-repo-utils update-versions",
     "update-versions": "node -e \"console.log('test')\"",
-    "postupdate-versions": "yarn workspace botbuilder-vendors postinstall && yarn workspace botbuilder-vendors postbuild"
+    "postupdate-versions": "yarn workspace botbuilder-vendors connect"
   },
   "resolutions": {
     "@types/ramda": "0.26.0",
