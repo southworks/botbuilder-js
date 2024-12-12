@@ -68,6 +68,7 @@
     "_ts3.4",
     "lib",
     "schemas",
-    "src"
+    "src",
+    "vendors"
   ]
 }

@@ -50,8 +50,7 @@
     "test:runtime": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-dialogs-adaptive-runtime*\" -t test:min",
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
-    "update-version": "yarn workspace botbuilder-repo-utils update-versions",
-    "update-versions": "node -e \"console.log('test')\"",
+    "update-versions": "yarn workspace botbuilder-repo-utils update-versions",
     "postupdate-versions": "yarn workspace botbuilder-vendors connect"
   },
   "resolutions": {

@@ -33,7 +33,6 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "eslint-plugin-only-warn": "^1.1.0",
-    "grapheme-splitter": "^1.0.2",
     "murmurhash-js": "^1.0.0",
     "nock": "^13.5.5",
     "url-parse": "^1.5.10",
@@ -51,6 +50,7 @@
     "_ts3.4",
     "lib",
     "schemas",
-    "src"
+    "src",
+    "vendors"
   ]
 }
