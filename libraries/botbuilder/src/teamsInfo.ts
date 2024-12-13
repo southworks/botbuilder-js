@@ -254,7 +254,6 @@ export class TeamsInfo {
     ): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
-            url: "",
             continuationToken: continuationToken,
             pageSize: pageSize,
         };
@@ -323,7 +322,6 @@ export class TeamsInfo {
         }
 
         const options: TeamsConnectorModels.ConversationsGetConversationPagedMembersOptionalParams = {
-            url: "",
             continuationToken: continuationToken,
             pageSize: pageSize,
         };
@@ -531,8 +529,8 @@ export class TeamsInfo {
         if (!operationId) {
             throw new Error('operationId is required.');
         }
-        const e = await this.getTeamsConnectorClient(context).teams.cancelOperation(operationId);
-        return e;
+
+        return await this.getTeamsConnectorClient(context).teams.cancelOperation(operationId);
     }
 
     /**

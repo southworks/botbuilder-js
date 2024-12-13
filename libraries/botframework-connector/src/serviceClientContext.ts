@@ -21,6 +21,17 @@ import {
 import {} from 'lodash';
 
 export class ServiceClientContext extends ServiceClient {
+    /**
+     * If specified, this is the base URI that requests will be made against for this ServiceClient.
+     * If it is not specified, then all OperationSpecs must contain a baseUrl property.
+     */
+    protected baseUri?: string;
+    /**
+     * The default request content type for the service.
+     * Used if no requestContentType is present on an OperationSpec.
+     */
+    protected requestContentType?: string;
+
     credentials: ServiceClientCredentials;
     private options: ServiceClientOptions;
 
@@ -39,9 +50,10 @@ export class ServiceClientContext extends ServiceClient {
             throw new Error("'credentials' cannot be null.");
         }
 
+        const requestContentType = 'application/json; charset=utf-8';
         super({
             endpoint: options?.baseUri,
-            requestContentType: 'application/json; charset=utf-8',
+            requestContentType,
             userAgentOptions: {
                 userAgentPrefix: `${getDefaultUserAgentValue()} ${options?.userAgent || ''}`,
             },
@@ -51,6 +63,8 @@ export class ServiceClientContext extends ServiceClient {
             credentialScopes: options?.credentialScopes,
         });
 
+        this.baseUri = options?.baseUri;
+        this.requestContentType = requestContentType;
         this.credentials = credentials;
         this.options = options;
         this.addPolicies(options.requestPolicyFactories);
@@ -58,6 +72,7 @@ export class ServiceClientContext extends ServiceClient {
     }
 
     /**
+     * TODO: evaluate if it should say deprecated or not.
      * @deprecated Could cause unwanted behaviors due to the migration of core-http to core-client. Please use core-client sendRequest instead.
      * Send the provided httpRequest.
      */
@@ -184,7 +199,5 @@ export class ServiceClientContext extends ServiceClient {
         } else if (typeof policies === 'function') {
             return this.addPolicies(policies([]) || []);
         }
-
-        return;
     }
 }

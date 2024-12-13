@@ -1681,13 +1681,13 @@ describe('TeamsInfo', function () {
             assert(cancelOperationExpectation.isDone());
         });
 
-        it.only('should return standard error response if a 4xx status code was returned', async function () {
+        it('should return standard error response if a 4xx status code was returned', async function () {
             const expectedAuthHeader = getBearerToken();
             const errorResponse = { error: { code: 'BadSyntax', message: 'Payload is incorrect' } };
 
             const cancelOperationExpectation = nock('https://smba.trafficmanager.net/amer')
                 .delete(`/v3/batch/conversation/${operationId}`)
-                .matchHeader('Accept-Encoding', expectedAuthHeader)
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(400, errorResponse);
 
             const context = new TestContext(teamActivity);

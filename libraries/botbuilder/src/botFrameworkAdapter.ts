@@ -9,8 +9,6 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { RequestPolicyFactory } from '@azure/core-http-compat';
-import { createEmptyPipeline, HttpClient, PipelinePolicy, PipelineRequest, PipelineResponse, SendRequest } from '@azure/core-rest-pipeline';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
@@ -1503,69 +1501,37 @@ export class BotFrameworkAdapter
     }
 
     private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
+        const options: ConnectorClientOptions = { ...this.settings.clientOptions };
         if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
             // Check if we have a streaming server. Otherwise, requesting a connector client
             // for a non-existent streaming connection results in an error
             if (!this.streamingServer) {
                 throw new Error(
-                    `Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`
+                    `Cannot create streaming connector client for serviceUrl ${serviceUrl} without a streaming connection. Call 'useWebSocket' or 'useNamedPipe' to start a streaming connection.`,
                 );
             }
 
-            const clientOptions = this.getClientOptions(serviceUrl, new StreamingHttpClient(this.streamingServer));
-            return new ConnectorClient(credentials, clientOptions);
+            options.httpClient = new StreamingHttpClient(this.streamingServer);
         }
 
-        const clientOptions = this.getClientOptions(serviceUrl);
-        return new ConnectorClient(credentials, clientOptions);
-    }
+        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
 
-    private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
-        const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
+        options.baseUri = serviceUrl;
+        options.userAgent = `${USER_AGENT} ${userAgent ?? ''}`;
 
-        const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
+        const client = new ConnectorClient(credentials, options);
 
-        if (httpClient) {
-            options.httpClient = httpClient;
-        }
-
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgentOptions;
-        const setUserAgent = userAgentPolicy({
-            value: 'core-http/3.0.4 Node/v18.18.2 OS/(x64-Windows_NT-10.0.26100)',
-        });
-
-        const acceptHeader: PipelinePolicy = {
-            name: "acceptHeaderPolicy",
-            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
-                if (!request.headers.has("accept")) {
-                    request.headers.set("accept", "*/*");
+        client.pipeline.addPolicy({
+            name: 'acceptHeaderPolicy',
+            sendRequest(request, next) {
+                if (!request.headers.has('accept')) {
+                    request.headers.set('accept', '*/*');
                 }
                 return next(request);
             },
-        };
+        });
 
-        const authorizationHeader: PipelinePolicy = {
-            name: "authorizationHeaderPolicy",
-            sendRequest: async (request: PipelineRequest, next: SendRequest): Promise<PipelineResponse> => {
-                const authHeader = "Bearer";
-                request.headers.set("Authorization", `Bearer ${authHeader}`);
-                return next(request);
-            },
-        };
-
-        // Create the pipeline with the provided options
-        const pipeline = createEmptyPipeline();
-
-        // Add custom policies
-        pipeline.addPolicy(acceptHeader, { afterPhase: "Serialize" });
-        pipeline.addPolicy(setUserAgent, { afterPhase: "Serialize" });
-        pipeline.addPolicy(authorizationHeader, { afterPhase: "Serialize" });
-
-        // Attach the pipeline to the options
-        options.requestPolicyFactories = pipeline;
-
-        options.pipeline = pipeline;
-        return options;
+        return client;
     }
 
     // Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
@@ -1670,7 +1636,7 @@ export class BotFrameworkAdapter
      */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
-        const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgentOptions: { userAgentPrefix: USER_AGENT } });
+        const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
 
         return client;
     }

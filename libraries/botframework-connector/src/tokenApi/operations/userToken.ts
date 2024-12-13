@@ -3,8 +3,9 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase } from "../../utils";
-import { createSerializer, OperationSpec, RawResponseCallback } from '@azure/core-client';
+import { createSerializer } from "@azure/core-client"
+import { RequestOptionsBase, ServiceCallback } from "../../utils";
+import { OperationSpec } from "@azure/core-client";
 import * as Models from '../models';
 import * as Mappers from '../models/userTokenMappers';
 import * as Parameters from '../models/parameters';
@@ -40,7 +41,7 @@ export class UserToken {
      * @param connectionName
      * @param callback The callback
      */
-    getToken(userId: string, connectionName: string, callback: RawResponseCallback): void;
+    getToken(userId: string, connectionName: string, callback: ServiceCallback<TokenResponse>): void;
     /**
      * @param userId
      * @param connectionName
@@ -51,30 +52,22 @@ export class UserToken {
         userId: string,
         connectionName: string,
         options: Models.UserTokenGetTokenOptionalParams,
-        callback: RawResponseCallback
+        callback: ServiceCallback<TokenResponse>
     ): void;
     getToken(
         userId: string,
         connectionName: string,
-        options?: Models.UserTokenGetTokenOptionalParams | RawResponseCallback,
-        callback?: RawResponseCallback
+        options?: Models.UserTokenGetTokenOptionalParams | ServiceCallback<TokenResponse>,
+        callback?: ServiceCallback<TokenResponse>
     ): Promise<Models.UserTokenGetTokenResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 userId,
                 connectionName,
                 options,
             },
-            getTokenOperationSpec
+            getTokenOperationSpec,
+            callback
         ) as Promise<Models.UserTokenGetTokenResponse>;
     }
 
@@ -101,7 +94,7 @@ export class UserToken {
         userId: string,
         connectionName: string,
         aadResourceUrls: Models.AadResourceUrls,
-        callback: RawResponseCallback
+        callback: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): void;
     /**
      * @param userId
@@ -115,7 +108,7 @@ export class UserToken {
         connectionName: string,
         aadResourceUrls: Models.AadResourceUrls,
         options: Models.UserTokenGetAadTokensOptionalParams,
-        callback: RawResponseCallback
+        callback: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): void;
     getAadTokens(
         userId: string,
@@ -123,18 +116,9 @@ export class UserToken {
         aadResourceUrls: Models.AadResourceUrls,
         options?:
             | Models.UserTokenGetAadTokensOptionalParams
-            | RawResponseCallback,
-        callback?: RawResponseCallback
+            | ServiceCallback<{ [propertyName: string]: TokenResponse }>,
+        callback?: ServiceCallback<{ [propertyName: string]: TokenResponse }>
     ): Promise<Models.UserTokenGetAadTokensResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 userId,
@@ -142,7 +126,8 @@ export class UserToken {
                 aadResourceUrls,
                 options,
             },
-            getAadTokensOperationSpec
+            getAadTokensOperationSpec,
+            callback
         ) as Promise<Models.UserTokenGetAadTokensResponse>;
     }
 
@@ -156,7 +141,7 @@ export class UserToken {
      * @param userId
      * @param callback The callback
      */
-    signOut(userId: string, callback: RawResponseCallback): void;
+    signOut(userId: string, callback: ServiceCallback<any>): void;
     /**
      * @param userId
      * @param options The optional parameters
@@ -165,28 +150,20 @@ export class UserToken {
     signOut(
         userId: string,
         options: Models.UserTokenSignOutOptionalParams,
-        callback: RawResponseCallback
+        callback: ServiceCallback<any>
     ): void;
     signOut(
         userId: string,
-        options?: Models.UserTokenSignOutOptionalParams | RawResponseCallback,
-        callback?: RawResponseCallback
+        options?: Models.UserTokenSignOutOptionalParams | ServiceCallback<any>,
+        callback?: ServiceCallback<any>
     ): Promise<Models.UserTokenSignOutResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 userId,
                 options,
             },
-            signOutOperationSpec
+            signOutOperationSpec,
+            callback
         ) as Promise<Models.UserTokenSignOutResponse>;
     }
 
@@ -203,7 +180,7 @@ export class UserToken {
      * @param userId
      * @param callback The callback
      */
-    getTokenStatus(userId: string, callback: RawResponseCallback): void;
+    getTokenStatus(userId: string, callback: ServiceCallback<TokenStatus[]>): void;
     /**
      * @param userId
      * @param options The optional parameters
@@ -212,28 +189,20 @@ export class UserToken {
     getTokenStatus(
         userId: string,
         options: Models.UserTokenGetTokenStatusOptionalParams,
-        callback: RawResponseCallback
+        callback: ServiceCallback<TokenStatus[]>
     ): void;
     getTokenStatus(
         userId: string,
-        options?: Models.UserTokenGetTokenStatusOptionalParams | RawResponseCallback,
-        callback?: RawResponseCallback
+        options?: Models.UserTokenGetTokenStatusOptionalParams | ServiceCallback<TokenStatus[]>,
+        callback?: ServiceCallback<TokenStatus[]>
     ): Promise<Models.UserTokenGetTokenStatusResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 userId,
                 options,
             },
-            getTokenStatusOperationSpec
+            getTokenStatusOperationSpec,
+            callback
         ) as Promise<Models.UserTokenGetTokenStatusResponse>;
     }
 
@@ -264,7 +233,7 @@ export class UserToken {
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        callback: RawResponseCallback
+        callback: ServiceCallback<any>
     ): void;
     /**
      * @param userId
@@ -280,25 +249,16 @@ export class UserToken {
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
         options: RequestOptionsBase,
-        callback: RawResponseCallback
+        callback: ServiceCallback<any>
     ): void;
     exchangeAsync(
         userId: string,
         connectionName: string,
         channelId: string,
         exchangeRequest: TokenExchangeRequest,
-        options?: RequestOptionsBase | RawResponseCallback,
-        callback?: RawResponseCallback
+        options?: RequestOptionsBase | ServiceCallback<any>,
+        callback?: ServiceCallback<any>
     ): Promise<Models.UserTokenExchangeAsyncResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 userId,
@@ -307,7 +267,8 @@ export class UserToken {
                 exchangeRequest,
                 options,
             },
-            exchangeAsyncOperationSpec
+            exchangeAsyncOperationSpec,
+            callback
         ) as Promise<Models.UserTokenExchangeAsyncResponse>;
     }
 }

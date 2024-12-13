@@ -49,9 +49,9 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         );
 
         const userAgent =
-            typeof this.connectorClientOptions.userAgent === 'function'
-                ? this.connectorClientOptions.userAgent(USER_AGENT)
-                : this.connectorClientOptions.userAgent;
+            typeof this.connectorClientOptions?.userAgent === 'function'
+                ? this.connectorClientOptions?.userAgent(USER_AGENT)
+                : this.connectorClientOptions?.userAgent;
         const options: ConnectorClientOptions = {
             ...this.connectorClientOptions,
             baseUri: serviceUrl,

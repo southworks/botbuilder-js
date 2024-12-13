@@ -5,7 +5,13 @@ import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
-import { HttpClient, PipelineRequest, PipelineResponse, createHttpHeaders } from '@azure/core-rest-pipeline';
+import {
+    RequestPolicy as HttpClient,
+    CompatResponse as HttpOperationResponse,
+    WebResourceLike as WebResource,
+    toHttpHeadersLike,
+} from '@azure/core-http-compat';
+import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { Request, Response, ResponseT } from './interfaces';
 import { USER_AGENT } from './botFrameworkAdapter';
@@ -393,13 +399,13 @@ class StreamingConnectorFactory implements ConnectorFactory {
 class StreamingHttpClient implements HttpClient {
     constructor(private readonly requestHandler: StreamingRequestHandler) {}
 
-    async sendRequest(httpRequest: PipelineRequest): Promise<PipelineResponse> {
+    async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         const streamingRequest = this.createStreamingRequest(httpRequest);
         const receiveResponse = await this.requestHandler.server?.send(streamingRequest);
         return this.createHttpResponse(receiveResponse, httpRequest);
     }
 
-    private createStreamingRequest(httpRequest: PipelineRequest): StreamingRequest {
+    private createStreamingRequest(httpRequest: WebResource): StreamingRequest {
         const verb = httpRequest.method.toString();
         const path = httpRequest.url.slice(httpRequest.url.indexOf('/v3'));
 
@@ -411,14 +417,14 @@ class StreamingHttpClient implements HttpClient {
 
     private async createHttpResponse(
         receiveResponse: IReceiveResponse,
-        httpRequest: PipelineRequest
-    ): Promise<PipelineResponse> {
+        httpRequest: WebResource,
+    ): Promise<HttpOperationResponse> {
         const [bodyAsText] =
             (await Promise.all(receiveResponse.streams?.map((stream) => stream.readAsString()) ?? [])) ?? [];
 
         return {
             bodyAsText,
-            headers: createHttpHeaders(),
+            headers: toHttpHeadersLike(createHttpHeaders()),
             request: httpRequest,
             status: receiveResponse.statusCode,
         };
