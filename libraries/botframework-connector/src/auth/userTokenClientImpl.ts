@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
+import type { ServiceClientCredentials } from '../azureCoreHttpCompat';
 import { Activity, SignInUrlResponse, TokenExchangeRequest, TokenResponse, TokenStatus } from 'botframework-schema';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { TokenApiClient } from '../tokenApi/tokenApiClient';
 import { UserTokenClient } from './userTokenClient';
-import { ServiceClientCredentials } from '../utils';
 
 /**
  * @internal

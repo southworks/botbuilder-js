@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { OperationURLParameter, OperationQueryParameter } from '@azure/core-client';
+import { OperationURLParameter, OperationQueryParameter } from '../../azureCoreHttpCompat';
 
 export const teamId: OperationURLParameter = {
     parameterPath: 'teamId',

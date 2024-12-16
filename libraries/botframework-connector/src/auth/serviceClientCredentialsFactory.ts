@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ServiceClientCredentials } from '../utils';
+import { ServiceClientCredentials } from '../azureCoreHttpCompat';
 
 // Export underlying type for convenience
 export { ServiceClientCredentials };

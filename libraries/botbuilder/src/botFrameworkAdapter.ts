@@ -1514,9 +1514,8 @@ export class BotFrameworkAdapter
             options.httpClient = new StreamingHttpClient(this.streamingServer);
         }
 
-        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
-
         options.baseUri = serviceUrl;
+        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
         options.userAgent = `${USER_AGENT} ${userAgent ?? ''}`;
 
         const client = new ConnectorClient(credentials, options);

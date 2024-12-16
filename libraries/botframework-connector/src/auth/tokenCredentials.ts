@@ -1,19 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { WebResourceLike } from '@azure/core-http-compat';
-import { HttpHeaders } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
-import { ServiceClientCredentials } from '../utils';
-
-const AUTHORIZATION_HEADER = 'Authorization';
-const DEFAULT_AUTHORIZATION_SCHEME = 'Bearer';
+import { HttpHeaders, Constants, WebResourceLike, ServiceClientCredentials } from '../azureCoreHttpCompat';
 
 /**
  * A credentials object that uses a token string and a authorzation scheme to authenticate.
  */
 export class TokenCredentials implements ServiceClientCredentials {
     token: string;
-    authorizationScheme: string = DEFAULT_AUTHORIZATION_SCHEME;
+    authorizationScheme: string = Constants.HeaderConstants.AUTHORIZATION_SCHEME;
 
     /**
      * Creates a new TokenCredentials object.
@@ -22,7 +17,7 @@ export class TokenCredentials implements ServiceClientCredentials {
      * @param {string} token The token.
      * @param {string} [authorizationScheme] The authorization scheme.
      */
-    constructor(token: string, authorizationScheme: string = DEFAULT_AUTHORIZATION_SCHEME) {
+    constructor(token: string, authorizationScheme: string = Constants.HeaderConstants.AUTHORIZATION_SCHEME) {
         if (!token) {
             throw new Error('token cannot be null or undefined.');
         }
@@ -38,7 +33,7 @@ export class TokenCredentials implements ServiceClientCredentials {
      */
     signRequest(webResource: WebResourceLike): Promise<WebResourceLike> {
         if (!webResource.headers) webResource.headers = new HttpHeaders();
-        webResource.headers.set(AUTHORIZATION_HEADER, `${this.authorizationScheme} ${this.token}`);
+        webResource.headers.set(Constants.HeaderConstants.AUTHORIZATION, `${this.authorizationScheme} ${this.token}`);
         return Promise.resolve(webResource);
     }
 }

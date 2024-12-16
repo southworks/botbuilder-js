@@ -5,9 +5,9 @@
 // Licensed under the MIT License.
 
 import { ok } from 'assert';
+import type { ServiceClientCredentials } from '../azureCoreHttpCompat';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { FederatedAppCredentials } from './federatedAppCredentials';
-import { ServiceClientCredentials } from '../utils';
 
 /**
  * A Federated Credentials implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) interface.

@@ -7,8 +7,7 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { WebResourceLike as WebResource } from '@azure/core-http-compat';
-import { ServiceClientCredentials } from '../utils';
+import { ServiceClientCredentials, WebResource } from '../azureCoreHttpCompat';
 import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticatorResult } from './authenticatorResult';

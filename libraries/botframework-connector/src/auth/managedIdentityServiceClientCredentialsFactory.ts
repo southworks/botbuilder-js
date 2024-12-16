@@ -7,10 +7,10 @@
  */
 
 import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
+import type { ServiceClientCredentials } from '../azureCoreHttpCompat';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
-import { ServiceClientCredentials } from '../utils';
 
 /**
  * A Managed Identity implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.

@@ -3,30 +3,12 @@
  * Licensed under the MIT License.
  */
 
-import { createSerializer } from "@azure/core-client"
-import { OperationSpec } from "@azure/core-client";
 import * as Mappers from "../models/conversationsMappers";
 import * as Models from "../models";
 import * as Parameters from "../models/parameters";
+import { ServiceCallback, RequestOptionsBase, RestResponse, createSerializer, OperationSpec } from "../../azureCoreHttpCompat"
 import { ConnectorClientContext } from "../connectorClientContext";
 import { ConversationIdHttpHeaderName } from "../../conversationConstants";
-import { HttpOperationResponse, RequestOptionsBase, ServiceCallback } from "../../utils";
-
-/**
- * The flattened response to a REST call.
- * Contains the underlying {@link HttpOperationResponse} as well as
- * the merged properties of the `parsedBody`, `parsedHeaders`, etc.
- */
-interface RestResponse {
-  /**
-   * The underlying HTTP response containing both raw and deserialized response data.
-   */
-  _response: HttpOperationResponse;
-  /**
-   * The flattened properties described by the `OperationSpec`, deserialized from headers and the HTTP body.
-   */
-  [key: string]: any;
-}
 
 /** Class representing a Conversations. */
 export class Conversations {

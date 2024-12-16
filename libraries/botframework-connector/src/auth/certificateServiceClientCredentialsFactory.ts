@@ -6,12 +6,12 @@
  * Licensed under the MIT License.
  */
 
+import type { ServiceClientCredentials } from '../azureCoreHttpCompat';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ok } from 'assert';
 import { CertificateAppCredentials } from './certificateAppCredentials';
 import { promisify } from 'util';
 import * as opensslWrapper from 'openssl-wrapper';
-import { ServiceClientCredentials } from '../utils';
 const openssl = promisify(opensslWrapper.default);
 
 /**

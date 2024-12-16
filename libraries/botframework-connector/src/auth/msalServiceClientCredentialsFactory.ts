@@ -6,10 +6,10 @@
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 import { MsalAppCredentials } from './msalAppCredentials';
+import { ServiceClientCredentials } from '../azureCoreHttpCompat';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
-import { ServiceClientCredentials } from '../utils';
 
 /**
  * An implementation of ServiceClientCredentialsFactory that generates MsalAppCredentials

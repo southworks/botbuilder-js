@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { OperationQueryParameter } from "@azure/core-client"
+import { OperationQueryParameter } from "../../azureCoreHttpCompat"
 
 export const channelId0: OperationQueryParameter = {
   parameterPath: [

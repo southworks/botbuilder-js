@@ -7,8 +7,7 @@
  */
 
 import { ServiceCallback } from 'botframework-connector';
-import { createSerializer } from "@azure/core-client"
-import { OperationSpec } from "@azure/core-client";
+import { createSerializer, OperationSpec } from "@azure/core-client"
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';

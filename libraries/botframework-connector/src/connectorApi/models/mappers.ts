@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompositeMapper } from '@azure/core-client';
+import { CompositeMapper } from '../../azureCoreHttpCompat';
 
 export const AttachmentView: CompositeMapper = {
   serializedName: "AttachmentView",

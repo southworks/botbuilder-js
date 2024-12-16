@@ -3,11 +3,10 @@
  * Licensed under the MIT License.
  */
 
-import { CompatResponse as HttpResponse } from "@azure/core-http-compat";
+import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "../../azureCoreHttpCompat";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";
-import { RequestOptionsBase, ServiceClientOptions } from "../../utils";
 export * from "botframework-schema";
 
 /**

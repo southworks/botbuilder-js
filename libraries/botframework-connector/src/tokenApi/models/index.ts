@@ -3,9 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { HttpHeadersLike } from "@azure/core-http-compat"
-import { PipelineResponse } from "@azure/core-rest-pipeline";
-import { RequestOptionsBase, ServiceClientOptions } from "../../utils";
+import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "../../azureCoreHttpCompat";
 import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**
@@ -69,7 +67,12 @@ export interface AadResourceUrls {
  * An interface representing TokenApiClientOptions.
  * @extends ServiceClientOptions
  */
-export interface TokenApiClientOptions extends ServiceClientOptions {}
+export interface TokenApiClientOptions extends ServiceClientOptions {
+  /**
+   * @member {string} [baseUri]
+   */
+  baseUri?: string;
+}
 
 /**
  * @interface
@@ -194,7 +197,7 @@ export type BotSignInGetSignInUrlResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -213,7 +216,7 @@ export type BotSignInGetSignInResourceResponse = SignInUrlResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -232,7 +235,7 @@ export type UserTokenGetTokenResponse = TokenResponse & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -256,7 +259,7 @@ export type UserTokenGetAadTokensResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -279,7 +282,7 @@ export type UserTokenSignOutResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -298,7 +301,7 @@ export type UserTokenGetTokenStatusResponse = Array<TokenStatus> & {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */
@@ -321,7 +324,7 @@ export type UserTokenExchangeAsyncResponse = {
   /**
    * The underlying HTTP response.
    */
-  _response: PipelineResponse & {
+  _response: HttpResponse & {
     /**
      * The response body as text (string format)
      */

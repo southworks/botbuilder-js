@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompatResponse as HttpResponse } from '@azure/core-http-compat';
-import { ServiceClientOptions, RequestOptionsBase } from "../../utils";
+import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '../../azureCoreHttpCompat';
 import {
     ConversationList,
     TeamDetails,

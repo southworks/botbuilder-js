@@ -2,9 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { createSerializer } from "@azure/core-client"
-import { RequestOptionsBase, ServiceCallback } from "../../utils";
-import { OperationSpec } from "@azure/core-client";
+import { RequestOptionsBase, ServiceCallback, OperationSpec, createSerializer } from "../../azureCoreHttpCompat";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
 import * as Mappers from "../models/attachmentsMappers";

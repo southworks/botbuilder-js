@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-// import { WebResource, HttpOperationResponse, HttpClient } from '@azure/core-http';
 import { WebResourceLike as WebResource, RequestPolicy as HttpClient, CompatResponse as HttpOperationResponse } from '@azure/core-http-compat';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 

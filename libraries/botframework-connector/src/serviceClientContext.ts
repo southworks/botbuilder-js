@@ -17,7 +17,7 @@ import {
     toPipelineRequest,
     toWebResourceLike,
     WebResourceLike,
-} from '../node_modules/@azure/core-http-compat/dist/commonjs/util';
+} from './azureCoreHttpCompat';
 import {} from 'lodash';
 
 export class ServiceClientContext extends ServiceClient {
