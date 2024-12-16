@@ -123,7 +123,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             assert.strictEqual(connectorFactory.credentialFactory, credsFactory);
 
             const connectorClient = await connectorFactory.create(HOST_SERVICE_URL, HOST_AUDIENCE);
-            assertHasAcceptHeader(connectorClient);
+            await assertHasAcceptHeader(connectorClient);
             assert.strictEqual(connectorClient.credentials.appId, APP_ID);
             assert.strictEqual(connectorClient.credentials.appPassword, APP_PASSWORD);
             assert.strictEqual(connectorClient.credentials.oAuthScope, HOST_AUDIENCE);
@@ -135,47 +135,16 @@ describe('BotFrameworkAuthenticationFactory', function () {
         });
     });
 
-    function assertHasAcceptHeader(client) {
-        let hasAcceptHeader = false;
-
-        // Mock a request
-        const mockRequest = {
-            url: "https://mockurl.test",
-            method: "GET",
-            headers: createHttpHeaders(),
-            timeout: 0,
-            withCredentials: false,
-            requestId: "mock-request-id",
-            allowInsecureConnection: false,
-        };
-
-        // Mock a response (not used here but required by pipeline policies)
-        const mockResponse = {
-            request: mockRequest,
-            status: 200,
+    async function assertHasAcceptHeader(client) {
+        const headerPolicy = client.pipeline
+            .getOrderedPolicies()
+            .find((policy) => policy.name === 'acceptHeaderPolicy');
+        const mockHttp = {
             headers: createHttpHeaders(),
         };
-
-        // Iterate over the pipeline policies
-        const policies = client._requestPolicyFactories.getOrderedPolicies();
-        for (const policy of policies) {
-            const mockNextPolicy = {
-                sendRequest: async (request) => {
-                    return mockResponse; // Return a dummy response
-                },
-            };
-
-            // Execute the policy's `sendRequest` to process the mock request
-            policy.sendRequest(mockRequest, mockNextPolicy);
-            const acceptHeader = mockRequest.headers.get("accept");
-            // Check if the Accept header was set to */*
-            if (mockRequest.headers.get("accept") === "*/*") {
-                hasAcceptHeader = true;
-                break;
-            }
-        }
+        await headerPolicy.sendRequest(mockHttp, () => {});
 
         // Assert the presence of the Accept header
-        assert(hasAcceptHeader, "Accept header from ConnectorClientContext should be */*");
+        assert(mockHttp.headers.get('accept') == '*/*', "Accept header from ConnectorClientContext should be */*");
     }
 });

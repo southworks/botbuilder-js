@@ -50,7 +50,11 @@ export class ServiceClientContext extends ServiceClient {
             throw new Error("'credentials' cannot be null.");
         }
 
-        const requestContentType = 'application/json; charset=utf-8';
+        const requestContentType =
+            options?.deserializationContentTypes?.json?.join(' ') ||
+            options?.deserializationContentTypes?.xml?.join(' ') ||
+            'application/json; charset=utf-8';
+
         super({
             endpoint: options?.baseUri,
             requestContentType,

@@ -4,7 +4,8 @@
  * license information.
  */
 
-import { PipelineRequestOptions, PipelineResponse } from '@azure/core-rest-pipeline';
+import { RequestOptionsBase } from 'botframework-connector';
+import { CompatResponse as HttpResponse } from "@azure/core-http-compat";
 
 /**
  * Represents an intent prediction.
@@ -194,7 +195,7 @@ export interface PredictionRequest {
 /**
  * Optional Parameters.
  */
-export interface PredictionGetVersionPredictionOptionalParams extends PipelineRequestOptions {
+export interface PredictionGetVersionPredictionOptionalParams extends RequestOptionsBase {
     /**
      * Indicates whether to get extra metadata for the entities predictions or not.
      */
@@ -212,7 +213,7 @@ export interface PredictionGetVersionPredictionOptionalParams extends PipelineRe
 /**
  * Optional Parameters.
  */
-export interface PredictionGetSlotPredictionOptionalParams extends PipelineRequestOptions {
+export interface PredictionGetSlotPredictionOptionalParams extends RequestOptionsBase {
     /**
      * Indicates whether to get extra metadata for the entities predictions or not.
      */
@@ -234,7 +235,7 @@ export type PredictionGetVersionPredictionResponse = PredictionResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: PipelineResponse & {
+    _response: HttpResponse & {
         /**
          * The response body as text (string format)
          */
@@ -254,7 +255,7 @@ export type PredictionGetSlotPredictionResponse = PredictionResponse & {
     /**
      * The underlying HTTP response.
      */
-    _response: PipelineResponse & {
+    _response: HttpResponse & {
         /**
          * The response body as text (string format)
          */

@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { OperationSpec, createSerializer, RawResponseCallback } from '@azure/core-client';
+import { ServiceCallback } from 'botframework-connector';
+import { createSerializer } from "@azure/core-client"
+import { OperationSpec } from "@azure/core-client";
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';
@@ -44,7 +46,7 @@ export class LuisPrediction {
      * @param query The utterance to predict.
      * @param callback The callback
      */
-    resolve(appId: string, query: string, callback: RawResponseCallback): void;
+    resolve(appId: string, query: string, callback: ServiceCallback<LuisResult>): void;
     /**
      * @param appId The LUIS application ID (Guid).
      * @param query The utterance to predict.
@@ -55,7 +57,7 @@ export class LuisPrediction {
         appId: string,
         query: string,
         options: PredictionResolveOptionalParams,
-        callback: RawResponseCallback
+        callback: ServiceCallback<LuisResult>,
     ): void;
     /**
      * @param appId The LUIS application ID (Guid).
@@ -67,26 +69,17 @@ export class LuisPrediction {
     resolve(
         appId: string,
         query: string,
-        options?: PredictionResolveOptionalParams | RawResponseCallback,
-        callback?: RawResponseCallback
+        options?: PredictionResolveOptionalParams | ServiceCallback<LuisResult>,
+        callback?: ServiceCallback<LuisResult>,
     ): Promise<PredictionResolveResponse> {
-        if (typeof options === 'function') {
-            const onResponse = options;
-            options = {
-
-                onResponse
-            }
-        } else if (options) {
-            options.onResponse = callback;
-        }
-
         return this.client.sendOperationRequest(
             {
                 appId,
                 query,
                 options,
             },
-            resolveOperationSpec
+            resolveOperationSpec,
+            callback,
         ) as Promise<PredictionResolveResponse>;
     }
 }

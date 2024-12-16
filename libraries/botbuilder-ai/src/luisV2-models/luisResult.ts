@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { RequestOptionsBase } from 'botframework-connector';
 import { Sentiment } from './luisModels';
-import { PipelineRequestOptions, PipelineResponse } from '@azure/core-rest-pipeline';
+import { RequestOptionsBase } from 'botframework-connector';
+import { CompatResponse as HttpResponse } from "@azure/core-http-compat";
 
 /**
  * Prediction, based on the input query, containing intent(s) and entities.
@@ -157,7 +157,7 @@ export type PredictionResolveResponse = LuisResult & {
     /**
      * The underlying HTTP response.
      */
-    _response: PipelineResponse & {
+    _response: HttpResponse & {
         /**
          * The response body as text (string format)
          */

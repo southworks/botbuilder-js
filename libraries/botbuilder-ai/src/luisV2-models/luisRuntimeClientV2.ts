@@ -6,12 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions } from '@azure/core-client';
+import { ServiceClientCredentials, ServiceClientOptions } from 'botframework-connector';
 import * as Models from './luisResult';
 import * as Mappers from './luisMappers';
 import { LuisPrediction } from './luisPrediction';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
-import { ServiceClientCredentials } from 'botframework-connector';
 
 /**
  * Represents the LUIS client for V2 of the runtime.
@@ -33,7 +32,7 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
     constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
         super(credentials, endpoint, options);
         this.prediction = new LuisPrediction(this);
-        //super.baseUri = '{Endpoint}/luis/v2.0';
+        super.baseUri = '{Endpoint}/luis/v2.0';
     }
 }
 

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PipelineRequestOptions } from '@azure/core-rest-pipeline';
+import { RequestOptionsBase } from 'botframework-connector';
 
 import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
@@ -41,7 +41,7 @@ export interface LuisApplication {
  *
  * Options per LUIS prediction.
  */
-export interface LuisPredictionOptions extends PipelineRequestOptions {
+export interface LuisPredictionOptions extends RequestOptionsBase {
     /**
      * If true, return all intents instead of just the top scoring intent.
      */
@@ -688,7 +688,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             return new LuisRecognizerV2(this.application, userOptions);
         } else {
             if (!this.options) {
-                this.options = { url: '' };
+                this.options = {};
             }
             const merge = Object.assign(this.options, userOptions);
 
