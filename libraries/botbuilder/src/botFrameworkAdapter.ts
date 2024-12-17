@@ -63,7 +63,6 @@ import {
     TokenApiModels,
     TokenExchangeRequest,
     TokenStatus,
-    userAgentPolicy,
 } from 'botframework-connector';
 
 import {

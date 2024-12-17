@@ -3,9 +3,8 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { ServiceClientContext, ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { TeamsConnectorClientOptions } from './models';
-import { ServiceClientContext } from '../serviceClientContext';
 
 /**
  * The Bot Connector REST API extension for Microsoft Teams allows your

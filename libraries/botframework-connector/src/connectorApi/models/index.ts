@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
+import { ServiceClientOptions, RequestOptionsBase, HttpOperationResponse as HttpResponse } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import { AttachmentInfo, ChannelAccount, ConversationResourceResponse, ConversationsResult, PagedMembersResult, ResourceResponse } from "botframework-schema";
 import type { Agent as HttpAgent } from "http";
 import type { Agent as HttpsAgent } from "https";

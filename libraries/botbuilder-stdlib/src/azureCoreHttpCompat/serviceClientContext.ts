@@ -7,7 +7,6 @@ import { ServiceClient, OperationArguments, OperationSpec } from '@azure/core-cl
 import { convertHttpClient, createRequestPolicyFactoryPolicy } from '@azure/core-http-compat';
 import { PipelineRequest, PipelineResponse, createHttpHeaders, PipelinePolicy } from '@azure/core-rest-pipeline';
 import {
-    getDefaultUserAgentValue,
     ServiceCallback,
     ServiceClientCredentials,
     ServiceClientOptions,
@@ -15,6 +14,7 @@ import {
     toPipelineRequest,
     toWebResourceLike,
     WebResourceLike,
+    toCompatResponse,
 } from './compat';
 
 export class ServiceClientContext extends ServiceClient {
@@ -52,12 +52,13 @@ export class ServiceClientContext extends ServiceClient {
             options?.deserializationContentTypes?.xml?.join(' ') ||
             'application/json; charset=utf-8';
 
+        const userAgentPrefix =
+            (typeof options?.userAgent === 'function' ? options?.userAgent('') : options?.userAgent) || '';
+
         super({
             endpoint: options?.baseUri,
             requestContentType,
-            userAgentOptions: {
-                userAgentPrefix: `${getDefaultUserAgentValue()} ${options?.userAgent || ''}`,
-            },
+            userAgentOptions: { userAgentPrefix },
             allowInsecureConnection: options?.baseUri?.toLowerCase().startsWith('http:'),
             proxyOptions: options?.proxySettings,
             httpClient: options?.httpClient ? convertHttpClient(options?.httpClient) : undefined,
@@ -126,63 +127,100 @@ export class ServiceClientContext extends ServiceClient {
         operationSpec: OperationSpec,
         callback?: ServiceCallback<T>,
     ): Promise<T> {
-        const newArguments = this.createOperationArguments(operationArguments as LegacyOperationArguments, callback);
-        return super.sendOperationRequest(newArguments, operationSpec);
+        let resolve: any;
+        let reject: any;
+        const result = new Promise<T>((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
+        const options =
+            this.createOptions(operationArguments.options as LegacyOperationArguments['options'], callback) ?? {};
+
+        const innerOnResponse = options.onResponse;
+        options.onResponse = (rawResponse, flatResponse, error) => {
+            innerOnResponse?.(rawResponse, flatResponse, error);
+            if (error) {
+                reject(error);
+            } else {
+                Object.defineProperty(flatResponse, '_response', {
+                    value: rawResponse,
+                });
+                resolve(flatResponse);
+            }
+        };
+
+        await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
+        return result;
     }
 
-    private isLegacyOperationArguments(operationArguments: LegacyOperationArguments) {
-        const options = operationArguments.options;
+    private isLegacyOptions(options: LegacyOperationArguments['options']): boolean {
         return (
-            options?.onDownloadProgress ||
-            options?.onUploadProgress ||
-            options?.shouldDeserialize ||
+            !!options?.onDownloadProgress ||
+            !!options?.onUploadProgress ||
+            !!options?.shouldDeserialize ||
             Object.keys(options?.serializerOptions || {}).some((e) =>
                 ['includeRoot', 'rootName', 'xmlCharKey'].includes(e),
             ) ||
-            options?.tracingContext ||
-            options?.timeout ||
-            options?.customHeaders ||
-            options?.onDownloadProgress ||
-            options?.onUploadProgress
+            !!options?.tracingContext ||
+            !!options?.timeout ||
+            !!options?.customHeaders ||
+            !!options?.onDownloadProgress ||
+            !!options?.onUploadProgress
         );
     }
 
-    private createOperationArguments(
-        operationArguments: LegacyOperationArguments,
+    private createOptions(
+        options: LegacyOperationArguments['options'],
         callback?: ServiceCallback<any>,
-    ): OperationArguments {
-        const isLegacy = this.isLegacyOperationArguments(operationArguments);
-        if (!isLegacy) {
-            return operationArguments as OperationArguments;
+    ): OperationArguments['options'] {
+        if (!options) {
+            return {};
         }
 
-        const optionsCallback = operationArguments.options as ServiceCallback<any>;
-        return {
-            options: {
-                serializerOptions: {
-                    xml: operationArguments.options?.serializerOptions!,
+        const isLegacy = this.isLegacyOptions(options);
+        if (!isLegacy) {
+            return options as OperationArguments['options'];
+        }
+
+        const result: OperationArguments['options'] = {
+            ...(options as OperationArguments['options']),
+            requestOptions: {
+                customHeaders: options?.customHeaders,
+                timeout: options?.timeout,
+                shouldDeserialize(response) {
+                    return typeof options?.shouldDeserialize === 'function'
+                        ? options?.shouldDeserialize?.(toCompatResponse(response))
+                        : options?.shouldDeserialize === true;
                 },
-                tracingOptions: {
-                    tracingContext: operationArguments.options?.tracingContext,
-                },
-                requestOptions: {
-                    customHeaders: operationArguments.options?.customHeaders,
-                    timeout: operationArguments.options?.timeout,
-                    shouldDeserialize: operationArguments.options?.shouldDeserialize,
-                    onDownloadProgress: operationArguments.options?.onDownloadProgress,
-                    onUploadProgress: operationArguments.options?.onUploadProgress,
-                },
-                onResponse(rawResponse, flatResponse, error) {
-                    optionsCallback?.(
+                onDownloadProgress: options?.onDownloadProgress,
+                onUploadProgress: options?.onUploadProgress,
+            },
+            onResponse(rawResponse: any, flatResponse, error) {
+                const args = []
+                typeof options === 'function' ??
+                    (options as ServiceCallback<any>)?.(
                         error as Error,
                         rawResponse.parsedBody,
                         toWebResourceLike(rawResponse.request),
                         rawResponse,
                     );
-                    callback?.(error as Error, rawResponse.parsedBody, toWebResourceLike(rawResponse.request), rawResponse);
-                },
+                callback?.(error as Error, rawResponse.parsedBody, toWebResourceLike(rawResponse.request), rawResponse);
             },
         };
+
+        if (options.serializerOptions) {
+            result.serializerOptions = {
+                xml: options.serializerOptions,
+            };
+        }
+
+        if (options.tracingOptions) {
+            result.tracingOptions = {
+                tracingContext: options.tracingContext,
+            };
+        }
+
+        return result;
     }
 
     private addPolicies(policies: ServiceClientOptions['requestPolicyFactories']): void {

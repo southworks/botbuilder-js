@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
-import { ServiceClientContext } from "../serviceClientContext";
+import { ServiceClientContext, ServiceClientCredentials } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import * as Models from "./models";
 
 const packageName = 'botframework-token';

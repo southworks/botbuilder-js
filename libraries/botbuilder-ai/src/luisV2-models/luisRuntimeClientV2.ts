@@ -30,9 +30,9 @@ class LUISRuntimeClientV2 extends LUISRuntimeClientContext {
      * @param [options] The parameter options
      */
     constructor(credentials: ServiceClientCredentials, endpoint: string, options?: ServiceClientOptions) {
-        super(credentials, endpoint, options);
+        const baseUri = options?.baseUri || '{Endpoint}/luis/v2.0';
+        super(credentials, endpoint, { ...options, baseUri });
         this.prediction = new LuisPrediction(this);
-        super.baseUri = '{Endpoint}/luis/v2.0';
     }
 }
 

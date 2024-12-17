@@ -6,7 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { WebResourceLike as WebResource, RequestPolicy as HttpClient, CompatResponse as HttpOperationResponse } from '@azure/core-http-compat';
+import {
+    WebResourceLike as WebResource,
+    HttpClient,
+    HttpOperationResponse,
+} from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
 /**
@@ -41,7 +45,7 @@ export class StreamingHttpClient implements HttpClient {
         }
         if (!this.server.isConnected) {
             throw new Error(
-                'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.'
+                'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.',
             );
         }
 
