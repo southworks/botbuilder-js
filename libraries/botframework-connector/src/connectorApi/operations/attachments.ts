@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RequestOptionsBase, ServiceCallback, OperationSpec, createSerializer } from "../../azureCoreHttpCompat";
+import { RequestOptionsBase, ServiceCallback, OperationSpec, createSerializer } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
 import * as Mappers from "../models/attachmentsMappers";

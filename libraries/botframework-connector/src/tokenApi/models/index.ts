@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "../../azureCoreHttpCompat";
+import { ServiceClientOptions, RequestOptionsBase, HttpResponse } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**

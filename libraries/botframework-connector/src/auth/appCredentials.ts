@@ -7,7 +7,7 @@
  */
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { ServiceClientCredentials, WebResource } from '../azureCoreHttpCompat';
+import { ServiceClientCredentials, WebResource } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { TokenCredentials } from './tokenCredentials';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticatorResult } from './authenticatorResult';

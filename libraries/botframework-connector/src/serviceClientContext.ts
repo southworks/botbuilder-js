@@ -12,13 +12,10 @@ import {
     ServiceClientCredentials,
     ServiceClientOptions,
     OperationArguments as LegacyOperationArguments,
-} from './utils';
-import {
     toPipelineRequest,
     toWebResourceLike,
     WebResourceLike,
-} from './azureCoreHttpCompat';
-import {} from 'lodash';
+} from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 export class ServiceClientContext extends ServiceClient {
     /**

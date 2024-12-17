@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { OperationQueryParameter } from "../../azureCoreHttpCompat"
+import { OperationQueryParameter } from "botbuilder-stdlib/lib/azureCoreHttpCompat"
 
 export const channelId0: OperationQueryParameter = {
   parameterPath: [

@@ -6,7 +6,7 @@
 import * as Mappers from "../models/conversationsMappers";
 import * as Models from "../models";
 import * as Parameters from "../models/parameters";
-import { ServiceCallback, RequestOptionsBase, RestResponse, createSerializer, OperationSpec } from "../../azureCoreHttpCompat"
+import { ServiceCallback, RequestOptionsBase, RestResponse, createSerializer, OperationSpec } from "botbuilder-stdlib/lib/azureCoreHttpCompat"
 import { ConnectorClientContext } from "../connectorClientContext";
 import { ConversationIdHttpHeaderName } from "../../conversationConstants";
 

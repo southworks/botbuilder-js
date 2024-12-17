@@ -7,6 +7,7 @@ import {
 
 import { WebResourceLike, CompatResponse as HttpResponse } from '@azure/core-http-compat';
 import { ProxySettings } from '@azure/core-rest-pipeline';
+import { TokenCredential, isTokenCredential } from '@azure/core-auth';
 
 /**
  * Represents an object or class with a `signRequest` method which will sign outgoing requests (for example, by setting the `Authorization` header).
@@ -55,7 +56,14 @@ export interface RestResponse {
 
 import { createSerializer } from '@azure/core-client';
 
-import { RequestOptionsBase, ServiceClientOptions, ServiceCallback, HttpOperationResponse } from './utils';
+import {
+    RequestOptionsBase,
+    ServiceClientOptions,
+    ServiceCallback,
+    HttpOperationResponse,
+    getDefaultUserAgentValue,
+    OperationArguments,
+} from './utils';
 import { CompositeMapper } from '@azure/core-client';
 import { OperationURLParameter, OperationQueryParameter, OperationSpec } from '@azure/core-client';
 
@@ -75,4 +83,8 @@ export {
     OperationSpec,
     createSerializer,
     ServiceCallback,
+    TokenCredential,
+    isTokenCredential,
+    getDefaultUserAgentValue,
+    OperationArguments,
 };

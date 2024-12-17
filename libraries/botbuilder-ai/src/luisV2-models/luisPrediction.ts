@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback } from 'botframework-connector';
-import { createSerializer, OperationSpec } from "@azure/core-client"
+import { ServiceCallback, OperationSpec, createSerializer } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { LUISRuntimeClientContext } from '../luisRuntimeClientContext';
 import { LuisResult, PredictionResolveOptionalParams, PredictionResolveResponse } from './luisResult';
 import * as Parameters from './luisParameters';

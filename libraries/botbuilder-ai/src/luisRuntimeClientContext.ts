@@ -4,7 +4,7 @@
  * license information.
  */
 
-import { ServiceClientCredentials, ServiceClientOptions } from 'botframework-connector';
+import { ServiceClientCredentials, ServiceClientOptions } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ServiceClientContext } from 'botframework-connector/lib/serviceClientContext';
 
 /**

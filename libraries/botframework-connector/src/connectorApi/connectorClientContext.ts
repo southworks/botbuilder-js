@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ServiceClientCredentials } from "../azureCoreHttpCompat";
+import { ServiceClientCredentials } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import { ServiceClientContext } from '../serviceClientContext';
 import * as Models from "./models";
 

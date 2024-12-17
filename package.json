@@ -15,7 +15,7 @@
     ],
     "nohoist": [
       "**/@types/selenium-webdriver",
-      "botframework-connector/@azure/core-http-compat",
+      "botbuilder-stdlib/@azure/core-http-compat",
       "botbuilder/filenamify"
     ],
     "nohoistComments": {

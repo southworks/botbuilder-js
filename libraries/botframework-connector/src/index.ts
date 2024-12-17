@@ -9,7 +9,6 @@
 export * from './auth';
 export * from './teams';
 export * from './tokenApi/models';
-export * from './utils'
 
 export { BotFrameworkClient } from './skills';
 export { ConnectorClient } from './connectorApi/connectorClient';

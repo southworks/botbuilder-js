@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceCallback, createSerializer, OperationSpec } from "../../azureCoreHttpCompat";
+import { ServiceCallback, createSerializer, OperationSpec } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import * as Models from "../models";
 import * as Mappers from "../models/botSignInMappers";
 import * as Parameters from "../models/parameters";

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientCredentials, ServiceClientOptions } from 'botframework-connector';
+import { ServiceClientCredentials, ServiceClientOptions } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import * as Models from './luisResult';
 import * as Mappers from './luisMappers';
 import { LuisPrediction } from './luisPrediction';

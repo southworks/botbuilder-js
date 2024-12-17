@@ -7,8 +7,7 @@
  */
 
 import { Sentiment } from './luisModels';
-import { RequestOptionsBase } from 'botframework-connector';
-import { CompatResponse as HttpResponse } from "@azure/core-http-compat";
+import { HttpResponse, RequestOptionsBase } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 /**
  * Prediction, based on the input query, containing intent(s) and entities.

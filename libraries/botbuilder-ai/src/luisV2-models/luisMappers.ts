@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { CompositeMapper } from '@azure/core-client';
+import { CompositeMapper } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 
 export const IntentModel: CompositeMapper = {
     serializedName: 'IntentModel',

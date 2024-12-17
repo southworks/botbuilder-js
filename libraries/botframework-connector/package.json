@@ -27,7 +27,6 @@
     }
   },
   "dependencies": {
-    "@azure/core-http-compat": "^2.1.2",
     "@azure/identity": "^4.4.1",
     "@azure/msal-node": "^2.13.1",
     "@types/jsonwebtoken": "9.0.6",
