@@ -15,7 +15,7 @@ import {
     toPipelineRequest,
     toWebResourceLike,
     WebResourceLike,
-} from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+} from './compat';
 
 export class ServiceClientContext extends ServiceClient {
     /**
@@ -42,7 +42,7 @@ export class ServiceClientContext extends ServiceClient {
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */
-    constructor(credentials: ServiceClientCredentials, options?: ServiceClientOptions) {
+    constructor(credentials: ServiceClientCredentials, options: ServiceClientOptions = {}) {
         if (credentials === null || credentials === undefined) {
             throw new Error("'credentials' cannot be null.");
         }
@@ -60,7 +60,7 @@ export class ServiceClientContext extends ServiceClient {
             },
             allowInsecureConnection: options?.baseUri?.toLowerCase().startsWith('http:'),
             proxyOptions: options?.proxySettings,
-            httpClient: options?.httpClient ? convertHttpClient(options?.httpClient) : null,
+            httpClient: options?.httpClient ? convertHttpClient(options?.httpClient) : undefined,
             credentialScopes: options?.credentialScopes,
         });
 
@@ -97,7 +97,7 @@ export class ServiceClientContext extends ServiceClient {
             ...newRequest.headers.toJSON({ preserveCase: true }),
             ...webResource.headers.toJson({ preserveCase: true }),
         });
-        newRequest.withCredentials = this.options?.withCredentials;
+        newRequest.withCredentials = this.options?.withCredentials === true;
         newRequest.headers = headers;
         return super.sendRequest(newRequest);
     }
@@ -149,7 +149,7 @@ export class ServiceClientContext extends ServiceClient {
 
     private createOperationArguments(
         operationArguments: LegacyOperationArguments,
-        callback: ServiceCallback<any>,
+        callback?: ServiceCallback<any>,
     ): OperationArguments {
         const isLegacy = this.isLegacyOperationArguments(operationArguments);
         if (!isLegacy) {
@@ -160,7 +160,7 @@ export class ServiceClientContext extends ServiceClient {
         return {
             options: {
                 serializerOptions: {
-                    xml: operationArguments.options?.serializerOptions,
+                    xml: operationArguments.options?.serializerOptions!,
                 },
                 tracingOptions: {
                     tracingContext: operationArguments.options?.tracingContext,
@@ -172,14 +172,14 @@ export class ServiceClientContext extends ServiceClient {
                     onDownloadProgress: operationArguments.options?.onDownloadProgress,
                     onUploadProgress: operationArguments.options?.onUploadProgress,
                 },
-                onResponse(rawResponse, flatResponse, error: Error) {
+                onResponse(rawResponse, flatResponse, error) {
                     optionsCallback?.(
-                        error,
+                        error as Error,
                         rawResponse.parsedBody,
                         toWebResourceLike(rawResponse.request),
                         rawResponse,
                     );
-                    callback?.(error, rawResponse.parsedBody, toWebResourceLike(rawResponse.request), rawResponse);
+                    callback?.(error as Error, rawResponse.parsedBody, toWebResourceLike(rawResponse.request), rawResponse);
                 },
             },
         };
