@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { HttpOperationResponse as HttpResponse, ServiceClientOptions, RequestOptionsBase } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import {
     ConversationList,
     TeamDetails,
