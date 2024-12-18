@@ -131,29 +131,29 @@ export class ServiceClientContext extends ServiceClient {
         operationSpec: OperationSpec,
         callback?: ServiceCallback<T>,
     ): Promise<T> {
-        // let resolve: any;
-        // let reject: any;
-        // const result = new Promise<T>((res, rej) => {
-        //     resolve = res;
-        //     reject = rej;
-        // });
+        let resolve: any;
+        let reject: any;
+        const result = new Promise<T>((res, rej) => {
+            resolve = res;
+            reject = rej;
+        });
         const options =
             this.createOptions(operationArguments.options as LegacyOperationArguments['options'], callback) ?? {};
 
-        // const innerOnResponse = options.onResponse;
-        // options.onResponse = (rawResponse, flatResponse, error) => {
-        //     innerOnResponse?.(rawResponse, flatResponse, error);
-        //     if (error) {
-        //         reject(error);
-        //     } else {
-        //         Object.defineProperty(flatResponse, '_response', {
-        //             value: rawResponse,
-        //         });
-        //         resolve(flatResponse);
-        //     }
-        // };
+        const innerOnResponse = options.onResponse;
+        options.onResponse = (rawResponse, flatResponse, error) => {
+            innerOnResponse?.(rawResponse, flatResponse, error);
+            if (error) {
+                reject(error);
+            } else {
+                Object.defineProperty(flatResponse, '_response', {
+                    value: rawResponse,
+                });
+                resolve(flatResponse);
+            }
+        };
 
-        const result = await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
+        await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
         return result;
     }
 
