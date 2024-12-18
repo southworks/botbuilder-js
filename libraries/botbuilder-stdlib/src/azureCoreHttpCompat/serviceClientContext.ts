@@ -14,13 +14,8 @@ import {
     WebResourceLike,
 } from './compat';
 
-import {
-    toPipelineRequest,
-    toWebResourceLike,
-} from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
-import {
-    toCompatResponse,
-} from '../../node_modules/@azure/core-http-compat/dist/commonjs/response';
+import { toPipelineRequest, toWebResourceLike } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+import { toCompatResponse } from '../../node_modules/@azure/core-http-compat/dist/commonjs/response';
 
 export class ServiceClientContext extends ServiceClient {
     /**

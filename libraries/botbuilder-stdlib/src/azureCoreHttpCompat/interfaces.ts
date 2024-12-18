@@ -10,7 +10,7 @@ import {
     HttpPipelineLogLevel,
     RequestPolicy as HttpClient,
     WebResourceLike,
-    CompatResponse as HttpOperationResponse
+    CompatResponse as HttpOperationResponse,
 } from '@azure/core-http-compat';
 
 /**
