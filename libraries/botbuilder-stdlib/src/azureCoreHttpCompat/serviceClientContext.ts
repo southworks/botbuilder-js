@@ -11,11 +11,16 @@ import {
     ServiceClientCredentials,
     ServiceClientOptions,
     OperationArguments as LegacyOperationArguments,
+    WebResourceLike,
+} from './compat';
+
+import {
     toPipelineRequest,
     toWebResourceLike,
-    WebResourceLike,
+} from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+import {
     toCompatResponse,
-} from './compat';
+} from '../../node_modules/@azure/core-http-compat/dist/commonjs/response';
 
 export class ServiceClientContext extends ServiceClient {
     /**
@@ -47,7 +52,7 @@ export class ServiceClientContext extends ServiceClient {
             throw new Error("'credentials' cannot be null.");
         }
 
-        if(!options){
+        if (!options) {
             options = {};
         }
 
@@ -200,7 +205,7 @@ export class ServiceClientContext extends ServiceClient {
                 onUploadProgress: options?.onUploadProgress,
             },
             onResponse(rawResponse: any, flatResponse, error) {
-                const args = []
+                const args = [];
                 typeof options === 'function' ??
                     (options as ServiceCallback<any>)?.(
                         error as Error,
