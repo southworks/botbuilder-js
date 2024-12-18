@@ -8,7 +8,8 @@ import type { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
-import { createWebResource, createHttpHeaders } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { createWebResource } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { createHttpHeaders } from '@azure/core-rest-pipeline';
 import { ok } from 'assert';
 import axios from 'axios';
 

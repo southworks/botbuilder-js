@@ -6,7 +6,8 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
-const { toHttpHeadersLike, userAgentPolicy, createHttpHeaders } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
+const { HttpHeaders } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
+const { userAgentPolicy, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 const {
     ActivityTypes,
@@ -480,7 +481,7 @@ describe('BotFrameworkAdapter', function () {
                 Promise.resolve({
                     request,
                     status: 200,
-                    headers: toHttpHeadersLike(createHttpHeaders()),
+                    headers: new HttpHeaders(),
                     readableStreamBody: undefined,
                     bodyAsText: '',
                 }),
