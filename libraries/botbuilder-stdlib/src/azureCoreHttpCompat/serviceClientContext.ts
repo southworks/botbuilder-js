@@ -131,29 +131,29 @@ export class ServiceClientContext extends ServiceClient {
         operationSpec: OperationSpec,
         callback?: ServiceCallback<T>,
     ): Promise<T> {
-        let resolve: any;
-        let reject: any;
-        const result = new Promise<T>((res, rej) => {
-            resolve = res;
-            reject = rej;
-        });
+        // let resolve: any;
+        // let reject: any;
+        // const result = new Promise<T>((res, rej) => {
+        //     resolve = res;
+        //     reject = rej;
+        // });
         const options =
             this.createOptions(operationArguments.options as LegacyOperationArguments['options'], callback) ?? {};
 
-        const innerOnResponse = options.onResponse;
-        options.onResponse = (rawResponse, flatResponse, error) => {
-            innerOnResponse?.(rawResponse, flatResponse, error);
-            if (error) {
-                reject(error);
-            } else {
-                Object.defineProperty(flatResponse, '_response', {
-                    value: rawResponse,
-                });
-                resolve(flatResponse);
-            }
-        };
+        // const innerOnResponse = options.onResponse;
+        // options.onResponse = (rawResponse, flatResponse, error) => {
+        //     innerOnResponse?.(rawResponse, flatResponse, error);
+        //     if (error) {
+        //         reject(error);
+        //     } else {
+        //         Object.defineProperty(flatResponse, '_response', {
+        //             value: rawResponse,
+        //         });
+        //         resolve(flatResponse);
+        //     }
+        // };
 
-        await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
+        const result = await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
         return result;
     }
 
@@ -192,15 +192,17 @@ export class ServiceClientContext extends ServiceClient {
                 customHeaders: options?.customHeaders,
                 timeout: options?.timeout,
                 shouldDeserialize(response) {
-                    return typeof options?.shouldDeserialize === 'function'
-                        ? options?.shouldDeserialize?.(toCompatResponse(response))
-                        : options?.shouldDeserialize === true;
+                    if (typeof options?.shouldDeserialize === 'function') {
+                        return options?.shouldDeserialize?.(toCompatResponse(response));
+                    } else if (typeof options?.shouldDeserialize === 'boolean') {
+                        return options?.shouldDeserialize;
+                    }
+                    return true;
                 },
                 onDownloadProgress: options?.onDownloadProgress,
                 onUploadProgress: options?.onUploadProgress,
             },
             onResponse(rawResponse: any, flatResponse, error) {
-                const args = [];
                 typeof options === 'function' ??
                     (options as ServiceCallback<any>)?.(
                         error as Error,
