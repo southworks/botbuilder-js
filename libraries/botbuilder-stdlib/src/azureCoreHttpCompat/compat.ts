@@ -9,7 +9,7 @@ export {
     RequestPolicy as HttpClient,
     toHttpHeadersLike,
 } from '@azure/core-http-compat';
-export { ProxySettings, userAgentPolicy, createHttpHeaders } from '@azure/core-rest-pipeline';
+export { ProxySettings, userAgentPolicy, createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
 export { TokenCredential, isTokenCredential } from '@azure/core-auth';
 export {
     createSerializer,
@@ -42,3 +42,17 @@ export const Constants = {
         AUTHORIZATION_SCHEME: 'Bearer',
     },
 };
+
+import { WebResourceLike } from '@azure/core-http-compat';
+import { PipelineRequestOptions, createPipelineRequest } from "@azure/core-rest-pipeline";
+
+import {
+    toPipelineRequest,
+    toWebResourceLike,
+    HttpHeaders,
+} from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
+
+
+export function createWebResource(resource: PipelineRequestOptions): WebResourceLike {
+    return toWebResourceLike(createPipelineRequest(resource));
+}

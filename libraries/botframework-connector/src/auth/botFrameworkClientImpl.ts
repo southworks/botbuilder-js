@@ -8,8 +8,7 @@ import type { ConnectorClientOptions } from '../connectorApi/models';
 import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
-import { createHttpHeaders, createPipelineRequest } from '@azure/core-rest-pipeline';
-import { toWebResourceLike } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { createWebResource, createHttpHeaders } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { ok } from 'assert';
 import axios from 'axios';
 
@@ -53,7 +52,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
         private readonly botFrameworkClientFetch?: ReturnType<typeof botFrameworkClientFetchImpl>,
-        private readonly connectorClientOptions?: ConnectorClientOptions,
+        private readonly connectorClientOptions?: ConnectorClientOptions
     ) {
         this.botFrameworkClientFetch ??= botFrameworkClientFetchImpl(this.connectorClientOptions);
 
@@ -83,7 +82,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         toUrl: string,
         serviceUrl: string,
         conversationId: string,
-        activity: Activity,
+        activity: Activity
     ): Promise<InvokeResponse<T>> {
         z.object({
             fromBotId: z.string().optional(),
@@ -105,7 +104,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             fromBotId,
             toBotId,
             this.loginEndpoint,
-            true,
+            true
         );
 
         // Capture current activity settings before changing them.
@@ -141,7 +140,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             }
             activity.recipient.role = RoleTypes.Skill;
 
-            const pipeline = createPipelineRequest({
+            const webRequest = createWebResource({
                 url: toUrl,
                 method: 'POST',
                 body: JSON.stringify(activity),
@@ -152,7 +151,6 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
                     'User-Agent': USER_AGENT,
                 }),
             });
-            const webRequest = toWebResourceLike(pipeline);
             const request = await credentials.signRequest(webRequest);
 
             const config: RequestInit = {

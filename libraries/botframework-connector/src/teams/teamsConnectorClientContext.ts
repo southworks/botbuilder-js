@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClientContext, ServiceClientCredentials } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
+import { ServiceClientCredentials, ServiceClientContext } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { TeamsConnectorClientOptions } from './models';
 
 /**

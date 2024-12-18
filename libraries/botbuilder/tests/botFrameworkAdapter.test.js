@@ -6,8 +6,7 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
-const { userAgentPolicy, createHttpHeaders } = require('@azure/core-rest-pipeline');
-const { toHttpHeadersLike } = require('@azure/core-http-compat');
+const { toHttpHeadersLike, userAgentPolicy, createHttpHeaders } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
 
 const {
     ActivityTypes,

@@ -1812,7 +1812,8 @@ export class BotFrameworkAdapter
         if (request.verb.toLocaleUpperCase() !== POST) {
             response.statusCode = StatusCodes.METHOD_NOT_ALLOWED;
             response.setBody(
-                `Invalid verb received for ${request.verb.toLocaleLowerCase()}. Only GET and POST are accepted. Verb: ${request.verb
+                `Invalid verb received for ${request.verb.toLocaleLowerCase()}. Only GET and POST are accepted. Verb: ${
+                    request.verb
                 }`
             );
 
@@ -2129,7 +2130,8 @@ function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
 
         let message = '';
         AuthenticationError.isStatusCodeError(err)
-            ? (message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${err.message
+            ? (message = `HTTP/1.1 ${err.statusCode} ${StatusCodes[err.statusCode]}\r\n${
+                  err.message
                 }\r\n${connectionHeader}\r\n`)
             : (message = AuthenticationError.determineStatusCodeAndBuildMessage(err));
 

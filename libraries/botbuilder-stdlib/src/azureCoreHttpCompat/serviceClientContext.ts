@@ -47,25 +47,29 @@ export class ServiceClientContext extends ServiceClient {
             throw new Error("'credentials' cannot be null.");
         }
 
+        if(!options){
+            options = {};
+        }
+
         const requestContentType =
-            options?.deserializationContentTypes?.json?.join(' ') ||
-            options?.deserializationContentTypes?.xml?.join(' ') ||
+            options.deserializationContentTypes?.json?.join(' ') ||
+            options.deserializationContentTypes?.xml?.join(' ') ||
             'application/json; charset=utf-8';
 
         const userAgentPrefix =
-            (typeof options?.userAgent === 'function' ? options?.userAgent('') : options?.userAgent) || '';
+            (typeof options.userAgent === 'function' ? options.userAgent('') : options.userAgent) || '';
 
         super({
-            endpoint: options?.baseUri,
+            endpoint: options.baseUri,
             requestContentType,
             userAgentOptions: { userAgentPrefix },
-            allowInsecureConnection: options?.baseUri?.toLowerCase().startsWith('http:'),
-            proxyOptions: options?.proxySettings,
-            httpClient: options?.httpClient ? convertHttpClient(options?.httpClient) : undefined,
-            credentialScopes: options?.credentialScopes,
+            allowInsecureConnection: options.baseUri?.toLowerCase().startsWith('http:'),
+            proxyOptions: options.proxySettings,
+            httpClient: options.httpClient ? convertHttpClient(options.httpClient) : undefined,
+            credentialScopes: options.credentialScopes,
         });
 
-        this.baseUri = options?.baseUri;
+        this.baseUri = options.baseUri;
         this.requestContentType = requestContentType;
         this.credentials = credentials;
         this.options = options;

@@ -383,24 +383,24 @@ export const Entity: CompositeMapper = {
       type: {
         serializedName: "type",
         type: {
-          name: "String",
-        },
+          name: "String"
+        }
       },
       text: {
         serializedName: "text",
         type: {
-          name: "String",
-        },
+          name: "String"
+        }
       },
       mentioned: {
         serializedName: "mentioned",
         type: {
           name: "Composite",
-          className: "ChannelAccount",
-        },
-      },
+          className: "ChannelAccount"
+        }
+      }
     }
-  },
+  }
 };
 
 export const ConversationReference: CompositeMapper = {

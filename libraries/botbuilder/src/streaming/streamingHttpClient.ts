@@ -8,8 +8,8 @@
 
 import {
     WebResourceLike as WebResource,
-    HttpClient,
     HttpOperationResponse,
+    HttpClient,
 } from 'botbuilder-stdlib/lib/azureCoreHttpCompat';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 

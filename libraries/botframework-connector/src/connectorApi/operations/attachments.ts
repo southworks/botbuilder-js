@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { RequestOptionsBase, ServiceCallback, OperationSpec, createSerializer } from "botbuilder-stdlib/lib/azureCoreHttpCompat";
 import { ConnectorClientContext } from "../connectorClientContext";
 import * as Models from "../models";
@@ -46,8 +47,7 @@ export class Attachments {
         options
       },
       getAttachmentInfoOperationSpec,
-      callback
-    ) as Promise<Models.AttachmentsGetAttachmentInfoResponse>;
+      callback) as Promise<Models.AttachmentsGetAttachmentInfoResponse>;
   }
 
   /**
@@ -80,8 +80,7 @@ export class Attachments {
         options
       },
       getAttachmentOperationSpec,
-      callback
-    ) as Promise<Models.AttachmentsGetAttachmentResponse>;
+      callback) as Promise<Models.AttachmentsGetAttachmentResponse>;
   }
 }
 
