@@ -14,7 +14,8 @@
 
 'use strict';
 
-const { ServiceClient, Serializer } = require("@azure/core-http");
+const { ExtendedServiceClient } = require("@azure/core-http-compat");
+const { Serializer } = require("@azure/core-client");
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +24,7 @@ const operations = require('./operations');
 
 
 /** Class representing a ResourceManagementClient. */
-class ResourceManagementClient extends ServiceClient {
+class ResourceManagementClient extends ExtendedServiceClient {
   /**
    * Create a ResourceManagementClient.
    * @param {credentials} credentials - Credentials needed for the client to connect to Azure.

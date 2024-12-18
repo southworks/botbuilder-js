@@ -11,7 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
-const { HttpHeaders } = require('@azure/core-http');
+const { createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
@@ -123,7 +123,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             assert.strictEqual(connectorFactory.credentialFactory, credsFactory);
 
             const connectorClient = await connectorFactory.create(HOST_SERVICE_URL, HOST_AUDIENCE);
-            assertHasAcceptHeader(connectorClient);
+            await assertHasAcceptHeader(connectorClient);
             assert.strictEqual(connectorClient.credentials.appId, APP_ID);
             assert.strictEqual(connectorClient.credentials.appPassword, APP_PASSWORD);
             assert.strictEqual(connectorClient.credentials.oAuthScope, HOST_AUDIENCE);
@@ -135,30 +135,16 @@ describe('BotFrameworkAuthenticationFactory', function () {
         });
     });
 
-    function assertHasAcceptHeader(client) {
-        let hasAcceptHeader = false;
-        const mockNextPolicy = {
-            create: (_) => ({}),
-            sendRequest: (_) => {
-                return {};
-            },
+    async function assertHasAcceptHeader(client) {
+        const headerPolicy = client.pipeline
+            .getOrderedPolicies()
+            .find((policy) => policy.name === 'acceptHeaderPolicy');
+        const mockHttp = {
+            headers: createHttpHeaders(),
         };
+        await headerPolicy.sendRequest(mockHttp, () => {});
 
-        const length = client._requestPolicyFactories.length;
-        for (let i = 0; i < length; i++) {
-            const mockHttp = {
-                headers: new HttpHeaders(),
-            };
-
-            const result = client._requestPolicyFactories[i].create(mockNextPolicy);
-
-            result.sendRequest(mockHttp);
-            if (mockHttp.headers.get('accept') == '*/*') {
-                hasAcceptHeader = true;
-                break;
-            }
-        }
-
-        assert(hasAcceptHeader, 'accept header from connector client should be */*');
+        // Assert the presence of the Accept header
+        assert(mockHttp.headers.get('accept') == '*/*', "Accept header from ConnectorClientContext should be */*");
     }
 });
