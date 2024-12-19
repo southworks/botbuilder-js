@@ -7,7 +7,6 @@ const { BotFrameworkAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { UserToken, BotSignIn } = require('botframework-connector/lib/tokenApi/operations');
 const { HttpHeaders } = require('botbuilder-stdlib/lib/azureCoreHttpCompat');
-const { userAgentPolicy, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 const {
     ActivityTypes,
@@ -31,6 +30,7 @@ const {
     ChannelValidation,
     GovernmentChannelValidation,
 } = require('botframework-connector');
+const { createPipelineRequest, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 const reference = {
     activityId: '1234',
@@ -90,7 +90,7 @@ class AdapterUnderTest extends BotFrameworkAdapter {
         assert.strictEqual(
             authHeader,
             this.expectAuthHeader,
-            'authenticateRequestInternal() not passed expected authHeader.'
+            'authenticateRequestInternal() not passed expected authHeader.',
         );
         return this.failAuth ? Promise.reject(new Error('failed auth')) : Promise.resolve({ claims: [] });
     }
@@ -345,7 +345,7 @@ describe('BotFrameworkAdapter', function () {
             assert.strictEqual(
                 adapter.webSocketFactory,
                 'test-web-socket',
-                'Adapter should have read settings.webSocketFactory'
+                'Adapter should have read settings.webSocketFactory',
             );
         });
     });
@@ -369,7 +369,7 @@ describe('BotFrameworkAdapter', function () {
             const incoming = TurnContext.applyConversationReference(
                 { type: 'message', text: 'foo', callerId: 'foo' },
                 reference,
-                true
+                true,
             );
             incoming.channelId = 'msteams';
 
@@ -389,7 +389,7 @@ describe('BotFrameworkAdapter', function () {
             const incoming = TurnContext.applyConversationReference(
                 { type: 'message', text: 'foo', callerId: 'foo' },
                 reference,
-                true
+                true,
             );
             incoming.channelId = 'msteams';
 
@@ -408,7 +408,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
             await assert.rejects(
                 adapter.testAuthenticateRequest(req, ''),
-                new Error('Unauthorized Access. Request is not authorized')
+                new Error('Unauthorized Access. Request is not authorized'),
             );
         });
     });
@@ -462,7 +462,7 @@ describe('BotFrameworkAdapter', function () {
             const userAgent = 'test user agent';
 
             nock(reference.serviceUrl)
-                .matchHeader('user-agent', (agent) => agent.includes(userAgent))
+                .matchHeader('user-agent', (val) => val.includes(userAgent))
                 .post('/v3/conversations/convo1/activities/1234')
                 .reply(200, { id: 'abc123id' });
 
@@ -498,51 +498,63 @@ describe('BotFrameworkAdapter', function () {
 
             assert(
                 sendRequest.called,
-                'sendRequest on HttpClient provided to BotFrameworkAdapter.clientOptions was not called when sending an activity'
+                'sendRequest on HttpClient provided to BotFrameworkAdapter.clientOptions was not called when sending an activity',
             );
 
             const [request] = sendRequest.args[0];
             assert.deepStrictEqual(
                 JSON.parse(request.body),
                 outgoingMessageLocale,
-                'sentActivity should flow through custom httpClient.sendRequest'
+                'sentActivity should flow through custom httpClient.sendRequest',
             );
         });
 
         it('ConnectorClient should use requestPolicyFactories from clientOptions', async function () {
-            const setUserAgent = userAgentPolicy({ value: 'test' });
-            const factories = [setUserAgent];
-
-            const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: factories } });
+            const policy = {
+                create(){
+                    return {
+                        sendRequest(){}
+                    }
+                }
+            };
+            const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: [policy] } });
 
             await adapter.continueConversation(reference, async (turnContext) => {
                 const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
 
                 assert(
-                    connectorClient.pipeline.getOrderedPolicies().find((policy) => policy === setUserAgent),
+                    connectorClient._requestPolicyFactories.find((policy) => policy === policy),
                     'requestPolicyFactories from clientOptions parameter is not used.',
                 );
             });
         });
 
         it('ConnectorClient should add requestPolicyFactory for accept header', async function () {
+            let hasAcceptHeader = false;
             const client = new BotFrameworkAdapter().createConnectorClient('https://localhost');
-            const headerPolicy = client.pipeline
-                .getOrderedPolicies()
-                .find((policy) => policy.name === 'acceptHeaderPolicy');
-                const mockHttp = {
+            const length = client._requestPolicyFactories.length;
+            for (let i = 0; i < length; i++) {
+                const mockHttp = createPipelineRequest({
                     headers: createHttpHeaders(),
-                };
-            await headerPolicy.sendRequest(mockHttp, () => {});
+                });
 
-            assert(mockHttp.headers.get('accept') == '*/*', 'accept header from connector client should be */*');
+                const result = client._requestPolicyFactories[i];
+
+                await result.sendRequest(mockHttp, (request) => ({ request, headers: mockHttp.headers }));
+                if (mockHttp.headers.get('accept') == '*/*') {
+                    hasAcceptHeader = true;
+                    break;
+                }
+            }
+
+            assert(hasAcceptHeader, 'accept header from connector client should be */*');
         });
 
         it('createConnectorClientWithIdentity should throw without identity', async function () {
             const adapter = new BotFrameworkAdapter();
             await assert.rejects(
                 adapter.createConnectorClientWithIdentity('https://serviceurl.com'),
-                new Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.')
+                new Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.'),
             );
         });
 
@@ -562,7 +574,7 @@ describe('BotFrameworkAdapter', function () {
                 .mock(adapter)
                 .expects('buildCredentials')
                 .callsFake((appId, oAuthScope) =>
-                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope))
+                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope)),
                 )
                 .once();
 
@@ -593,7 +605,7 @@ describe('BotFrameworkAdapter', function () {
                 .mock(adapter)
                 .expects('buildCredentials')
                 .callsFake((appId, oAuthScope) =>
-                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope))
+                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope)),
                 )
                 .once();
 
@@ -622,7 +634,7 @@ describe('BotFrameworkAdapter', function () {
                 .mock(adapter)
                 .expects('buildCredentials')
                 .callsFake((appId, oAuthScope) =>
-                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope))
+                    Promise.resolve(new MicrosoftAppCredentials(appId, '', undefined, oAuthScope)),
                 )
                 .once();
 
@@ -642,7 +654,7 @@ describe('BotFrameworkAdapter', function () {
 
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
-                new ClaimsIdentity([{ type: AuthenticationConstants.AppIdClaim, value: appId }])
+                new ClaimsIdentity([{ type: AuthenticationConstants.AppIdClaim, value: appId }]),
             );
             const credentials = connector.credentials;
 
@@ -660,7 +672,7 @@ describe('BotFrameworkAdapter', function () {
 
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
-                new ClaimsIdentity([{ type: AuthenticationConstants.AppIdClaim, value: appId }])
+                new ClaimsIdentity([{ type: AuthenticationConstants.AppIdClaim, value: appId }]),
             );
 
             const credentials = connector.credentials;
@@ -679,7 +691,7 @@ describe('BotFrameworkAdapter', function () {
 
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
-                new ClaimsIdentity([{ type: AuthenticationConstants.AudienceClaim, value: appId }])
+                new ClaimsIdentity([{ type: AuthenticationConstants.AudienceClaim, value: appId }]),
             );
 
             const credentials = connector.credentials;
@@ -713,7 +725,7 @@ describe('BotFrameworkAdapter', function () {
                 await context.sendActivity({ type: 'invokeResponse', text: '1st message' });
                 await context.sendActivity({ type: 'invokeResponse', text: '2nd message' });
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK, true);
@@ -730,7 +742,7 @@ describe('BotFrameworkAdapter', function () {
                     text: '2nd message',
                     type: 'invokeResponse',
                 },
-            ]
+            ],
         );
     });
 
@@ -747,7 +759,7 @@ describe('BotFrameworkAdapter', function () {
                 await context.sendActivity({ type: 'invokeResponse', text: 'message' });
                 await context.sendActivity(testTraceMessage);
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK, true);
@@ -760,7 +772,7 @@ describe('BotFrameworkAdapter', function () {
                     text: 'message',
                     type: 'invokeResponse',
                 },
-            ]
+            ],
         );
     });
 
@@ -777,7 +789,7 @@ describe('BotFrameworkAdapter', function () {
                 await context.sendActivity({ type: 'invokeResponse', text: 'message' });
                 await context.sendActivity(testTraceMessage);
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK, true);
@@ -785,7 +797,7 @@ describe('BotFrameworkAdapter', function () {
 
         assert.deepStrictEqual(
             response.body.activities.map(({ type }) => type),
-            ['invokeResponse', 'trace']
+            ['invokeResponse', 'trace'],
         );
     });
 
@@ -830,7 +842,7 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     typeof context.activity.timestamp,
                     'object',
-                    "'context.activity.timestamp' is not a date"
+                    "'context.activity.timestamp' is not a date",
                 );
 
                 assert(context.activity.timestamp instanceof Date, "'context.activity.timestamp' is not a date");
@@ -838,15 +850,15 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     typeof context.activity.localTimestamp,
                     'object',
-                    "'context.activity.localTimestamp' is not a date"
+                    "'context.activity.localTimestamp' is not a date",
                 );
 
                 assert(
                     context.activity.localTimestamp instanceof Date,
-                    "'context.activity.localTimestamp' is not a date"
+                    "'context.activity.localTimestamp' is not a date",
                 );
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK);
@@ -861,7 +873,7 @@ describe('BotFrameworkAdapter', function () {
                 assert(!fake.called);
                 assertResponse(response, 400, true);
                 return true;
-            }
+            },
         );
     });
 
@@ -873,7 +885,7 @@ describe('BotFrameworkAdapter', function () {
                 assert(!fake.called);
                 assertResponse(response, 400, true);
                 return true;
-            }
+            },
         );
     });
 
@@ -881,7 +893,7 @@ describe('BotFrameworkAdapter', function () {
         const activity = TurnContext.applyConversationReference(
             { type: 'message', text: 'foo', channelData: { tenant: { id: '1234' } } },
             reference,
-            true
+            true,
         );
         activity.channelId = 'msteams';
 
@@ -890,10 +902,10 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     context.activity.conversation.tenantId,
                     '1234',
-                    'should have copied tenant id from channelData to conversation address'
+                    'should have copied tenant id from channelData to conversation address',
                 );
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK);
@@ -904,7 +916,7 @@ describe('BotFrameworkAdapter', function () {
         const activity = TurnContext.applyConversationReference(
             { type: 'message', text: 'foo', semanticAction: { state: 'start' } },
             reference,
-            true
+            true,
         );
         activity.channelId = 'msteams';
 
@@ -912,7 +924,7 @@ describe('BotFrameworkAdapter', function () {
             (context) => {
                 assert(context.activity.semanticAction.state === 'start');
             },
-            { activity }
+            { activity },
         );
 
         assertResponse(response, StatusCodes.OK);
@@ -923,7 +935,7 @@ describe('BotFrameworkAdapter', function () {
         const processIncoming = async (
             incoming,
             handler,
-            { adapterArgs = {}, authDisabled = false, claims = [] } = {}
+            { adapterArgs = {}, authDisabled = false, claims = [] } = {},
         ) => {
             // Sets up expectation for JWT validation to pass back claims
             mockReturns(JwtTokenValidation, 'authenticateRequest', new ClaimsIdentity(claims, true));
@@ -952,7 +964,7 @@ describe('BotFrameworkAdapter', function () {
             const incoming = TurnContext.applyConversationReference(
                 { type: 'message', text: 'foo', callerId: 'foo' },
                 reference,
-                true
+                true,
             );
             incoming.channelId = 'msteams';
 
@@ -973,7 +985,7 @@ describe('BotFrameworkAdapter', function () {
                 (context) => {
                     assert.strictEqual(
                         context.activity.callerId,
-                        `${CallerIdConstants.BotToBotPrefix}${skillConsumerAppId}`
+                        `${CallerIdConstants.BotToBotPrefix}${skillConsumerAppId}`,
                     );
                 },
                 {
@@ -982,7 +994,7 @@ describe('BotFrameworkAdapter', function () {
                         { type: AuthenticationConstants.AppIdClaim, value: skillConsumerAppId },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                }
+                },
             );
         });
 
@@ -990,7 +1002,7 @@ describe('BotFrameworkAdapter', function () {
             const incoming = TurnContext.applyConversationReference(
                 { type: 'message', text: 'foo', callerId: 'foo' },
                 reference,
-                true
+                true,
             );
             incoming.channelId = 'msteams';
 
@@ -999,7 +1011,7 @@ describe('BotFrameworkAdapter', function () {
                 (context) => {
                     assert.strictEqual(context.activity.callerId, undefined);
                 },
-                { authDisabled: true }
+                { authDisabled: true },
             );
         });
 
@@ -1020,7 +1032,7 @@ describe('BotFrameworkAdapter', function () {
                         { type: AuthenticationConstants.AudienceClaim, value: skillAppId },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                }
+                },
             );
         });
     });
@@ -1029,7 +1041,7 @@ describe('BotFrameworkAdapter', function () {
         const incoming = TurnContext.applyConversationReference(
             { type: 'message', text: 'foo', callerId: 'foo' },
             reference,
-            true
+            true,
         );
         incoming.channelId = 'msteams';
 
@@ -1050,7 +1062,7 @@ describe('BotFrameworkAdapter', function () {
                 assert(!fake.called);
 
                 return true;
-            }
+            },
         );
     });
 
@@ -1065,7 +1077,7 @@ describe('BotFrameworkAdapter', function () {
                 assert(fake.called);
 
                 return true;
-            }
+            },
         );
     });
 
@@ -1073,7 +1085,7 @@ describe('BotFrameworkAdapter', function () {
         const createConversation = async (
             reference,
             handler,
-            { adapterArgs, createConversationParams, testAdapterArgs } = {}
+            { adapterArgs, createConversationParams, testAdapterArgs } = {},
         ) => {
             const adapter = new AdapterUnderTest(adapterArgs, testAdapterArgs);
 
@@ -1107,7 +1119,7 @@ describe('BotFrameworkAdapter', function () {
                     assert(context.activity.conversation, 'activity has no conversation');
                     assert(context.activity.conversation.isGroup, 'activity isGroup is not true');
                 },
-                { createConversationParams: { isGroup: true } }
+                { createConversationParams: { isGroup: true } },
             );
         });
 
@@ -1120,17 +1132,17 @@ describe('BotFrameworkAdapter', function () {
                     assert.strictEqual(
                         context.activity.conversation.id,
                         'convo2',
-                        'request has invalid conversation.id.'
+                        'request has invalid conversation.id.',
                     );
                     assert.strictEqual(
                         context.activity.serviceUrl,
                         'https://example.org/channel2',
-                        'request has invalid conversation.id.'
+                        'request has invalid conversation.id.',
                     );
                 },
                 {
                     testAdapterArgs: { newServiceUrl: 'https://example.org/channel2' },
-                }
+                },
             );
         });
 
@@ -1145,7 +1157,7 @@ describe('BotFrameworkAdapter', function () {
                     assert(!fake.called);
 
                     return true;
-                }
+                },
             );
         });
 
@@ -1166,13 +1178,13 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     context.activity.conversation.tenantId,
                     tenantReference.conversation.tenantId,
-                    'request has invalid tenantId on conversation.'
+                    'request has invalid tenantId on conversation.',
                 );
 
                 assert.strictEqual(
                     context.activity.channelData.tenant.id,
                     tenantReference.conversation.tenantId,
-                    'request has invalid tenantId in channelData.'
+                    'request has invalid tenantId in channelData.',
                 );
             });
         });
@@ -1185,7 +1197,7 @@ describe('BotFrameworkAdapter', function () {
             const responses = await adapter.sendActivities(context, [outgoingMessage]);
             assert.deepStrictEqual(
                 responses.map(({ id }) => id),
-                ['5678']
+                ['5678'],
             );
         });
 
@@ -1238,7 +1250,7 @@ describe('BotFrameworkAdapter', function () {
     it('should return bots invokeResponse', async function () {
         const { response, verify } = await processActivity(
             (context) => context.sendActivity({ type: 'invokeResponse', value: { status: 200, body: 'body' } }),
-            { activity: incomingInvoke }
+            { activity: incomingInvoke },
         );
         assertResponse(response, StatusCodes.OK, true);
         verify();
@@ -1253,7 +1265,7 @@ describe('BotFrameworkAdapter', function () {
                 assert(fake.called);
 
                 return true;
-            }
+            },
         );
     });
 
@@ -1285,7 +1297,7 @@ describe('BotFrameworkAdapter', function () {
         const responses = await adapter.sendActivities(context, [copy]);
         assert.deepStrictEqual(
             responses.map(({ id }) => id),
-            ['5678']
+            ['5678'],
         );
     });
 
@@ -1350,7 +1362,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should create a User-Agent header with the same info as the host machine.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', (agent) => agent.includes(userAgent))
+            .matchHeader('user-agent', (val) => val.includes(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 
@@ -1363,7 +1375,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', (agent) => agent.includes(userAgent))
+            .matchHeader('user-agent', (val) => val.includes(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 
@@ -1391,7 +1403,7 @@ describe('BotFrameworkAdapter', function () {
             assert.strictEqual(
                 testEndpoint,
                 connector.ChannelValidation.OpenIdMetadataEndpoint,
-                'ChannelValidation.OpenIdMetadataEndpoint was not set.'
+                'ChannelValidation.OpenIdMetadataEndpoint was not set.',
             );
         });
 
@@ -1402,7 +1414,7 @@ describe('BotFrameworkAdapter', function () {
             assert.strictEqual(
                 testEndpoint,
                 connector.GovernmentChannelValidation.OpenIdMetadataEndpoint,
-                'GovernmentChannelValidation.OpenIdMetadataEndpoint was not set.'
+                'GovernmentChannelValidation.OpenIdMetadataEndpoint was not set.',
             );
         });
     });
@@ -1418,7 +1430,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: {} }),
-            new Error('BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl'),
         );
     });
 
@@ -1426,7 +1438,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com' } }),
-            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id'),
         );
     });
 
@@ -1434,7 +1446,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id'),
         );
     });
 
@@ -1448,7 +1460,7 @@ describe('BotFrameworkAdapter', function () {
 
         await adapter.deleteConversationMember(
             { activity: { serviceUrl: 'https://test.com', conversation: { id: 'convo1' } } },
-            'test-member'
+            'test-member',
         );
 
         sandbox.verify();
@@ -1458,7 +1470,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: {} }),
-            new Error('BotFrameworkAdapter.getActivityMembers(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing serviceUrl'),
         );
     });
 
@@ -1466,7 +1478,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com' } }),
-            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id'),
         );
     });
 
@@ -1474,7 +1486,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id'),
         );
     });
 
@@ -1484,7 +1496,7 @@ describe('BotFrameworkAdapter', function () {
             adapter.getActivityMembers({
                 activity: { serviceUrl: 'https://test.com', conversation: { id: '1' } },
             }),
-            new Error('BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id'),
         );
     });
 
@@ -1499,7 +1511,7 @@ describe('BotFrameworkAdapter', function () {
 
         await adapter.getActivityMembers(
             { activity: { serviceUrl: 'https://test.com', conversation: { id: 'convo1' } } },
-            'activityId'
+            'activityId',
         );
 
         sandbox.verify();
@@ -1509,7 +1521,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: {} }),
-            new Error('BotFrameworkAdapter.getConversationMembers(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing serviceUrl'),
         );
     });
 
@@ -1517,7 +1529,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com' } }),
-            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id'),
         );
     });
 
@@ -1525,7 +1537,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id'),
         );
     });
 
@@ -1548,7 +1560,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: {}, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id'),
         );
     });
 
@@ -1556,7 +1568,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: { from: {} }, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id'),
         );
     });
 
@@ -1564,7 +1576,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: { from: { id: 'some id' } }, turnState: new Map() }),
-            new Error('getUserToken() requires a connectionName but none was provided.')
+            new Error('getUserToken() requires a connectionName but none was provided.'),
         );
     });
 
@@ -1577,7 +1589,7 @@ describe('BotFrameworkAdapter', function () {
 
         const token = await adapter.getUserToken(
             { activity: { channelId: 'The Facebook', from: { id: 'some id' } }, turnState: new Map() },
-            'aConnectionName'
+            'aConnectionName',
         );
 
         sandbox.verify();
@@ -1595,7 +1607,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.signOutUser({ activity: {}, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
+            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id'),
         );
     });
 
@@ -1603,7 +1615,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.signOutUser({ activity: { from: {} }, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
+            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id'),
         );
     });
 
@@ -1624,7 +1636,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getAadTokens({ activity: {}, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id'),
         );
     });
 
@@ -1632,7 +1644,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getAadTokens({ activity: { from: {} }, turnState: new Map() }),
-            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id'),
         );
     });
 
@@ -1680,9 +1692,9 @@ describe('BotFrameworkAdapter', function () {
                     context,
                     'aConnectionName',
                     new MicrosoftAppCredentials('abc', 'abc'),
-                    'invalidId'
+                    'invalidId',
                 ),
-                ReferenceError("cannot retrieve OAuth signin link for a user that's different from the conversation")
+                ReferenceError("cannot retrieve OAuth signin link for a user that's different from the conversation"),
             );
         });
 
@@ -1698,7 +1710,7 @@ describe('BotFrameworkAdapter', function () {
             const response = await adapter.getSignInLink(
                 context,
                 'aConnectionName',
-                new MicrosoftAppCredentials('abc', 'abc')
+                new MicrosoftAppCredentials('abc', 'abc'),
             );
             assert(response, mockedUrl);
             verify();
@@ -1711,7 +1723,7 @@ describe('BotFrameworkAdapter', function () {
                 'aConnectionName',
                 new MicrosoftAppCredentials('abc', 'abc'),
                 incomingMessage.from.id,
-                'http://finalredirect.com'
+                'http://finalredirect.com',
             );
             assert(response, mockedUrl);
             verify();
@@ -1742,7 +1754,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.getSignInResource(context),
-                new Error('getUserToken() requires a connectionName but none was provided.')
+                new Error('getUserToken() requires a connectionName but none was provided.'),
             );
         });
 
@@ -1753,7 +1765,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter(activity);
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName'),
-                new Error('BotFrameworkAdapter.getSignInResource(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getSignInResource(): missing from or from.id'),
             );
         });
 
@@ -1764,7 +1776,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter(activity);
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName'),
-                new Error('BotFrameworkAdapter.getSignInResource(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getSignInResource(): missing from or from.id'),
             );
         });
 
@@ -1773,8 +1785,8 @@ describe('BotFrameworkAdapter', function () {
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName', 'OtherUserId'),
                 new Error(
-                    'BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation'
-                )
+                    'BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation',
+                ),
             );
         });
 
@@ -1802,7 +1814,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.exchangeToken(context),
-                new Error('exchangeToken() requires a connectionName but none was provided.')
+                new Error('exchangeToken() requires a connectionName but none was provided.'),
             );
         });
 
@@ -1810,7 +1822,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.exchangeToken(context, 'TestConnectionName'),
-                new Error('exchangeToken() requires an userId but none was provided.')
+                new Error('exchangeToken() requires an userId but none was provided.'),
             );
         });
 
@@ -1819,8 +1831,8 @@ describe('BotFrameworkAdapter', function () {
             await assert.rejects(
                 adapter.exchangeToken(context, 'TestConnectionName', 'TestUser', {}),
                 new Error(
-                    'BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest'
-                )
+                    'BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest',
+                ),
             );
         });
 
@@ -1868,7 +1880,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest();
             await assert.rejects(
                 adapter.getTokenStatus({ activity: {}, turnState: new Map() }),
-                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id'),
             );
         });
 
@@ -1876,7 +1888,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest();
             await assert.rejects(
                 adapter.getTokenStatus({ activity: { from: {} }, turnState: new Map() }),
-                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id'),
             );
         });
     });
@@ -1889,7 +1901,7 @@ describe('BotFrameworkAdapter', function () {
         // Empty Claims
         assert.strictEqual(
             AuthenticationConstants.ToChannelFromBotOAuthScope,
-            await adapter.getOAuthScope('botAppId', [])
+            await adapter.getOAuthScope('botAppId', []),
         );
 
         // Non-skill Claims
@@ -1898,7 +1910,7 @@ describe('BotFrameworkAdapter', function () {
             await adapter.getOAuthScope('botAppId', [
                 { type: 'aud', value: 'botAppId' },
                 { type: 'azp', value: 'botAppId' },
-            ])
+            ]),
         );
 
         const govAdapter = new BotFrameworkAdapter({ channelService: GovernmentConstants.ChannelService });
@@ -1908,7 +1920,7 @@ describe('BotFrameworkAdapter', function () {
         // Empty Claims
         assert.strictEqual(
             GovernmentConstants.ToChannelFromBotOAuthScope,
-            await govAdapter.getOAuthScope('botAppId', [])
+            await govAdapter.getOAuthScope('botAppId', []),
         );
 
         // Non-skill Claims
@@ -1917,7 +1929,7 @@ describe('BotFrameworkAdapter', function () {
             await govAdapter.getOAuthScope('botAppId', [
                 { type: 'aud', value: 'botAppId' },
                 { type: 'azp', value: 'botAppId' },
-            ])
+            ]),
         );
     });
 
@@ -1947,7 +1959,7 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     context.activity.recipient.id,
                     reference.bot.id,
-                    'request has invalid recipient.id.'
+                    'request has invalid recipient.id.',
                 );
             });
         });
@@ -1961,7 +1973,7 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     context.activity.recipient.id,
                     reference.bot.id,
-                    'request has invalid recipient.id.'
+                    'request has invalid recipient.id.',
                 );
             });
         });
@@ -1975,7 +1987,7 @@ describe('BotFrameworkAdapter', function () {
                 assert.strictEqual(
                     context.activity.recipient.id,
                     reference.bot.id,
-                    'request has invalid recipient.id.'
+                    'request has invalid recipient.id.',
                 );
             });
         });
@@ -1993,7 +2005,7 @@ describe('BotFrameworkAdapter', function () {
                     assert.strictEqual(context.activity.recipient.id, reference.bot.id);
                     assert.strictEqual(context.turnState.get(context.adapter.OAuthScopeKey), oauthScope);
                 },
-                { oauthScope }
+                { oauthScope },
             );
         });
 
@@ -2010,12 +2022,12 @@ describe('BotFrameworkAdapter', function () {
 
                     assert.strictEqual(
                         context.turnState.get(context.adapter.OAuthScopeKey),
-                        GovernmentConstants.ToChannelFromBotOAuthScope
+                        GovernmentConstants.ToChannelFromBotOAuthScope,
                     );
                 },
                 {
                     adapterArgs: { channelService: GovernmentConstants.ChannelService },
-                }
+                },
             );
         });
     });
@@ -2073,7 +2085,7 @@ describe('BotFrameworkAdapter', function () {
 
             await assert.rejects(
                 adapter.processActivityDirect(createActivity(), () => null),
-                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR\n test-error')
+                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR\n test-error'),
             );
 
             sandbox.verify();
@@ -2085,7 +2097,7 @@ describe('BotFrameworkAdapter', function () {
 
             await assert.rejects(
                 adapter.processActivityDirect(createActivity(), 'callbackLogic'),
-                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR')
+                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR'),
             );
 
             sandbox.verify();

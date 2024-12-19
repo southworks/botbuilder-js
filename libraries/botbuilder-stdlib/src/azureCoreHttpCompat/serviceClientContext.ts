@@ -3,21 +3,21 @@
  * Licensed under the MIT License.
  */
 
-import { ServiceClient, OperationArguments, OperationSpec } from '@azure/core-client';
+import { ServiceClient, OperationSpec, OperationArguments as OperationArgumentsPipeline } from '@azure/core-client';
 import { convertHttpClient, createRequestPolicyFactoryPolicy } from '@azure/core-http-compat';
-import { PipelineRequest, PipelineResponse, createHttpHeaders, PipelinePolicy } from '@azure/core-rest-pipeline';
+import { PipelineRequest, PipelinePolicy, createHttpHeaders } from '@azure/core-rest-pipeline';
 import {
     ServiceCallback,
     ServiceClientCredentials,
     ServiceClientOptions,
-    OperationArguments as LegacyOperationArguments,
-    WebResourceLike,
+    OperationArguments,
+    HttpOperationResponse,
+    createWebResource,
+    RestResponse,
 } from './compat';
-
-import { toPipelineRequest, toWebResourceLike } from '../../node_modules/@azure/core-http-compat/dist/commonjs/util';
 import { toCompatResponse } from '../../node_modules/@azure/core-http-compat/dist/commonjs/response';
 
-export class ServiceClientContext extends ServiceClient {
+export class ServiceClientContext {
     /**
      * If specified, this is the base URI that requests will be made against for this ServiceClient.
      * If it is not specified, then all OperationSpecs must contain a baseUrl property.
@@ -29,8 +29,11 @@ export class ServiceClientContext extends ServiceClient {
      */
     protected requestContentType?: string;
 
-    credentials: ServiceClientCredentials;
     private options: ServiceClientOptions;
+    private client: ServiceClient;
+    private readonly _requestPolicyFactories: PipelinePolicy[] = [];
+
+    credentials: ServiceClientCredentials;
 
     // Protects against JSON.stringify leaking secrets
     private toJSON(): unknown {
@@ -59,190 +62,156 @@ export class ServiceClientContext extends ServiceClient {
         const userAgentPrefix =
             (typeof options.userAgent === 'function' ? options.userAgent('') : options.userAgent) || '';
 
-        super({
-            endpoint: options.baseUri,
+        const {
+            baseUri: endpoint,
+            proxySettings: proxyOptions,
+            httpClient,
+            credentialScopes,
+            requestPolicyFactories,
+        } = options;
+
+        // do something with noPolicy option.
+        this.client = new ServiceClient({
+            endpoint,
             requestContentType,
             userAgentOptions: { userAgentPrefix },
-            allowInsecureConnection: options.baseUri?.toLowerCase().startsWith('http:'),
-            proxyOptions: options.proxySettings,
-            httpClient: options.httpClient ? convertHttpClient(options.httpClient) : undefined,
-            credentialScopes: options.credentialScopes,
+            allowInsecureConnection: endpoint?.toLowerCase().startsWith('http:'),
+            proxyOptions,
+            httpClient: httpClient ? convertHttpClient(httpClient) : undefined,
+            credentialScopes,
         });
 
-        this.baseUri = options.baseUri;
+        this.baseUri = endpoint;
         this.requestContentType = requestContentType;
         this.credentials = credentials;
         this.options = options;
-        this.addPolicies(options.requestPolicyFactories);
-        // do something with noPolicy option.
+        this._requestPolicyFactories = this.addPolicies(this.client, requestPolicyFactories);
     }
 
-    /**
-     * TODO: evaluate if it should say deprecated or not.
-     * @deprecated Could cause unwanted behaviors due to the migration of core-http to core-client. Please use core-client sendRequest instead.
-     * Send the provided httpRequest.
-     */
-    sendRequest(options: WebResourceLike): Promise<any>;
+    async sendRequest(request: PipelineRequest): Promise<HttpOperationResponse> {
+        if (!request) {
+            throw new Error('request cannot be null');
+        }
 
-    /**
-     * @remarks from core-client package.
-     * @inheritdoc
-     */
-    sendRequest(request: PipelineRequest): Promise<PipelineResponse>;
+        const newRequest = await this.addRequestSettings(request);
+        const response = await this.client.sendRequest(newRequest);
+        return toCompatResponse(response);
+    }
 
-    async sendRequest(request: PipelineRequest | WebResourceLike): Promise<PipelineResponse> {
-        const isLegacyResource = (request as PipelineRequest).headers.toJSON === undefined;
-        const newRequest = isLegacyResource
-            ? toPipelineRequest(request as WebResourceLike)
-            : (request as PipelineRequest);
-        // Convert to WebResourceLike to acquire token header.
-        const webResource = toWebResourceLike(newRequest);
+    async sendOperationRequest(
+        operationArguments: OperationArguments,
+        operationSpec: OperationSpec,
+        callback?: ServiceCallback<any>,
+    ): Promise<RestResponse> {
+        if (!operationArguments) {
+            throw new Error('operationArguments cannot be null');
+        }
+
+        const {
+            customHeaders,
+            timeout,
+            onDownloadProgress,
+            onUploadProgress,
+            shouldDeserialize,
+            serializerOptions,
+            tracingContext,
+            ...restOptions
+        } = operationArguments.options || {};
+
+        let _response;
+        const operationArgumentPipeline: OperationArgumentsPipeline = {
+            ...operationArguments,
+            options: {
+                ...restOptions,
+                requestOptions: {},
+                onResponse(rawResponse, flatResponse, error) {
+                    _response = rawResponse;
+                    const response = toCompatResponse(rawResponse);
+                    callback?.(error as Error, flatResponse, response.request, response);
+                },
+            },
+        };
+
+        if (customHeaders) {
+            operationArgumentPipeline.options!.requestOptions!.customHeaders = customHeaders;
+        }
+
+        if (timeout) {
+            operationArgumentPipeline.options!.requestOptions!.timeout = timeout;
+        }
+
+        if (onDownloadProgress) {
+            operationArgumentPipeline.options!.requestOptions!.onDownloadProgress = onDownloadProgress;
+        }
+
+        if (onUploadProgress) {
+            operationArgumentPipeline.options!.requestOptions!.onUploadProgress = onUploadProgress;
+        }
+
+        if (shouldDeserialize) {
+            operationArgumentPipeline.options!.requestOptions!.shouldDeserialize = (response) => {
+                if (typeof shouldDeserialize === 'function') {
+                    return shouldDeserialize(toCompatResponse(response));
+                } else if (typeof shouldDeserialize === 'boolean') {
+                    return shouldDeserialize;
+                }
+                return true;
+            };
+        }
+
+        if (serializerOptions) {
+            operationArgumentPipeline.options!.serializerOptions = {
+                xml: serializerOptions,
+            };
+        }
+
+        if (tracingContext) {
+            operationArgumentPipeline.options!.tracingOptions = {
+                tracingContext,
+            };
+        }
+
+        const result = await this.client.sendOperationRequest<RestResponse>(operationArgumentPipeline, operationSpec);
+
+        Object.defineProperty(result, '_response', {
+            value: _response,
+        });
+
+        return result;
+    }
+
+    private async addRequestSettings(request: PipelineRequest) {
+        const webResource = createWebResource(request);
         await this.credentials.signRequest(webResource);
         const headers = createHttpHeaders({
-            ...newRequest.headers.toJSON({ preserveCase: true }),
+            ...request.headers.toJSON({ preserveCase: true }),
             ...webResource.headers.toJson({ preserveCase: true }),
         });
-        newRequest.withCredentials = this.options?.withCredentials === true;
-        newRequest.headers = headers;
-        return super.sendRequest(newRequest);
+        request.withCredentials = this.options?.withCredentials === true;
+        request.headers = headers;
+        return request;
     }
 
-    /**
-     * @deprecated Could cause unwanted behaviors due to the migration of core-http to core-client. Please use core-client sendOperationRequest instead.
-     * Send an HTTP request that is populated using the provided OperationSpec.
-     * @param operationArguments - The arguments that the HTTP request's templated values will be populated from.
-     * @param operationSpec - The OperationSpec to use to populate the httpRequest.
-     * @param callback - The callback to call when the response is received.
-     */
-    sendOperationRequest(
-        operationArguments: LegacyOperationArguments,
-        operationSpec: OperationSpec,
-        callback?: ServiceCallback<any>,
-    ): Promise<any>;
-
-    /**
-     * @remarks from core-client package.
-     * @inheritdoc
-     */
-    sendOperationRequest<T>(operationArguments: OperationArguments, operationSpec: OperationSpec): Promise<T>;
-
-    async sendOperationRequest<T>(
-        operationArguments: OperationArguments | LegacyOperationArguments,
-        operationSpec: OperationSpec,
-        callback?: ServiceCallback<T>,
-    ): Promise<T> {
-        let resolve: any;
-        let reject: any;
-        const result = new Promise<T>((res, rej) => {
-            resolve = res;
-            reject = rej;
-        });
-        const options =
-            this.createOptions(operationArguments.options as LegacyOperationArguments['options'], callback) ?? {};
-
-        const innerOnResponse = options.onResponse;
-        options.onResponse = (rawResponse, flatResponse, error) => {
-            innerOnResponse?.(rawResponse, flatResponse, error);
-            if (error) {
-                reject(error);
-            } else {
-                Object.defineProperty(flatResponse, '_response', {
-                    value: rawResponse,
-                });
-                resolve(flatResponse);
-            }
-        };
-
-        await super.sendOperationRequest<T>({ ...operationArguments, options }, operationSpec);
-        return result;
-    }
-
-    private isLegacyOptions(options: LegacyOperationArguments['options']): boolean {
-        return (
-            !!options?.onDownloadProgress ||
-            !!options?.onUploadProgress ||
-            !!options?.shouldDeserialize ||
-            Object.keys(options?.serializerOptions || {}).some((e) =>
-                ['includeRoot', 'rootName', 'xmlCharKey'].includes(e),
-            ) ||
-            !!options?.tracingContext ||
-            !!options?.timeout ||
-            !!options?.customHeaders ||
-            !!options?.onDownloadProgress ||
-            !!options?.onUploadProgress
-        );
-    }
-
-    private createOptions(
-        options: LegacyOperationArguments['options'],
-        callback?: ServiceCallback<any>,
-    ): OperationArguments['options'] {
-        if (!options) {
-            return {};
-        }
-
-        const isLegacy = this.isLegacyOptions(options);
-        if (!isLegacy) {
-            return options as OperationArguments['options'];
-        }
-
-        const result: OperationArguments['options'] = {
-            ...(options as OperationArguments['options']),
-            requestOptions: {
-                customHeaders: options?.customHeaders,
-                timeout: options?.timeout,
-                shouldDeserialize(response) {
-                    if (typeof options?.shouldDeserialize === 'function') {
-                        return options?.shouldDeserialize?.(toCompatResponse(response));
-                    } else if (typeof options?.shouldDeserialize === 'boolean') {
-                        return options?.shouldDeserialize;
-                    }
-                    return true;
-                },
-                onDownloadProgress: options?.onDownloadProgress,
-                onUploadProgress: options?.onUploadProgress,
-            },
-            onResponse(rawResponse: any, flatResponse, error) {
-                typeof options === 'function' ??
-                    (options as ServiceCallback<any>)?.(
-                        error as Error,
-                        rawResponse.parsedBody,
-                        toWebResourceLike(rawResponse.request),
-                        rawResponse,
-                    );
-                callback?.(error as Error, rawResponse.parsedBody, toWebResourceLike(rawResponse.request), rawResponse);
-            },
-        };
-
-        if (options.serializerOptions) {
-            result.serializerOptions = {
-                xml: options.serializerOptions,
-            };
-        }
-
-        if (options.tracingOptions) {
-            result.tracingOptions = {
-                tracingContext: options.tracingContext,
-            };
-        }
-
-        return result;
-    }
-
-    private addPolicies(policies: ServiceClientOptions['requestPolicyFactories']): void {
+    private addPolicies(
+        client: ServiceClient,
+        policies: ServiceClientOptions['requestPolicyFactories'],
+    ): PipelinePolicy[] {
         if (Array.isArray(policies)) {
-            for (const policy of policies) {
-                const isLegacyPolicy = policy.create !== undefined;
-                const newPolicy: PipelinePolicy = isLegacyPolicy
-                    ? createRequestPolicyFactoryPolicy([policy])
-                    : (policy as any);
-
-                // Override existing.
-                this.pipeline.removePolicy(newPolicy);
-                this.pipeline.addPolicy(newPolicy);
-            }
+            const policy = createRequestPolicyFactoryPolicy(policies);
+            client.pipeline.removePolicy(policy);
+            client.pipeline.addPolicy(policy);
         } else if (typeof policies === 'function') {
-            return this.addPolicies(policies([]) || []);
+            this.addPolicies(client, policies([]) || []);
         }
+
+        this.client.pipeline.addPolicy({
+            name: 'ServiceClientContext_Credentials_SignRequest',
+            sendRequest: async (request, next) => {
+                const newRequest = await this.addRequestSettings(request);
+                return next(newRequest);
+            },
+        });
+
+        return client.pipeline.getOrderedPolicies();
     }
 }

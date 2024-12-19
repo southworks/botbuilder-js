@@ -1517,19 +1517,20 @@ export class BotFrameworkAdapter
         const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
         options.userAgent = `${USER_AGENT} ${userAgent ?? ''}`;
 
-        const client = new ConnectorClient(credentials, options);
-
-        client.pipeline.addPolicy({
-            name: 'acceptHeaderPolicy',
-            sendRequest(request, next) {
-                if (!request.headers.has('accept')) {
-                    request.headers.set('accept', '*/*');
-                }
-                return next(request);
+        options.requestPolicyFactories = [
+            {
+                create: (nextPolicy) => ({
+                    sendRequest: (httpRequest) => {
+                        if (!httpRequest.headers.contains('accept')) {
+                            httpRequest.headers.set('accept', '*/*');
+                        }
+                        return nextPolicy.sendRequest(httpRequest);
+                    },
+                }),
             },
-        });
+        ];
 
-        return client;
+        return new ConnectorClient(credentials, options);
     }
 
     // Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.

@@ -11,7 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
-const { createHttpHeaders } = require('@azure/core-rest-pipeline');
+const { createPipelineRequest, createHttpHeaders } = require('@azure/core-rest-pipeline');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
@@ -30,7 +30,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
     it('should throw with an unknown channel service', function () {
         assert.throws(
             () => BotFrameworkAuthenticationFactory.create('unknown'),
-            new Error('The provided ChannelService value is not supported.')
+            new Error('The provided ChannelService value is not supported.'),
         );
     });
 
@@ -66,7 +66,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
                 undefined,
                 undefined,
                 credsFactory,
-                { requiredEndorsements: [] }
+                { requiredEndorsements: [] },
             );
             assert.strictEqual(pBFA.getOriginatingAudience(), AuthenticationConstants.ToChannelFromBotOAuthScope);
             assert.strictEqual(pBFA.credentialsFactory, credsFactory);
@@ -85,7 +85,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             // If authentication was enabled 'UnusedAudienceWhenAuthIsDisabled' would have been used, but is unnecessary with disabled authentication.
             assert.strictEqual(
                 connectorClient.credentials.oAuthScope,
-                AuthenticationConstants.ToChannelFromBotOAuthScope
+                AuthenticationConstants.ToChannelFromBotOAuthScope,
             );
 
             const userTokenClient = await pBFA.createUserTokenClient(claimsIdentity);
@@ -107,7 +107,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
                 undefined,
                 undefined,
                 credsFactory,
-                { requiredEndorsements: [] }
+                { requiredEndorsements: [] },
             );
             assert.strictEqual(pBFA.getOriginatingAudience(), AuthenticationConstants.ToChannelFromBotOAuthScope);
             assert.strictEqual(pBFA.credentialsFactory, credsFactory);
@@ -136,15 +136,23 @@ describe('BotFrameworkAuthenticationFactory', function () {
     });
 
     async function assertHasAcceptHeader(client) {
-        const headerPolicy = client.pipeline
-            .getOrderedPolicies()
-            .find((policy) => policy.name === 'acceptHeaderPolicy');
-        const mockHttp = {
-            headers: createHttpHeaders(),
-        };
-        await headerPolicy.sendRequest(mockHttp, () => {});
+        let hasAcceptHeader = false;
 
-        // Assert the presence of the Accept header
-        assert(mockHttp.headers.get('accept') == '*/*', "Accept header from ConnectorClientContext should be */*");
+        const length = client._requestPolicyFactories.length;
+        for (let i = 0; i < length; i++) {
+            const mockHttp = createPipelineRequest({
+                headers: createHttpHeaders(),
+            });
+
+            const result = client._requestPolicyFactories[i];
+
+            await result.sendRequest(mockHttp, (request) => ({ request, headers: mockHttp.headers }));
+            if (mockHttp.headers.get('accept') == '*/*') {
+                hasAcceptHeader = true;
+                break;
+            }
+        }
+
+        assert(hasAcceptHeader, 'accept header from connector client should be */*');
     }
 });

@@ -58,17 +58,19 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             userAgent: `${USER_AGENT} ${userAgent ?? ''}`,
         };
 
-        const client = new ConnectorClient(credentials, options);
-        client.pipeline.addPolicy({
-            name: 'acceptHeaderPolicy',
-            sendRequest(request, next) {
-                if (!request.headers.has('accept')) {
-                    request.headers.set('accept', '*/*');
-                }
-                return next(request);
-            },
-        });
+        options.requestPolicyFactories = [
+            {
+                create: (nextPolicy) => ({
+                    sendRequest: (httpRequest) => {
+                        if (!httpRequest.headers.contains('accept')) {
+                            httpRequest.headers.set('accept', '*/*');
+                        }
+                        return nextPolicy.sendRequest(httpRequest);
+                    },
+                }),
+            }
+        ]
 
-        return client;
+        return new ConnectorClient(credentials, options);
     }
 }

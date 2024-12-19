@@ -43,13 +43,13 @@ describe('AppCredentials', function () {
     describe('signRequest', function () {
         it('should not sign request when appId is falsy', async function () {
             const creds = new MicrosoftAppCredentials('');
-            const webRequest = await creds.signRequest(createWebResource({ url: "dummyURL" }));
+            const webRequest = await creds.signRequest(createWebResource({ url: 'https://example.com' }));
             assert(!webRequest.headers.Authorization);
         });
 
         it('should not sign request when appId is anonymous skill appId', async function () {
             const creds = new MicrosoftAppCredentials(AuthenticationConstants.AnonymousSkillAppId);
-            const webRequest = await creds.signRequest(createWebResource({ url: "dummyURL" }));
+            const webRequest = await creds.signRequest(createWebResource({ url: 'https://example.com' }));
             assert(!webRequest.headers.Authorization);
         });
     });

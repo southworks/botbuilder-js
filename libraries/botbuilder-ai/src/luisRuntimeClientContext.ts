@@ -36,7 +36,7 @@ export class LUISRuntimeClientContext extends ServiceClientContext {
             options = {};
         }
 
-        const baseUri = options?.baseUri || '{Endpoint}/luis/v3.0-preview';
+        const baseUri = options?.baseUri || `${endpoint}/luis/v3.0-preview`;
 
         super(credentials, { ...options, baseUri });
 
