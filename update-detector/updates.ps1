@@ -148,45 +148,45 @@ function CreateTable($packages) {
     return $result | Out-String;
 }
 
-$packages = GetOutdatedPackages;
-$table = CreateTable $packages
+# $packages = GetOutdatedPackages;
+# $table = CreateTable $packages
 
 
-$WorkspacesInfo = (yarn workspaces --json info | ConvertFrom-Json).data | ConvertFrom-Json
+# $WorkspacesInfo = (yarn workspaces --json info | ConvertFrom-Json).data | ConvertFrom-Json
 
-$ConsolidateTable = @();
-$UpdatesTable = @();
-$OutdatedPackages | Group-Object { $_[[Keys]::Package] } | ForEach-Object {
-    $Fields = $_.Group[0];
-    $Package = $Fields[[Keys]::Package];
-    $Current = $Fields[[Keys]::Current];
-    $Wanted = $Fields[[Keys]::Wanted];
-    $Latest = $Fields[[Keys]::Latest];
-    $PackageVersions = $_.Group;
+# $ConsolidateTable = @();
+# $UpdatesTable = @();
+# $OutdatedPackages | Group-Object { $_[[Keys]::Package] } | ForEach-Object {
+#     $Fields = $_.Group[0];
+#     $Package = $Fields[[Keys]::Package];
+#     $Current = $Fields[[Keys]::Current];
+#     $Wanted = $Fields[[Keys]::Wanted];
+#     $Latest = $Fields[[Keys]::Latest];
+#     $PackageVersions = $_.Group;
 
-    if ($Wanted -eq "exotic") {
-        # Ignore packages that can't be resolved from npm.
-        return;
-    }
+#     if ($Wanted -eq "exotic") {
+#         # Ignore packages that can't be resolved from npm.
+#         return;
+#     }
 
-    $PackageItem = PackageItem -Package $Package;
+#     $PackageItem = PackageItem -Package $Package;
 
-    $ConsolidateTableItem = ConsolidateTableItem -PackageVersions $PackageVersions
-    if ($ConsolidateTableItem) {
-        $ConsolidateTable += $ConsolidateTableItem
-    }
+#     $ConsolidateTableItem = ConsolidateTableItem -PackageVersions $PackageVersions
+#     if ($ConsolidateTableItem) {
+#         $ConsolidateTable += $ConsolidateTableItem
+#     }
 
-    $FromItem = VersionTableItem -Package $Package -Version $Current
+#     $FromItem = VersionTableItem -Package $Package -Version $Current
 
-    $ToItem = @($Wanted, $Latest) | 
-    Get-Unique | 
-    ForEach-Object { VersionTableItem -Package $Package -Version $_ -Current $Current -ShowColor $true } | 
-    Join-String -Separator '<br>';
+#     $ToItem = @($Wanted, $Latest) | 
+#     Get-Unique | 
+#     ForEach-Object { VersionTableItem -Package $Package -Version $_ -Current $Current -ShowColor $true } | 
+#     Join-String -Separator '<br>';
 
-    $WorkspacesItem = WorkspacesMarkdown -Packages $PackageVersions -Separator '<br>'
+#     $WorkspacesItem = WorkspacesMarkdown -Packages $PackageVersions -Separator '<br>'
 
-    $UpdatesTable += "| $($PackageItem) | $($FromItem) | $($ToItem) | $($WorkspacesItem) |";
-}
+#     $UpdatesTable += "| $($PackageItem) | $($FromItem) | $($ToItem) | $($WorkspacesItem) |";
+# }
 
 # TODO: generate a hash based on generated string, to later use to compare from issue to update. the hash will be saved as comment in the issue.
 # TODO: parallel
@@ -255,40 +255,6 @@ function GetOutdatedPackages() {
 }
 
 
-$OutdatedPackages = GetOutdatedPackages;
-$PackageMarkdownList = GetPackageMarkdownList -Packages $OutdatedPackages;
-Set-Content .\update-detector\updates.md $PackageMarkdownList
-
-$Content = "
-# Updates (new format)
-
-> [!NOTE]
-> 30 dependencies found that require update:
-> - 🟥 5 major
-> - 🟨 15 minor
-> - 🟩 10 patch
-
-> [!IMPORTANT]  
-> Supported Node versions: `18` and `20`.
-
-$($PackageMarkdownList)
-
-[@azure/core-auth](https://www.npmjs.com/package/@azure/core-auth) `1.7.2`
-└──  **detected versions in projects** ─ $${\color{orange}\textsf{consolidate}}$$
-&emsp;&emsp;├─ `1.7.2` [`botbuilder-js`]()
-&emsp;&emsp;└─ `8.2.0` [`botbuilder-test-utils`]()
-└── **detected versions** ─ $${\color{orange}\textsf{pick one}}$$
-&emsp;&emsp;└─ `1.7.3` `🟩 patch`
-&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
-&emsp;&emsp;&emsp;└─ **supported node versions:** `>=6`
-&emsp;&emsp;└─ `1.8.1` `🟨 minor`
-&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
-&emsp;&emsp;&emsp;└─ **supported node versions:** `>=18`
-&emsp;&emsp;└─ `8.2.0` `🟥 major` ─ $${\color{red}\textsf{drops node versions}}$$
-&emsp;&emsp;&emsp;├─ **module type:** `ESM`
-&emsp;&emsp;&emsp;└─ **supported node versions:** `>=20`
-";
-
 function GetPackageMarkdownList($Packages) {
     return $Packages | ForEach-Object {
         $Package = $_;
@@ -324,3 +290,92 @@ function GetPackageMarkdownList($Packages) {
         return $Result | Out-String;
     }
 }
+
+$OutdatedPackages = GetOutdatedPackages;
+$PackageMarkdownList = GetPackageMarkdownList -Packages $OutdatedPackages;
+Set-Content .\update-detector\updates.md $PackageMarkdownList
+
+$Content = "
+# Updates (new format)
+
+> [!NOTE]
+> 30 dependencies found that require update:
+> - 🟥 5 major
+> - 🟨 15 minor
+> - 🟩 10 patch
+
+> [!IMPORTANT]  
+> BotBuilder supported node versions: `18`, `20`, `22`.
+
+$($PackageMarkdownList)
+
+[@azure/core-auth](https://www.npmjs.com/package/@azure/core-auth) `1.7.2`
+└──  **detected versions in projects** ─ $${\color{orange}\textsf{consolidate}}$$
+&emsp;&emsp;├─ `1.7.2` [`botbuilder-js`]()
+&emsp;&emsp;└─ `8.2.0` [`botbuilder-test-utils`]()
+└── **detected versions** ─ $${\color{orange}\textsf{pick one}}$$
+&emsp;&emsp;└─ `1.7.3` `🟩 patch`
+&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=6`
+&emsp;&emsp;└─ `1.8.1` `🟨 minor`
+&emsp;&emsp;&emsp;├─ **module type:** `CommonJS`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=18`
+&emsp;&emsp;└─ `8.2.0` `🟥 major` ─ $${\color{red}\textsf{drops node versions}}$$
+&emsp;&emsp;&emsp;├─ **module type:** `ESM`
+&emsp;&emsp;&emsp;└─ **supported node versions:** `>=20`
+";
+
+
+function PackageLink($Name, $Version) {
+    if ($Version) {
+        return "[``$Version``](https://www.npmjs.com/package/$Name/v/$Version)";
+    }
+    return "[$Name](https://www.npmjs.com/package/$Name)";
+}
+
+function CreateDescription($Packages) {
+    $Description = "
+    > [!IMPORTANT]  
+    > SDK supported node versions: ``18|20|22``.
+    "
+    $Packages | ForEach-Object {
+        $Package = $_;
+        $Description += "
+        ## [$Name](https://www.npmjs.com/package/$Name)
+        - **version:** ``$Version``
+        ";
+
+        if ($Package.AvailableUpdates) {
+            $Description += "- **available updates:** _newer versions detected, please update to one of the following._";
+            foreach ($Pkg in $Package.AvailableUpdates) {
+                $Description += " └─ [``$Version``](https://www.npmjs.com/package/$Name/v/$Version) ─ **type:** ``$Type``, **node version:** ``$NodeVersion``";
+            }
+        }
+
+        if ($Package.VersionDisparity) {
+            $Description += "- **version disparity:** _multiple projects contain different versions of the package, please consolidate._";
+            $Link = PackageWithLineNumber -Package $Name -Projects $Projects -Workspaces $Workspaces;
+            foreach ($Pkg in $Package.VersionDisparity) {
+                $Description += " └─ [``$Version``](https://www.npmjs.com/package/$Name/v/$Version) ─ **package:** $Link";
+            }
+        }
+    }
+}
+
+function PackageWithLineNumber($Package, $Projects, $Workspaces) {
+    return $Projects | ForEach-Object {
+        $Project = $_ || "botbuilder-js";
+        $Path = $Workspaces."$($Project)".location;
+        $PackageString = Get-Content "$($Path)\package.json";
+        $LineNumber = $PackageString.Split("`n").IndexOf("`"$($Package)`"");
+
+        if (!$_) {
+            return "[``$($Project)``](https://github.com/microsoft/botbuilder-js/blob/main/package.json#L$($LineNumber))"
+        }
+
+        return "[``$($Project)``](https://github.com/microsoft/botbuilder-js/blob/main/$($Project)/package.json#L$($LineNumber))"
+    }   
+}
+
+$Title = "30 dependencies found that require updating";
+$Description = CreateDescription -Packages $Packages
