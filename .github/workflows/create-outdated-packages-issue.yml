@@ -29,7 +29,7 @@ jobs:
 
       - name: check existing issue
         run: |
-          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo $GITHUB_REPOSITORY --app github-actions --state open --json id,number,body | ConvertFrom-Json
+          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo $GITHUB_REPOSITORY --app "github-actions" --state open --json id,number,body | ConvertFrom-Json
           if($json.body -eq $null) {
               echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
               exit 0
@@ -50,7 +50,7 @@ jobs:
 
       - name: generate report
         run: |
-          $json = node --experimental-transform-types ./report.ts | ConvertFrom-Json
+          $json = node --experimental-transform-types ./botframework-sdk/report.ts | ConvertFrom-Json
           if($json.integrity -eq $env:ISSUE_HASH) {
             echo "No changes detected. Exiting..."
             exit 0
@@ -61,24 +61,22 @@ jobs:
             hash:$($json.integrity)
           -->
 
-          $($json.markdown)" | Out-File ./report.md
-          Get-Content report.md
+          $($json.markdown)" | Out-File ./botframework-sdk/report.md
+          Get-Content ./botframework-sdk/report.md
         shell: pwsh
-        working-directory: ./botframework-sdk
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          $content = Get-Content report.md;
+          $content = Get-Content ./botframework-sdk/report.md;
           if($env:ISSUE_NUMBER -eq '') {
             gh issue create --title "Outdated packages" --body $content --repo $GITHUB_REPOSITORY;
           } else {
             gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
           }
         shell: pwsh
-        working-directory: ./botframework-sdk
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
