@@ -68,7 +68,7 @@ jobs:
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
-      - name: "${{ steps.check-existing-issue.outputs.ISSUE_NUMBER != '' ? 'update' : 'create' }} issue"
+      - name: "create/update issue"
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
           $content = Get-Content report.md;
