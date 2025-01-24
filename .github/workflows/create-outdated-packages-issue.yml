@@ -27,8 +27,8 @@ jobs:
         with:
           node-version: 22.x
 
+          # https://cli.github.com/manual/gh_issue_create
       - run: |
-          https://cli.github.com/manual/gh_issue_create
           gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
         env:
           GH_TOKEN: ${{ github.token }}
