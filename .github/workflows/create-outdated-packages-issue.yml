@@ -32,15 +32,15 @@ jobs:
       - name: check existing issue
         run: |
           $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo southworks/botbuilder-js --app github-actions --state open --json id,number,body | ConvertFrom-Json
-          if($json.body -ne $null) {
-              echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
-              echo "Existing issue #$($json.number) found. Exiting..."
-              exit 0
+          if($json.body -eq $null) {
+            echo "Existing issue #$($json.number) found. Exiting..."
+            return;
           }
           $start = $json.body.IndexOf("<!--");
           $end = $json.body.IndexOf("-->") + 3;
           $header = $json.body.Substring($start, $end - $start)
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
+          echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
           echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT"
         shell: pwsh
         env:
@@ -53,33 +53,34 @@ jobs:
 
       - name: generate report
         run: |
-          $json = node --experimental-transform-types botframework-sdk/report.ts | ConvertFrom-Json
+          $json = node --experimental-transform-types report.ts | ConvertFrom-Json
           if($json.integrity -eq $env:ISSUE_HASH) {
             echo "No changes detected. Exiting..."
-            exit 0
+            exit 0;
           }
 
           "<!--
-            ${REPORT_ID}
+            ${{ env.REPORT_ID }}
             hash:$($json.integrity)
           -->
 
-          $($json.markdown)" | Out-File botframework-sdk/report.md
-          Get-Content botframework-sdk/report.md
+          $($json.markdown)" | Out-File report.md
         shell: pwsh
+        working-directory: ${{ WORKING_DIR }}
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          $content = Get-Content botframework-sdk/report.md;
+          $content = Get-Content report.md;
           if($env:ISSUE_NUMBER -eq '') {
             gh issue create --title "Outdated packages" --body $content --repo $GITHUB_REPOSITORY;
           } else {
             gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
           }
         shell: pwsh
+        working-directory: ${{ WORKING_DIR }}
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
