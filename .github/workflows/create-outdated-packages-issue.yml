@@ -30,6 +30,7 @@ jobs:
           node-version: 22.x
 
       - name: check existing issue
+        id: check-existing-issue
         run: |
           $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo ${{ github.repository }} --app github-actions --state open --json id,number,body | ConvertFrom-Json
           if($json.body -eq $null) {
@@ -68,7 +69,7 @@ jobs:
 
           $($json.markdown)" | Out-File report.md
           echo "Changes detected and saved to report.md. Continuing..."
-          echo "Changes $($env:ISSUE_HASH)"
+          echo "Changes $($env:ISSUE_HASH) ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}"
         shell: pwsh
         working-directory: ${{ env.WORKING_DIR }}
         env:
