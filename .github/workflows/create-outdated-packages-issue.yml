@@ -15,7 +15,7 @@ on:
 
 jobs:
   issue:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       issues: write
     env:
@@ -29,7 +29,7 @@ jobs:
 
       - name: check existing issue
         run: |
-          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo $GITHUB_REPOSITORY --app "github-actions" --state open --json id,number,body | ConvertFrom-Json
+          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo $GITHUB_REPOSITORY --app github-actions --state open --json id,number,body | ConvertFrom-Json
           if($json.body -eq $null) {
               echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
               exit 0
