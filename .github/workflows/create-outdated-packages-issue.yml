@@ -40,8 +40,8 @@ jobs:
           $end = $json.body.IndexOf("-->") + 3;
           $header = $json.body.Substring($start, $end - $start)
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
-          echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT";
-          echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT";
+          echo "ISSUE_NUMBER=$($json.number)" >> $env:GITHUB_OUTPUT;
+          echo "ISSUE_HASH=$hash" >> $env:GITHUB_OUTPUT;
           echo "Existing issue detected: `n - number: $($json.number)`n - hash: $hash";
         shell: pwsh
         env:
