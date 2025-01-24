@@ -27,21 +27,21 @@ jobs:
         with:
           node-version: 22.x
 
-      # https://cli.github.com/manual/gh_issue_create
-      # - run: |
-      #     gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
-      #     ISSUE: ${{ github.event.issue.html_url }}
-
       - name: check existing issue
-        # use --author github-actions and improve --search
-        # shell: pwsh
         run: |
-          gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
+          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo $GITHUB_REPOSITORY --app github-actions --state open --json id,number,body | ConvertFrom-Json
+          if($json.body -eq $null) {
+              echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
+              exit 0
+          }
+          $start = $json.body.IndexOf("<!--");
+          $end = $json.body.IndexOf("-->") + 3;
+          $header = $json.body.Substring($start, $end - $start)
+          $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
+          echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT"
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-          # ISSUE: ${{ github.event.issue.html_url }}
 
       # - name: get script from botframework-sdk
       #   run: |
@@ -50,22 +50,47 @@ jobs:
 
       - name: generate report
         run: |
-          json = node --experimental-transform-types report.ts | jq --slurp
-          `
-          <!--
+          $json = node --experimental-transform-types report.ts | ConvertFrom-Json
+          if($json.integrity -eq $env:ISSUE_HASH) {
+            echo "No changes detected. Exiting..."
+            exit 0
+          }
+
+          "<!--
             ${REPORT_ID}
-            hash:${json.integrity}
+            hash:$($json.integrity)
           -->
 
-          ${json.markdown}
-          ` > report.md
-          cat report.md
+          $($json.markdown)" | Out-File report.md
+          Get-Content report.md
+        shell: pwsh
         working-directory: botframework-sdk
+        env:
+          ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
-      # - name: update report
-      #   run: |
-      #     checksum = cat ./botframework-sdk/.checksum
-      #     report = cat ./botframework-sdk/report.md
+      - name: "${{ steps.check-existing-issue.outputs.ISSUE_NUMBER != '' ? 'update' : 'create' }} issue"
+        if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
+        run: |
+          $content = Get-Content report.md;
+          if($env:ISSUE_NUMBER -eq '') {
+            gh issue create --title "Outdated packages" --body $content --repo $GITHUB_REPOSITORY;
+          } else {
+            gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
+          }
+        shell: pwsh
+        working-directory: botframework-sdk
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.html_url }}
+          ISSUE_NUMBER: ${{ steps.check-existing-issue.outputs.ISSUE_NUMBER }}
+          ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
+
+      # https://cli.github.com/manual/gh_issue_create
+      # - run: |
+      #     gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #     ISSUE: ${{ github.event.issue.html_url }}
 
       # Get outdated packages
       # Generate hash
