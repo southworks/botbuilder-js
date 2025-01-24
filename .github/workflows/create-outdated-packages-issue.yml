@@ -43,7 +43,6 @@ jobs:
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
           echo ISSUE_HASH=$hash >> $env:GITHUB_OUTPUT;
           echo ISSUE_NUMBER=$($json.number) >> $env:GITHUB_OUTPUT;
-          # "ISSUE_HASH=$hash" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append;
           echo "Existing issue detected: `n - number: $($json.number)`n - hash: $hash";
         shell: pwsh
         env:
@@ -69,7 +68,6 @@ jobs:
 
           $($json.markdown)" | Out-File report.md
           echo "Changes detected and saved to report.md. Continuing..."
-          echo "Changes $($env:ISSUE_HASH) ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}"
         shell: pwsh
         working-directory: ${{ env.WORKING_DIR }}
         env:
@@ -78,11 +76,11 @@ jobs:
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          $content = Get-Content report.md;
+          echo "issue: $($env:ISSUE_NUMBER)"
           if($env:ISSUE_NUMBER -eq '') {
-            gh issue create --title "Outdated packages" --body $content --repo ${{ github.repository }};
+            gh issue create --title "Outdated packages" --body-file report.md $content --repo ${{ github.repository }};
           } else {
-            gh issue edit $env:ISSUE_NUMBER --body $content --repo ${{ github.repository }};
+            gh issue edit $env:ISSUE_NUMBER --body-file report.md --repo ${{ github.repository }};
           }
         shell: pwsh
         working-directory: ${{ env.WORKING_DIR }}
