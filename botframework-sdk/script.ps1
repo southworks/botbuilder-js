@@ -1,11 +1,11 @@
-$json = gh issue list --search "in:body *id:outdated-packages*" --repo southworks/botbuilder-js --app github-actions --state closed --json id,number,body | ConvertFrom-Json
+$json = Invoke-Expression "gh issue list --search `"in:body *id:outdated-packages*`" --repo southworks/botbuilder-js --app github-actions --state open --json id,number,body" | ConvertFrom-Json
 
 if($json.body -eq $null) {
     Write-Output "No issues found"
     exit 0
 }
 
-# $json.body
+$json.body
 
 # $str = "
 
