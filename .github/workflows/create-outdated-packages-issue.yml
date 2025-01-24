@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - main
+    - '4.0.0-m1'
     - 'joelmut/test/package-notification'
   pull_request:
     branches:
-    - main
+    - '4.0.0-m1'
     - 'joelmut/test/package-notification'
 
   # schedule: 
