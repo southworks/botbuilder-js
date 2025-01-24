@@ -34,7 +34,8 @@ jobs:
       - name: check existing issue
         # use --author github-actions and improve --search
         run: |
-          gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
+          result = gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
+          echo $result
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
@@ -56,7 +57,7 @@ jobs:
           ${json.markdown}
           ` > report.md
           cat report.md
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: botframework-sdk
 
       # - name: update report
       #   run: |
