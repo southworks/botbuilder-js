@@ -39,7 +39,7 @@ jobs:
           $header = $json.body.Substring($start, $end - $start)
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
           echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT"
-        shell: pwsh
+        shell: powershell
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -63,7 +63,7 @@ jobs:
 
           $($json.markdown)" | Out-File ./botframework-sdk/report.md
           Get-Content ./botframework-sdk/report.md
-        shell: pwsh
+        shell: powershell
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
@@ -76,7 +76,7 @@ jobs:
           } else {
             gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
           }
-        shell: pwsh
+        shell: powershell
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
