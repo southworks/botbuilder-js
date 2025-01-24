@@ -32,6 +32,7 @@ jobs:
           $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo southworks/botbuilder-js --app github-actions --state open --json id,number,body | ConvertFrom-Json
           if($json.body -ne $null) {
               echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
+              echo "Existing issue #$($json.number) found. Exiting..."
               exit 0
           }
           $start = $json.body.IndexOf("<!--");
@@ -50,7 +51,7 @@ jobs:
 
       - name: generate report
         run: |
-          $json = node --experimental-transform-types ./botframework-sdk/report.ts | ConvertFrom-Json
+          $json = node --experimental-transform-types ../botframework-sdk/report.ts | ConvertFrom-Json
           if($json.integrity -eq $env:ISSUE_HASH) {
             echo "No changes detected. Exiting..."
             exit 0
@@ -61,7 +62,7 @@ jobs:
             hash:$($json.integrity)
           -->
 
-          $($json.markdown)" | Out-File ./botframework-sdk/report.md
+          $($json.markdown)" | Out-File ../botframework-sdk/report.md
           Get-Content ./botframework-sdk/report.md
         shell: powershell
         env:
@@ -70,7 +71,7 @@ jobs:
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          $content = Get-Content ./botframework-sdk/report.md;
+          $content = Get-Content ../botframework-sdk/report.md;
           if($env:ISSUE_NUMBER -eq '') {
             gh issue create --title "Outdated packages" --body $content --repo $GITHUB_REPOSITORY;
           } else {
