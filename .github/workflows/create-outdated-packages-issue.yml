@@ -2,6 +2,10 @@ name: Outdated Packages
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+    - joelmut/test/package-notification
   # schedule: 
   #   # Daily at 8:20 UTC
   #   - cron: '20 8 * * *'
