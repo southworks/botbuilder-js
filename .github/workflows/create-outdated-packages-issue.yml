@@ -15,13 +15,15 @@ on:
 
 jobs:
   issue:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       issues: write
     env:
       REPORT_ID: "id:outdated-packages"
       WORKING_DIR: "botframework-sdk"
     steps:
+      - uses: actions/checkout@v2
+
       - name: use node 22.x
         uses: actions/setup-node@v4
         with:
@@ -40,7 +42,7 @@ jobs:
           $header = $json.body.Substring($start, $end - $start)
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
           echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT"
-        shell: powershell
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -51,7 +53,7 @@ jobs:
 
       - name: generate report
         run: |
-          $json = node --experimental-transform-types ../botframework-sdk/report.ts | ConvertFrom-Json
+          $json = node --experimental-transform-types botframework-sdk/report.ts | ConvertFrom-Json
           if($json.integrity -eq $env:ISSUE_HASH) {
             echo "No changes detected. Exiting..."
             exit 0
@@ -62,22 +64,22 @@ jobs:
             hash:$($json.integrity)
           -->
 
-          $($json.markdown)" | Out-File ../botframework-sdk/report.md
-          Get-Content ./botframework-sdk/report.md
-        shell: powershell
+          $($json.markdown)" | Out-File botframework-sdk/report.md
+          Get-Content botframework-sdk/report.md
+        shell: pwsh
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          $content = Get-Content ../botframework-sdk/report.md;
+          $content = Get-Content botframework-sdk/report.md;
           if($env:ISSUE_NUMBER -eq '') {
             gh issue create --title "Outdated packages" --body $content --repo $GITHUB_REPOSITORY;
           } else {
             gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
           }
-        shell: powershell
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
