@@ -27,14 +27,22 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: check existing issue
-        # use --author github-actions and improve --search
-        run: |
-          result = gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
-          echo $result
+      - run: |
+          https://cli.github.com/manual/gh_issue_create
+          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
+
+      - name: check existing issue
+        # use --author github-actions and improve --search
+        shell: pwsh
+        run: |
+          $result = gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
+          echo $result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # ISSUE: ${{ github.event.issue.html_url }}
 
       # - name: get script from botframework-sdk
       #   run: |
