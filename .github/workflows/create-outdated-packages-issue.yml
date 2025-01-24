@@ -42,7 +42,7 @@ jobs:
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
           echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT";
           echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT";
-          echo "Existing issue `n - number:$($json.number)`n - hash:$hash";
+          echo "Existing issue detected: `n - number: $($json.number)`n - hash: $hash";
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -67,6 +67,7 @@ jobs:
 
           $($json.markdown)" | Out-File report.md
           echo "Changes detected and saved to report.md. Continuing..."
+          echo "Changes $($env:ISSUE_HASH)"
         shell: pwsh
         working-directory: ${{ env.WORKING_DIR }}
         env:
