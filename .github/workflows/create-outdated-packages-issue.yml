@@ -29,8 +29,8 @@ jobs:
 
       - name: check existing issue
         run: |
-          $json = Invoke-Expression "gh issue list --search `"in:body *${{ env.REPORT_ID }}*`" --repo $GITHUB_REPOSITORY --app github-actions --state open --json id,number,body" | ConvertFrom-Json
-          if($json.body -eq $null) {
+          $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo southworks/botbuilder-js --app github-actions --state open --json id,number,body | ConvertFrom-Json
+          if($json.body -ne $null) {
               echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
               exit 0
           }
