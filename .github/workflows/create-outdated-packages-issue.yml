@@ -33,15 +33,16 @@ jobs:
         run: |
           $json = gh issue list --search "in:body *${{ env.REPORT_ID }}*" --repo ${{ github.repository }} --app github-actions --state open --json id,number,body | ConvertFrom-Json
           if($json.body -eq $null) {
-            echo "Existing issue #$($json.number) found. Exiting..."
+            echo "Could not find existing issue. Continuing...";
             return;
           }
           $start = $json.body.IndexOf("<!--");
           $end = $json.body.IndexOf("-->") + 3;
           $header = $json.body.Substring($start, $end - $start)
           $hash = $header.Split("hash:")[1].Split("`n")[0].Trim();
-          echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT"
-          echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT"
+          echo "ISSUE_NUMBER=$($json.number)" >> "$GITHUB_OUTPUT";
+          echo "ISSUE_HASH=$hash" >> "$GITHUB_OUTPUT";
+          echo "Existing issue `n - number:$($json.number)`n - hash:$hash";
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -65,6 +66,7 @@ jobs:
           -->
 
           $($json.markdown)" | Out-File report.md
+          echo "Changes detected and saved to report.md. Continuing..."
         shell: pwsh
         working-directory: ${{ env.WORKING_DIR }}
         env:
@@ -85,7 +87,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
           ISSUE_NUMBER: ${{ steps.check-existing-issue.outputs.ISSUE_NUMBER }}
-          ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
       # https://cli.github.com/manual/gh_issue_create
       # - run: |
