@@ -2,10 +2,15 @@ name: Outdated Packages
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - main
+    - 'joelmut/test/package-notification'
   pull_request:
     branches:
     - main
-    - joelmut/test/package-notification
+    - 'joelmut/test/package-notification'
+
   # schedule: 
   #   # Daily at 8:20 UTC
   #   - cron: '20 8 * * *'
@@ -51,7 +56,7 @@ jobs:
           ${json.markdown}
           ` > report.md
           cat report.md
-        working-directory: ${{ WORKING_DIR }}
+        working-directory: ${{ env.WORKING_DIR }}
 
       # - name: update report
       #   run: |
