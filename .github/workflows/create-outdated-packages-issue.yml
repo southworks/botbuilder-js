@@ -1,19 +1,70 @@
 name: Outdated Packages
 
-on: 
-  schedule: 
-    # Daily at 8:20 UTC
-    - cron: '20 8 * * *'
+on:
+  workflow_dispatch:
+  # schedule: 
+  #   # Daily at 8:20 UTC
+  #   - cron: '20 8 * * *'
+
+# TODO: for testing use a manual execution.
 
 jobs:
   issue:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+    env:
+      REPORT_ID: "id:outdated-packages"
+      WORKING_DIR: "botframework-sdk"
     steps:
-      - run: |
-          https://cli.github.com/manual/gh_issue_create
-          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
+      - name: use node 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: check existing issue
+        # use --author github-actions and improve --search
+        run: |
+          gh issue list --search "\"${{ env.REPORT_ID }}\" in:body" --repo $GITHUB_REPOSITORY
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
+
+      # - name: get script from botframework-sdk
+      #   run: |
+      #     wget <botframework-sdk repo>
+      #   working-directory: ${{ WORKING_DIR }}
+
+      - name: generate report
+        run: |
+          json = node --experimental-transform-types report.ts | jq --slurp
+          `
+          <!--
+            ${REPORT_ID}
+            hash:${json.integrity}
+          -->
+
+          ${json.markdown}
+          ` > report.md
+          cat report.md
+        working-directory: ${{ WORKING_DIR }}
+
+      # - name: update report
+      #   run: |
+      #     checksum = cat ./botframework-sdk/.checksum
+      #     report = cat ./botframework-sdk/report.md
+
+      # Get outdated packages
+      # Generate hash
+      # Check if existing issue is open by checking the cache || title || body.hash, and save a boolean flag
+      # If the issue exists, compare hash with the "Get outdated packages" step
+      # If the hash is the same, exit
+      # Generate .md report
+      # if boolean flag is true, update the issue with the new report
+      # if boolean flag is false, create a new issue with the report
+      # - run: |
+      #     https://cli.github.com/manual/gh_issue_create
+      #     gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
+      #     ISSUE: ${{ github.event.issue.html_url }}
