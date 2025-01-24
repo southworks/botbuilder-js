@@ -50,7 +50,7 @@ jobs:
 
       - name: generate report
         run: |
-          $json = node --experimental-transform-types report.ts | ConvertFrom-Json
+          $json = node --experimental-transform-types ./report.ts | ConvertFrom-Json
           if($json.integrity -eq $env:ISSUE_HASH) {
             echo "No changes detected. Exiting..."
             exit 0
@@ -61,14 +61,14 @@ jobs:
             hash:$($json.integrity)
           -->
 
-          $($json.markdown)" | Out-File report.md
+          $($json.markdown)" | Out-File ./report.md
           Get-Content report.md
         shell: pwsh
-        working-directory: botframework-sdk
+        working-directory: ./botframework-sdk
         env:
           ISSUE_HASH: ${{ steps.check-existing-issue.outputs.ISSUE_HASH }}
 
-      - name: "create/update issue"
+      - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
           $content = Get-Content report.md;
@@ -78,7 +78,7 @@ jobs:
             gh issue edit $env:ISSUE_NUMBER --body $content --repo $GITHUB_REPOSITORY;
           }
         shell: pwsh
-        working-directory: botframework-sdk
+        working-directory: ./botframework-sdk
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE: ${{ github.event.issue.html_url }}
