@@ -76,7 +76,6 @@ jobs:
       - name: create/update issue
         if: ${{ steps.check-existing-issue.outputs.ISSUE_HASH != '' }}
         run: |
-          echo "issue: $($env:ISSUE_NUMBER)"
           if($env:ISSUE_NUMBER -eq '') {
             gh issue create --title "Outdated packages" --body-file report.md $content --repo ${{ github.repository }};
           } else {
