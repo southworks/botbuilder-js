@@ -11,6 +11,7 @@
     "transcripts"
   ],
   "scripts": {
+    "s":"node --experimental-transform-types ./botframework-sdk/report.ts",
     "browser-functional-test": "yarn workspace browser-functional-tests test",
     "build": "wsrun -e -m -t build",
     "build-docs": "wsrun -e -m build-docs",
