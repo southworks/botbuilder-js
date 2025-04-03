@@ -52,6 +52,9 @@ module.exports = {
         new webpack.ProvidePlugin({
             process: 'process/browser',
         }),
+        new webpack.ProvidePlugin({
+            crypto: 'crypto',
+        }),
     ],
     resolve: {
         extensions: ['.css', '.js', '.ts'],
@@ -61,9 +64,13 @@ module.exports = {
             tls: false,
             vm: false,
             path: false,
-            crypto: require.resolve('crypto-browserify'),
+            crypto: false,
             stream: require.resolve('stream-browserify'),
             buffer: require.resolve('buffer'),
+            http: false,
+            https: false,
+            url: false,
+            child_process: false,
             'process/browser': require.resolve('process/browser'),
         },
     },
