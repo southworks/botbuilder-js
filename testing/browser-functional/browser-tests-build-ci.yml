@@ -77,10 +77,10 @@ steps:
     TestURI: $(TESTURI)
   displayName: Run tests
 
-- task: AzureCLI@1
-  displayName: 'Delete Resource Group'
-  inputs:
-    azureSubscription: '$(AzureSubscription)'
-    scriptLocation: inlineScript
-    inlineScript: 'call az group delete -n $(TestResourceGroup) --yes'
-  condition: succeededOrFailed()
+# - task: AzureCLI@1
+#   displayName: 'Delete Resource Group'
+#   inputs:
+#     azureSubscription: '$(AzureSubscription)'
+#     scriptLocation: inlineScript
+#     inlineScript: 'call az group delete -n $(TestResourceGroup) --yes'
+#   condition: succeededOrFailed()
