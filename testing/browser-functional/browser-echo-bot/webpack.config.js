@@ -52,9 +52,12 @@ module.exports = {
         new webpack.ProvidePlugin({
             process: 'process/browser',
         }),
-        new webpack.ProvidePlugin({
-            crypto: 'crypto',
-        }),
+        // new webpack.ProvidePlugin({
+        //     crypto: [resolve(__dirname, 'crypto-shim.js'), 'default'],
+        // }),
+        // new webpack.ProvidePlugin({
+        //     createHash: [resolve(__dirname, 'createHash-polyfill.js'), 'default'], // Inject createHash separately
+        // }),
     ],
     resolve: {
         extensions: ['.css', '.js', '.ts'],
@@ -72,6 +75,9 @@ module.exports = {
             url: false,
             child_process: false,
             'process/browser': require.resolve('process/browser'),
+        },
+        alias: {
+            crypto: resolve(__dirname, 'crypto-shim.js'),
         },
     },
     output: {
