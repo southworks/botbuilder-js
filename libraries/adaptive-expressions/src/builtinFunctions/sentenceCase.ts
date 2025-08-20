@@ -29,7 +29,7 @@ export class SentenceCase extends StringTransformEvaluator {
     private static evaluator(args: unknown[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);
-        const firstArg = args[0] as string | undefined;
+        const firstArg = args[0];
         if (typeof firstArg === 'string' || firstArg === undefined) {
             const inputStr = (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleLowerCase(locale);
             if (inputStr === '') {
