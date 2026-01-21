@@ -13,7 +13,7 @@
   "dependencies": {
     "dayjs": "^1.11.13",
     "fast-glob": "^3.3.2",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.23",
     "minimatch": "^9.0.5",
     "minimist": "^1.2.6"
   },

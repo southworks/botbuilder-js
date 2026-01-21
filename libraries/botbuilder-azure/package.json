@@ -34,7 +34,7 @@
     "bcryptjs": "^2.4.3",
     "botbuilder": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.23",
     "p-map": "^7.0.3"
   },
   "devDependencies": {
