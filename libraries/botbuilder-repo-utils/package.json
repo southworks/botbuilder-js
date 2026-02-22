@@ -14,7 +14,7 @@
     "dayjs": "^1.11.13",
     "fast-glob": "^3.3.2",
     "lodash": "^4.17.20",
-    "minimatch": "^9.0.5",
+    "minimatch": "^10.2.1",
     "minimist": "^1.2.6"
   },
   "devDependencies": {
